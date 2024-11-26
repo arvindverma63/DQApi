@@ -421,7 +421,7 @@ class WebOrderController extends Controller
                 'id' => $menu->id,
                 'itemName' => $menu->itemName,
                 'itemImage' => $menu->itemImage,
-                'price' => $menu->price,
+                'price' => floatval($menu->price),
                 'category' => $category ? $category->categoryName : null,
                 'ingredients' => $ingredients,
             ];
