@@ -125,7 +125,7 @@ class CategoryController extends Controller
      }
 
      // Return the response in JSON format
-     return response()->json($data);
+     return response()->json(['data' => $data, 'message' => 'Categories retrieved successfully']);
  }
 
 

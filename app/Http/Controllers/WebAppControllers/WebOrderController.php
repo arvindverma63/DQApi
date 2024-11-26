@@ -327,6 +327,6 @@ class WebOrderController extends Controller
         }
 
         // Return the response in JSON format
-        return response()->json(['data' => $data, 'message' => 'Categories retrieved successfully']);
+        return response()->json($data);
     }
 }
