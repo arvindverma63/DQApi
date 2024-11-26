@@ -257,23 +257,34 @@ class WebOrderController extends Controller
      *
      * @OA\Get(
      *     path="/webMenu/categories",
-     *     summary="Retrieve all categories",
-     *     description="Fetch a list of all categories.",
+     *     summary="Retrieve all categories by restaurant",
+     *     description="Fetch a list of all categories based on the restaurant ID.",
      *     operationId="getAllCategories",
      *     tags={"WebAppMenu"},
+     *     @OA\Parameter(
+     *         name="restaurantId",
+     *         in="query",
+     *         required=true,
+     *         description="ID of the restaurant to fetch categories for",
+     *         @OA\Schema(type="string", example="R1728231298")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", description="Category ID", example=1),
-     *                 @OA\Property(property="name", type="string", description="Category name", example="Pizza"),
-     *                 @OA\Property(property="description", type="string", description="Category description", example="Italian cuisine pizzas"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp", example="2024-11-26T10:00:00Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp", example="2024-11-26T10:00:00Z")
-     *             )
+     *             type="object",
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", description="Category ID", example=1),
+     *                     @OA\Property(property="categoryName", type="string", description="Category name", example="Pizza"),
+     *                     @OA\Property(property="categoryImage", type="string", description="Full URL of the category image", example="http://example.com/images/pizza.jpg"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp", example="2024-11-26T10:00:00Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp", example="2024-11-26T10:00:00Z"),
+     *                     @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298")
+     *                 )
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Categories retrieved successfully")
      *         )
      *     ),
      *     @OA\Response(
@@ -282,22 +293,40 @@ class WebOrderController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="No categories found.")
+     *             @OA\Property(property="message", type="string", example="No categories found for the given restaurant ID.")
      *         )
      *     )
      * )
      */
-    public function getAllCategories()
-    {
-        $response = Category::all();
 
-        if ($response->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No categories found.'
-            ], 404);
+    public function getAllCategories(Request $request)
+    {
+        // Validate restaurantId
+        $validatedData = $request->validate([
+            'restaurantId' => 'string|required'
+        ]);
+
+        // Fetch categories based on restaurantId
+        $categories = Category::where('restaurantId', $validatedData['restaurantId'])->get();
+
+        // Initialize an empty array for the response data
+        $data = [];
+
+        // Construct image URL for each category and prepare the response
+        foreach ($categories as $category) {
+            $imageUrl = env('APP_URL') . '/' . $category->categoryImage; // Construct image URL
+
+            $data[] = [
+                'id' => $category->id,
+                'categoryName' => $category->categoryName,
+                'categoryImage' => $imageUrl, // Send full image URL
+                'created_at' => $category->created_at,
+                'updated_at' => $category->updated_at,
+                'restaurantId' => $category->restaurantId
+            ];
         }
 
-        return response()->json($response, 200);
+        // Return the response in JSON format
+        return response()->json(['data' => $data, 'message' => 'Categories retrieved successfully']);
     }
 }
