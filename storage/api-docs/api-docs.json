@@ -3177,6 +3177,112 @@
                     }
                 }
             }
+        },
+        "/menu/category/{id}": {
+            "get": {
+                "tags": [
+                    "WebAppMenu"
+                ],
+                "summary": "Search menu by category",
+                "description": "Retrieve all menu items based on the provided category ID.",
+                "operationId": "searchMenuByCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to filter menu items",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "Menu item ID",
+                                                "type": "integer",
+                                                "example": 101
+                                            },
+                                            "itemName": {
+                                                "description": "Menu item name",
+                                                "type": "string",
+                                                "example": "Margherita Pizza"
+                                            },
+                                            "itemImage": {
+                                                "description": "URL of the menu item image",
+                                                "type": "string",
+                                                "example": "http://example.com/images/pizza.jpg"
+                                            },
+                                            "price": {
+                                                "description": "Price of the menu item",
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 8.99
+                                            },
+                                            "category": {
+                                                "description": "Category name",
+                                                "type": "string",
+                                                "example": "Pizza"
+                                            },
+                                            "ingredients": {
+                                                "description": "List of ingredients for the menu item",
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "ingredientName": {
+                                                            "description": "Ingredient name",
+                                                            "type": "string",
+                                                            "example": "Cheese"
+                                                        },
+                                                        "quantity": {
+                                                            "description": "Ingredient quantity",
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 1.5
+                                                        },
+                                                        "unit": {
+                                                            "description": "Unit of the ingredient quantity",
+                                                            "type": "string",
+                                                            "example": "kg"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No menu found for the given category ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No menu found for the given restaurant ID."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

@@ -338,7 +338,7 @@ class WebOrderController extends Controller
  *     summary="Search menu by category",
  *     description="Retrieve all menu items based on the provided category ID.",
  *     operationId="searchMenuByCategory",
- *     tags={"Menu"},
+ *     tags={"WebAppMenu"},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
