@@ -174,6 +174,7 @@ Route::middleware(['auth:api'])->group(function () {
 
      Route::get('/webMenu',[WebOrderController::class,'menu']);
      Route::post('/addOrder',[WebOrderController::class,'addTransaction']);
+     Route::get('/webMenu/categories',[WebOrderController::class,'getAllCategories']);
     // Api's for mobile app
 
     Route::get('/app/menu',[MobileMenuController::class,'getMenu']);

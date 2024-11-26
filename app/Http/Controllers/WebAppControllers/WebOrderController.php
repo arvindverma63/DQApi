@@ -250,4 +250,54 @@ class WebOrderController extends Controller
             ], 500);
         }
     }
+
+
+    /**
+     * Get all categories.
+     *
+     * @OA\Get(
+     *     path="/webMenu/categories",
+     *     summary="Retrieve all categories",
+     *     description="Fetch a list of all categories.",
+     *     operationId="getAllCategories",
+     *     tags={"WebAppMenu"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", description="Category ID", example=1),
+     *                 @OA\Property(property="name", type="string", description="Category name", example="Pizza"),
+     *                 @OA\Property(property="description", type="string", description="Category description", example="Italian cuisine pizzas"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp", example="2024-11-26T10:00:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp", example="2024-11-26T10:00:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No categories found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="No categories found.")
+     *         )
+     *     )
+     * )
+     */
+    public function getAllCategories()
+    {
+        $response = Category::all();
+
+        if ($response->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No categories found.'
+            ], 404);
+        }
+
+        return response()->json($response, 200);
+    }
 }

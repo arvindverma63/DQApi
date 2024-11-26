@@ -3077,6 +3077,80 @@
                     }
                 }
             }
+        },
+        "/webMenu/categories": {
+            "get": {
+                "tags": [
+                    "WebAppMenu"
+                ],
+                "summary": "Retrieve all categories",
+                "description": "Fetch a list of all categories.",
+                "operationId": "getAllCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "Category ID",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "description": "Category name",
+                                                "type": "string",
+                                                "example": "Pizza"
+                                            },
+                                            "description": {
+                                                "description": "Category description",
+                                                "type": "string",
+                                                "example": "Italian cuisine pizzas"
+                                            },
+                                            "created_at": {
+                                                "description": "Creation timestamp",
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-11-26T10:00:00Z"
+                                            },
+                                            "updated_at": {
+                                                "description": "Last update timestamp",
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-11-26T10:00:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No categories found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No categories found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
