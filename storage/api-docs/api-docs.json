@@ -1,0 +1,3492 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Category API",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Add a new category",
+                "operationId": "e301f3736687480d08ac9e13fcce984c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "categoryName",
+                                    "restaurantId"
+                                ],
+                                "properties": {
+                                    "categoryName": {
+                                        "type": "string",
+                                        "example": "Beverages"
+                                    },
+                                    "categoryImage": {
+                                        "description": "Category Image",
+                                        "type": "file"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get all categories",
+                "operationId": "2fe5ca4dee04989664b62719792bcb06",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categories retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categories retrieved successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/category/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get a single category by ID",
+                "operationId": "dd9259f6deb254f21c891fc7d4291095",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category retrieved successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update a category",
+                "operationId": "230a1ca9523c603f806befa152b14479",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "categoryName",
+                                    "restaurantId"
+                                ],
+                                "properties": {
+                                    "categoryName": {
+                                        "type": "string",
+                                        "example": "Updated Category"
+                                    },
+                                    "categoryImage": {
+                                        "description": "Category Image",
+                                        "type": "file"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete a category",
+                "operationId": "67cd66983df6f14333d3f03fa7685182",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/customer": {
+            "post": {
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "Create a new customer",
+                "description": "Creates a new customer with the provided details",
+                "operationId": "f7451adbe82dcf8e5006b67f387a46be",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "1234567890"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Main St, City, Country"
+                                    },
+                                    "restaurantId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Customer created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/{id}": {
+            "get": {
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "Get Customer by Restaurant ID",
+                "description": "Retrieve customer data by the provided restaurant ID.",
+                "operationId": "getCustomerByRestaurantId",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the restaurant to fetch customer data for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of customer data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "John Doe",
+                                                "email": "johndoe@example.com"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customer data not found for the given restaurant ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Customer data not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/inventories": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get all inventory items",
+                "description": "Retrieve a list of all inventory items, including the supplier name",
+                "operationId": "45302c7dc2f4a8fe349ab337cd121b33",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of inventory items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Inventory"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No inventory items found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Create a new inventory item",
+                "description": "Add a new item to the inventory",
+                "operationId": "47e240ce9a6c834049d1eed9815a01d8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Inventory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Inventory item created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Inventory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/inventories/{id}": {
+            "get": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Get a specific inventory item",
+                "description": "Retrieve a specific inventory item by ID",
+                "operationId": "180242b97cf6e69adc846bcdd3fb05f1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Inventory item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inventory item details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Inventory"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inventory item not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Update an inventory item",
+                "description": "Update details of an inventory item",
+                "operationId": "fc16aec6698088402562d8a34415c312",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Inventory item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Inventory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inventory item updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Inventory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Inventory item not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Delete an inventory item",
+                "description": "Delete an inventory item by ID",
+                "operationId": "eed673ba7d84800cadfec634bc500c3c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Inventory item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inventory item deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "Inventory item deleted successfully"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inventory item not found"
+                    }
+                }
+            }
+        },
+        "/menu": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get all menu items",
+                "operationId": "b652340154a29a3f4dc6f3cc7caf8d69",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "The restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List all menu items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Menu"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create a new menu item",
+                "operationId": "d8203dcb55d6c0ecc2b215c311511aba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "itemName",
+                                    "price",
+                                    "categoryId",
+                                    "restaurantId",
+                                    "stock",
+                                    "stockItems"
+                                ],
+                                "properties": {
+                                    "itemName": {
+                                        "description": "Name of the menu item",
+                                        "type": "string",
+                                        "example": "Pizza"
+                                    },
+                                    "itemImage": {
+                                        "description": "Menu item image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "price": {
+                                        "description": "Price of the menu item",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 9.99
+                                    },
+                                    "categoryId": {
+                                        "description": "Category ID for the menu item",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "restaurantId": {
+                                        "description": "Restaurant ID for the menu item",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "stock": {
+                                        "description": "Available stock for the menu item",
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "stockItems": {
+                                        "description": "Array of stock items with their quantities",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "stockId": {
+                                                    "description": "Stock ID",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity for this stock item",
+                                                    "type": "number",
+                                                    "example": 10.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu item created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Menu"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu item created successfully with associated stock."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The total stock must be equal to or greater than the sum of stock item quantities."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to create menu item and stock: [Error message here]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/menu/{id}": {
+            "put": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update a menu item",
+                "operationId": "b34ab9d213ec80e3a7cb89c0e52c7620",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Menu item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "itemName",
+                                    "price",
+                                    "categoryId"
+                                ],
+                                "properties": {
+                                    "itemName": {
+                                        "description": "Name of the menu item",
+                                        "type": "string",
+                                        "example": "Burger"
+                                    },
+                                    "itemImage": {
+                                        "description": "Image of the menu item",
+                                        "type": "file"
+                                    },
+                                    "price": {
+                                        "description": "Price of the menu item",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 5.99
+                                    },
+                                    "categoryId": {
+                                        "description": "Category ID of the menu item",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "stockItems": {
+                                        "description": "List of stock items with IDs and quantities",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "stockId": {
+                                                    "description": "ID of the stock item",
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity of the stock item",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Menu item updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Menu"
+                                        },
+                                        "itemImage": {
+                                            "description": "URL of the updated menu item image",
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu item updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menu item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu item not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update menu item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to update menu item"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Delete a menu item",
+                "operationId": "1fca3d0c5517e940e6cc54a9bb5c4dcb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Menu item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Menu item deleted successfully"
+                    },
+                    "404": {
+                        "description": "Menu item not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/menu_inventory": {
+            "get": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Get all menu inventory items",
+                "description": "Retrieve a list of all menu inventory items",
+                "operationId": "2d5149373d20f9e16795f02a6364af01",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "Restaurant ID to filter inventory",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of menu inventory items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MenuInventory"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No menu inventory items found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Create a new menu inventory item",
+                "description": "Add a new item to the menu inventory",
+                "operationId": "90dcc163fbb05248a517b2225d09da5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MenuInventory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu inventory item created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MenuInventory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/menu_inventory/{id}": {
+            "get": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Get a specific menu inventory item",
+                "description": "Retrieve a specific menu inventory item by ID",
+                "operationId": "0c8ec584ca6345e1afda5c29399df8f6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Menu Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Menu inventory item details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MenuInventory"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menu inventory item not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Update a menu inventory item",
+                "description": "Update details of a menu inventory item",
+                "operationId": "8bae0551969e6bb26705ccb4454e0496",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Menu Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MenuInventory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Menu inventory item updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MenuInventory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Menu inventory item not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Delete a menu inventory item",
+                "description": "Delete a menu inventory item by ID",
+                "operationId": "a6833f3e1f2c8cf7b6168dc91c200a9a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Menu Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Menu inventory item deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "Menu inventory item deleted successfully"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menu inventory item not found"
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get all orders by restaurant ID",
+                "operationId": "d721086094bb68a619ca718faa38b971",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "The restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved orders"
+                    },
+                    "404": {
+                        "description": "No orders found for this restaurant"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order",
+                "operationId": "ad11876a24af19e01794f3304ad0ea47",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "orderDetails",
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "tableNumber": {
+                                        "type": "string",
+                                        "example": "12"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "ABC123"
+                                    },
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "orderDetails": {
+                                        "properties": {
+                                            "item1": {
+                                                "properties": {
+                                                    "item_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "item2": {
+                                                "properties": {
+                                                    "item_id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully"
+                    }
+                }
+            }
+        },
+        "/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get a specific order by ID",
+                "operationId": "3ac6f1521285ee4dace2c3bf8b57ce76",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved order"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update an existing order",
+                "operationId": "a249d0fb13ee104f7a74ebef1ac5d753",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "orderDetails",
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "tableNumber": {
+                                        "type": "string",
+                                        "example": "12"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "ABC123"
+                                    },
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "orderDetails": {
+                                        "properties": {
+                                            "item1": {
+                                                "properties": {
+                                                    "item_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 10.99
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "item2": {
+                                                "properties": {
+                                                    "item_id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "quantity": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.99
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order updated successfully"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Delete an order",
+                "operationId": "e59cfa6ae520c37259470130ea449512",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order deleted successfully"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                }
+            }
+        },
+        "/orders/{id}/status": {
+            "put": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update order status",
+                "description": "Update the status of an order to one of the following: 'processing', 'accept', 'reject', or 'complete'. When status is 'complete', stock will be decreased.",
+                "operationId": "391b32c67227365c6aa684602d350494",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "processing",
+                                            "accept",
+                                            "reject",
+                                            "complete"
+                                        ],
+                                        "example": "complete"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order status updated successfully and stock adjusted"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                }
+            }
+        },
+        "/qr/create": {
+            "post": {
+                "tags": [
+                    "QR Code"
+                ],
+                "summary": "Create a new QR code",
+                "operationId": "13f999bf61f2169340f9ef97d1b953bd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    },
+                                    "tableNo": {
+                                        "type": "integer",
+                                        "example": "12"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "QR code generated and stored successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/qr/{id}": {
+            "get": {
+                "tags": [
+                    "QR Code"
+                ],
+                "summary": "Get a QR code by ID",
+                "operationId": "5255116da45d09b44d723a372e22069a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "QR code data"
+                    },
+                    "404": {
+                        "description": "QR code not found"
+                    }
+                }
+            }
+        },
+        "/qr/update/{id}": {
+            "put": {
+                "tags": [
+                    "QR Code"
+                ],
+                "summary": "Update a QR code by ID",
+                "operationId": "5291d9f3ce3cd300bcf6adcc00a17584",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    },
+                                    "tableNo": {
+                                        "type": "integer",
+                                        "example": "12"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "QR code updated successfully"
+                    },
+                    "404": {
+                        "description": "QR code not found"
+                    }
+                }
+            }
+        },
+        "/qr/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "QR Code"
+                ],
+                "summary": "Delete a QR code by ID",
+                "operationId": "81f07a28c3c07911d60ace77816b13cc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "QR code deleted successfully"
+                    },
+                    "404": {
+                        "description": "QR code not found"
+                    }
+                }
+            }
+        },
+        "/reports/{id}": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get Dashboard Statistics for a Specific Restaurant",
+                "description": "Fetches the dashboard statistics for a specific restaurant, including today's collection, total invoices, completed orders, and rejected orders.",
+                "operationId": "e12d063b9dc00384af305459ed38f4d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "todayCollection": {
+                                            "type": "number",
+                                            "example": 1234.56
+                                        },
+                                        "totalInvoiceToday": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "totalCompleteOrder": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "totalRejectOrder": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Restaurant Not Found"
+                    }
+                }
+            }
+        },
+        "/suppliers": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get all suppliers for a specific restaurant",
+                "description": "Retrieve a list of all suppliers filtered by restaurantId",
+                "operationId": "f0be8a4028798fd2f6cbfa60fdfa3738",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "The restaurant ID to filter suppliers",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of suppliers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Supplier"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No suppliers found for this restaurant"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Create a new supplier",
+                "description": "Add a new supplier",
+                "operationId": "e49684af88d9e680e84d79aa3c340988",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Supplier"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Supplier created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/suppliers/{id}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get a specific supplier",
+                "description": "Retrieve a supplier by their ID",
+                "operationId": "d44c939d9f8205ccb802a56bd6e3717f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supplier details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Supplier not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Update a supplier",
+                "description": "Update a supplier's details",
+                "operationId": "7dd10b5a23860beccf5015fe279c5a7c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Supplier"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Supplier updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Supplier not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Delete a supplier",
+                "description": "Remove a supplier by their ID",
+                "operationId": "5f7f7f8e9c7f27b9dae1fbd30ae8126b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supplier deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "Supplier deleted successfully"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Supplier not found"
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "post": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Add a new transaction",
+                "description": "Create a new transaction with items, tax, discount, and restaurant ID.",
+                "operationId": "addTransaction",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "User ID",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "items": {
+                                        "description": "List of items in the transaction",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "item_id": {
+                                                    "description": "Item ID",
+                                                    "type": "integer",
+                                                    "example": 101
+                                                },
+                                                "name": {
+                                                    "description": "Item name",
+                                                    "type": "string",
+                                                    "example": "Item 1"
+                                                },
+                                                "price": {
+                                                    "description": "Item price",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100.5
+                                                },
+                                                "quantity": {
+                                                    "description": "Item quantity",
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "tax": {
+                                        "description": "Tax amount",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15
+                                    },
+                                    "discount": {
+                                        "description": "Discount amount",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "sub_total": {
+                                        "description": "Subtotal amount",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 300
+                                    },
+                                    "total": {
+                                        "description": "Total amount",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 305
+                                    },
+                                    "type": {
+                                        "description": "Payment type",
+                                        "type": "string",
+                                        "example": "credit_card"
+                                    },
+                                    "restaurantId": {
+                                        "description": "Restaurant ID",
+                                        "type": "string",
+                                        "example": "R1728231298"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid input data."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/{id}": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get transactions by restaurant ID",
+                "description": "Retrieve a list of transactions for a specific restaurant.",
+                "operationId": "getTransaction",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "R1728231298"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Transaction"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No transactions found for the given restaurant ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No transactions found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred while retrieving transactions."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user and return JWT token",
+                "operationId": "registerUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "role",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful registration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in a user and send OTP",
+                "description": "Log in a user with email and password, and send OTP for verification",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP sent to email",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OTP sent to your email"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/verify-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify OTP and log in user",
+                "description": "Verify the OTP sent to the user's email and log them in",
+                "operationId": "verifyOtp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "otp",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP verified, user logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid OTP or email"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log out user",
+                "description": "Log out the authenticated user",
+                "operationId": "logoutUser",
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully signed out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get the authenticated user",
+                "description": "Return details of the authenticated user",
+                "operationId": "getAuthenticatedUser",
+                "responses": {
+                    "200": {
+                        "description": "Authenticated user details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/super-admin/add-restaurant": {
+            "post": {
+                "tags": [
+                    "Users For Admin"
+                ],
+                "summary": "Create a new restaurant user",
+                "description": "Creates a new user with restaurant role and profile.",
+                "operationId": "addRestaurant",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "role",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User created successfully"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/super-admin/users": {
+            "get": {
+                "tags": [
+                    "Users For Admin"
+                ],
+                "summary": "Retrieve all users",
+                "description": "Get a list of all users and their profiles.",
+                "operationId": "getAllUsers",
+                "responses": {
+                    "200": {
+                        "description": "Users retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/super-admin/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users For Admin"
+                ],
+                "summary": "Retrieve a specific user",
+                "description": "Get details of a specific user and their profile.",
+                "operationId": "getUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users For Admin"
+                ],
+                "summary": "Update a user",
+                "description": "Update details of a specific user.",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "restaurant"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users For Admin"
+                ],
+                "summary": "Soft delete a user",
+                "description": "Soft delete a user by setting their deleted_at field.",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/app/menu": {
+            "get": {
+                "tags": [
+                    "Menu For App"
+                ],
+                "summary": "Get menu for a specific restaurant",
+                "operationId": "getMenu",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "ID of the restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of menu items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "number",
+                                                "example": 1
+                                            },
+                                            "itemName": {
+                                                "type": "string",
+                                                "example": "Pizza"
+                                            },
+                                            "itemImage": {
+                                                "type": "string",
+                                                "example": "http://example.com/image.jpg"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "example": 9.99
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "example": "Main Course"
+                                            },
+                                            "ingredients": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "ingredientName": {
+                                                            "type": "string",
+                                                            "example": "Mozzarella Cheese"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "number",
+                                                            "example": 1.5
+                                                        },
+                                                        "unit": {
+                                                            "type": "string",
+                                                            "example": "kg"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menu not found"
+                    }
+                }
+            }
+        },
+        "/app/menu/all": {
+            "get": {
+                "tags": [
+                    "Menu For App"
+                ],
+                "summary": "Get all menu items",
+                "operationId": "getAllMenu",
+                "responses": {
+                    "200": {
+                        "description": "List of all menu items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "number",
+                                                "example": 1
+                                            },
+                                            "itemName": {
+                                                "type": "string",
+                                                "example": "Burger"
+                                            },
+                                            "itemImage": {
+                                                "type": "string",
+                                                "example": "http://example.com/image.jpg"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "example": 5.99
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "example": "Snacks"
+                                            },
+                                            "ingredients": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "ingredientName": {
+                                                            "type": "string",
+                                                            "example": "Lettuce"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "number",
+                                                            "example": 0.5
+                                                        },
+                                                        "unit": {
+                                                            "type": "string",
+                                                            "example": "kg"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No menu items found"
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user profile",
+                "description": "Returns the user profile data",
+                "operationId": "getUserProfile",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User Profile Data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/dashboard": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user dashboard",
+                "description": "Returns the user dashboard data",
+                "operationId": "getUserDashboard",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User Dashboard Data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/webMenu": {
+            "get": {
+                "tags": [
+                    "WebAppMenu"
+                ],
+                "summary": "Get the menu items for a restaurant",
+                "description": "Fetch all menu items for a specific restaurant by restaurant ID",
+                "operationId": "getRestaurantMenu",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "ID of the restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "number",
+                                                "example": 1
+                                            },
+                                            "itemName": {
+                                                "type": "string",
+                                                "example": "Cheese Pizza"
+                                            },
+                                            "itemImage": {
+                                                "type": "string",
+                                                "example": "http://example.com/storage/app/public/item_image.jpg"
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 12.99
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "example": "Pizza"
+                                            },
+                                            "ingredients": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "ingredientName": {
+                                                            "type": "string",
+                                                            "example": "Mozzarella Cheese"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 1.5
+                                                        },
+                                                        "unit": {
+                                                            "type": "string",
+                                                            "example": "kg"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Missing or invalid parameter"
+                    },
+                    "404": {
+                        "description": "No menu found for the given restaurant ID"
+                    }
+                }
+            }
+        },
+        "/addOrder": {
+            "post": {
+                "tags": [
+                    "WebAppMenu"
+                ],
+                "summary": "Add a new transaction",
+                "description": "Create a new transaction with user details, order details, and restaurant information.",
+                "operationId": "addOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tableNumber": {
+                                        "description": "Table number",
+                                        "type": "string",
+                                        "example": "12"
+                                    },
+                                    "restaurantId": {
+                                        "description": "Restaurant ID",
+                                        "type": "string",
+                                        "example": "R1728231298"
+                                    },
+                                    "orderDetails": {
+                                        "description": "List of items in the transaction",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "item_id": {
+                                                    "description": "Item ID",
+                                                    "type": "integer",
+                                                    "example": 101
+                                                },
+                                                "name": {
+                                                    "description": "Item name",
+                                                    "type": "string",
+                                                    "example": "Pizza"
+                                                },
+                                                "price": {
+                                                    "description": "Item price",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 200.5
+                                                },
+                                                "quantity": {
+                                                    "description": "Item quantity",
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "phoneNumber": {
+                                        "description": "Customer phone number",
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "userName": {
+                                        "description": "Customer name",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "description": "Customer email",
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "address": {
+                                        "description": "Customer address",
+                                        "type": "string",
+                                        "example": "123 Main St"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction created successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid input data."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Customer": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "johndoe@example.com"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "123 Main St, City, Country"
+                    },
+                    "restaurantId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Inventory": {
+                "title": "Inventory",
+                "description": "Inventory schema",
+                "properties": {
+                    "id": {
+                        "description": "Inventory ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "itemName": {
+                        "description": "Name of the inventory item",
+                        "type": "string",
+                        "example": "Item Name"
+                    },
+                    "quantity": {
+                        "description": "Quantity of the inventory item in decimal format (up to 3 decimal places)",
+                        "type": "number",
+                        "format": "float",
+                        "example": "100.123"
+                    },
+                    "unit": {
+                        "description": "Unit of the inventory item",
+                        "type": "string",
+                        "example": "kg"
+                    },
+                    "supplierId": {
+                        "description": "Supplier ID related to the inventory item",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID related to the inventory item",
+                        "type": "string",
+                        "example": "R123456789"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-11T13:55:52.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-12T13:55:52.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Menu": {
+                "title": "Menu",
+                "description": "Menu Model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the menu item",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "itemName": {
+                        "description": "Name of the menu item",
+                        "type": "string",
+                        "example": "Pizza"
+                    },
+                    "itemImage": {
+                        "description": "Image path for the menu item",
+                        "type": "string",
+                        "example": "menu_images/pizza.jpg"
+                    },
+                    "price": {
+                        "description": "Price of the menu item",
+                        "type": "number",
+                        "format": "float",
+                        "example": 9.99
+                    },
+                    "categoryId": {
+                        "description": "Category ID of the menu item",
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID associated with the menu item",
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "stock": {
+                        "description": "Available stock for the menu item",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the menu item was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the menu item was last updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MenuInventory": {
+                "title": "Menu Inventory",
+                "description": "Menu Inventory schema",
+                "properties": {
+                    "id": {
+                        "description": "Menu Inventory ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "menuId": {
+                        "description": "ID of the menu item",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID associated with the inventory",
+                        "type": "string",
+                        "example": "R123456789"
+                    },
+                    "quantity": {
+                        "description": "Quantity of the menu item",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2.5
+                    },
+                    "stockId": {
+                        "description": "ID of the associated stock item",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-11T13:55:52.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-12T13:55:52.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Supplier": {
+                "title": "Supplier",
+                "description": "Supplier schema",
+                "properties": {
+                    "id": {
+                        "description": "Supplier ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "supplierName": {
+                        "description": "Supplier Name",
+                        "type": "string",
+                        "example": "Supplier One"
+                    },
+                    "email": {
+                        "description": "Supplier Email",
+                        "type": "string",
+                        "example": "supplier@example.com"
+                    },
+                    "phoneNumber": {
+                        "description": "Supplier Phone Number",
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "rawItem": {
+                        "description": "Raw materials provided by supplier",
+                        "type": "string",
+                        "example": "Raw Materials"
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID associated with supplier",
+                        "type": "string",
+                        "example": "R123456"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-11T13:55:52.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-12T13:55:52.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Transaction": {
+                "required": [
+                    "user_id",
+                    "items",
+                    "tax",
+                    "discount",
+                    "sub_total",
+                    "total",
+                    "payment_type",
+                    "restaurantId"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Transaction ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "description": "User ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "items": {
+                        "description": "List of items in the transaction",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "item_id": {
+                                    "description": "Item ID",
+                                    "type": "integer",
+                                    "example": 101
+                                },
+                                "name": {
+                                    "description": "Item name",
+                                    "type": "string",
+                                    "example": "Item 1"
+                                },
+                                "price": {
+                                    "description": "Item price",
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 100.5
+                                },
+                                "quantity": {
+                                    "description": "Item quantity",
+                                    "type": "integer",
+                                    "example": 2
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "tax": {
+                        "description": "Tax amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 15
+                    },
+                    "discount": {
+                        "description": "Discount amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 10
+                    },
+                    "sub_total": {
+                        "description": "Subtotal amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 300
+                    },
+                    "total": {
+                        "description": "Total amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 305
+                    },
+                    "payment_type": {
+                        "description": "Payment type",
+                        "type": "string",
+                        "example": "credit_card"
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID",
+                        "type": "string",
+                        "example": "R1728231298"
+                    },
+                    "created_at": {
+                        "description": "Transaction creation timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-11-11T12:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Transaction update timestamp",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-11-11T12:00:00.000000Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Use a Bearer token to access this API",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Category",
+            "description": "Category"
+        },
+        {
+            "name": "Customer",
+            "description": "Customer"
+        },
+        {
+            "name": "Inventory",
+            "description": "Inventory"
+        },
+        {
+            "name": "Menu",
+            "description": "Menu"
+        },
+        {
+            "name": "MenuInventory",
+            "description": "MenuInventory"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "QR Code",
+            "description": "QR Code"
+        },
+        {
+            "name": "Reports",
+            "description": "Reports"
+        },
+        {
+            "name": "Suppliers",
+            "description": "Suppliers"
+        },
+        {
+            "name": "Transaction",
+            "description": "Transaction"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Users For Admin",
+            "description": "Users For Admin"
+        },
+        {
+            "name": "Menu For App",
+            "description": "Menu For App"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        },
+        {
+            "name": "WebAppMenu",
+            "description": "WebAppMenu"
+        }
+    ]
+}
