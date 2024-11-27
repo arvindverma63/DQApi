@@ -368,14 +368,7 @@ class OrderController extends Controller
                 ], $transactionResponse->getStatusCode());
             }
 
-            // Decrease stock after successful transaction creation
-            $decreaseStockResult = $this->decreaseStock($order);
 
-            if (!$decreaseStockResult) {
-                return response()->json([
-                    'message' => 'Insufficient stock for one or more items.',
-                ], 400);
-            }
         }
 
         // Update the order status
