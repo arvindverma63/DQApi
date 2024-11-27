@@ -70,7 +70,7 @@ class OrderController extends Controller
 
                 return [
                     'item_id' => $menuItem->id,
-                    'item_name' => $menuItem->name,
+                    'item_name' => $menuItem->itemName,
                     'price' => $menuItem->price,
                     'quantity' => $item['quantity'],
                     'item_total' => $itemTotal,
