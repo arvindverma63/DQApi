@@ -43,28 +43,31 @@ class OrderController extends Controller
     // Fetch orders by restaurantId
     $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
 
-    // Check if orders exist for the restaurant
+    // Return a 404 response if no orders are found
     if ($orders->isEmpty()) {
         return response()->json(['message' => 'No orders found for this restaurant'], 404);
     }
 
-    // Enhance orders with user and item details
-    $enhancedOrders = $orders->map(function ($order) {
-        // Fetch user profile details
-        $userDetails = Customer::where('id', $order->user_id)->first();
+    // Preload customers and menu items for optimization
+    $customerIds = $orders->pluck('user_id')->unique();
+    $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
 
-        // Decode the order details JSON
-        $orderDetails = json_decode($order->orderDetails, true);
+    $menuItemIds = $orders->flatMap(function ($order) {
+        return collect(json_decode($order->orderDetails, true))->pluck('id');
+    })->unique();
+    $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
 
-        // Initialize total
+    // Map orders with user and item details
+    $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
+        $userDetails = $customers->get($order->user_id);
+        $orderDetails = collect(json_decode($order->orderDetails, true));
+
         $total = 0;
 
-        // Fetch item details for each item in the order
-        $itemDetails = collect($orderDetails)->map(function ($item) use (&$total) {
-            $menuItem = Menu::where('id', $item['id'])->first();
-
+        // Map item details and calculate totals
+        $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+            $menuItem = $menuItems->get($item['id']);
             if ($menuItem) {
-                // Calculate the total (price * quantity)
                 $itemTotal = $menuItem->price * $item['quantity'];
                 $total += $itemTotal;
 
@@ -76,19 +79,17 @@ class OrderController extends Controller
                     'item_total' => $itemTotal,
                 ];
             }
+            return null;
+        })->filter(); // Remove null values
 
-            return null;  // If item not found
-        })->filter();  // Remove null values (items not found)
-
-        // Append user and item details to the order
         return [
             'order_id' => $order->id,
             'table_number' => $order->tableNumber,
             'restaurant_id' => $order->restaurantId,
             'status' => $order->status,
-            'order_details' => $itemDetails->values()->toArray(),  // Get the item details
-            'user' => $userDetails ? $userDetails->toArray() : null, // If userDetails found
-            'total' => $total,  // Calculated total
+            'order_details' => $itemDetails->values()->toArray(),
+            'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
+            'total' => $total,
             'created_at' => $order->created_at,
             'updated_at' => $order->updated_at,
         ];
@@ -97,6 +98,7 @@ class OrderController extends Controller
     // Return the enhanced orders with user and item details
     return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
 }
+
 
 
 
