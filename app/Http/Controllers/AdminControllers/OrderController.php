@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Menu;
+use App\Models\Transaction;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 
@@ -34,70 +35,70 @@ class OrderController extends Controller
      * )
      */
     public function index(Request $request)
-{
-    // Validate restaurantId from the request
-    $validatedData = $request->validate([
-        'restaurantId' => 'required|string',
-    ]);
+    {
+        // Validate restaurantId from the request
+        $validatedData = $request->validate([
+            'restaurantId' => 'required|string',
+        ]);
 
-    // Fetch orders by restaurantId
-    $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
+        // Fetch orders by restaurantId
+        $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
 
-    // Return a 404 response if no orders are found
-    if ($orders->isEmpty()) {
-        return response()->json(['message' => 'No orders found for this restaurant'], 404);
+        // Return a 404 response if no orders are found
+        if ($orders->isEmpty()) {
+            return response()->json(['message' => 'No orders found for this restaurant'], 404);
+        }
+
+        // Preload customers and menu items for optimization
+        $customerIds = $orders->pluck('user_id')->unique();
+        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+
+        $menuItemIds = $orders->flatMap(function ($order) {
+            return collect(json_decode($order->orderDetails, true))->pluck('id');
+        })->unique();
+        $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
+
+        // Map orders with user and item details
+        $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
+            $userDetails = $customers->get($order->user_id);
+            $orderDetails = collect(json_decode($order->orderDetails, true));
+
+            $total = 0;
+
+            // Map item details and calculate totals
+            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+                $menuItem = $menuItems->get($item['id']);
+                if ($menuItem) {
+                    $itemTotal = $menuItem->price * $item['quantity'];
+                    $total += $itemTotal;
+
+                    return [
+                        'item_id' => $menuItem->id,
+                        'item_name' => $menuItem->itemName,
+                        'price' => $menuItem->price,
+                        'quantity' => $item['quantity'],
+                        'item_total' => $itemTotal,
+                    ];
+                }
+                return null;
+            })->filter(); // Remove null values
+
+            return [
+                'order_id' => $order->id,
+                'table_number' => $order->tableNumber,
+                'restaurant_id' => $order->restaurantId,
+                'status' => $order->status,
+                'order_details' => $itemDetails->values()->toArray(),
+                'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
+                'total' => $total,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+            ];
+        });
+
+        // Return the enhanced orders with user and item details
+        return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
     }
-
-    // Preload customers and menu items for optimization
-    $customerIds = $orders->pluck('user_id')->unique();
-    $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
-
-    $menuItemIds = $orders->flatMap(function ($order) {
-        return collect(json_decode($order->orderDetails, true))->pluck('id');
-    })->unique();
-    $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
-
-    // Map orders with user and item details
-    $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
-        $userDetails = $customers->get($order->user_id);
-        $orderDetails = collect(json_decode($order->orderDetails, true));
-
-        $total = 0;
-
-        // Map item details and calculate totals
-        $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
-            $menuItem = $menuItems->get($item['id']);
-            if ($menuItem) {
-                $itemTotal = $menuItem->price * $item['quantity'];
-                $total += $itemTotal;
-
-                return [
-                    'item_id' => $menuItem->id,
-                    'item_name' => $menuItem->itemName,
-                    'price' => $menuItem->price,
-                    'quantity' => $item['quantity'],
-                    'item_total' => $itemTotal,
-                ];
-            }
-            return null;
-        })->filter(); // Remove null values
-
-        return [
-            'order_id' => $order->id,
-            'table_number' => $order->tableNumber,
-            'restaurant_id' => $order->restaurantId,
-            'status' => $order->status,
-            'order_details' => $itemDetails->values()->toArray(),
-            'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
-            'total' => $total,
-            'created_at' => $order->created_at,
-            'updated_at' => $order->updated_at,
-        ];
-    });
-
-    // Return the enhanced orders with user and item details
-    return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
-}
 
 
 
@@ -313,46 +314,72 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:processing,accept,reject,complete'
+            'status' => 'required|in:processing,accept,reject,complete',
         ]);
 
         $order = Order::find($id);
 
-        // If the status is being changed to complete, decrease stock
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found.',
+            ], 404);
+        }
+
+        // If the status is being changed to complete
         if ($request->status === 'complete') {
+            $orderDetails = json_decode($order->orderDetails, true);
+
+            // Calculate tax, discount, and totals (adjust logic as needed)
+            $subTotal = collect($orderDetails)->sum(function ($item) {
+                return $item['price'] * $item['quantity'];
+            });
+
+            $tax = $subTotal * 0.1; // Example: 10% tax
+            $discount = 0; // Adjust discount logic if applicable
+            $total = $subTotal + $tax - $discount;
+
+            // Prepare transaction data
+            $transactionData = [
+                'user_id' => $order->user_id,
+                'items' => collect($orderDetails)->map(function ($item) {
+                    return [
+                        'item_id' => $item['item_id'],
+                        'name' => $item['item_name'],
+                        'price' => $item['price'],
+                        'quantity' => $item['quantity'],
+                    ];
+                })->toArray(),
+                'tax' => $tax,
+                'discount' => $discount,
+                'sub_total' => $subTotal,
+                'total' => $total,
+                'type' => 'credit_card', // Replace with actual payment type if available
+                'restaurantId' => $order->restaurantId,
+            ];
+
+            // Call TransactionController to add transaction
+            $transactionController = new TransactionController();
+            $transactionResponse = $transactionController->addTransaction(new Request($transactionData));
+
+            if ($transactionResponse->getStatusCode() !== 201) {
+                return response()->json([
+                    'message' => 'Failed to create transaction.',
+                    'error' => $transactionResponse->getData(),
+                ], $transactionResponse->getStatusCode());
+            }
+
+            // Decrease stock after successful transaction creation
             $this->decreaseStock($order);
         }
 
+        // Update the order status
         $order->update([
             'status' => $request->status,
         ]);
 
         return response()->json([
             'message' => 'Order status updated successfully',
-            'order' => $order
+            'order' => $order,
         ], 200);
-    }
-
-    /**
-     * Decrease stock based on order items.
-     *
-     * @param \App\Models\Order $order
-     */
-    protected function decreaseStock(Order $order)
-    {
-        foreach (json_decode($order->orderDetails, true) as $item) {
-            // Using item_id to find the menu item
-            $menuItem = Menu::find($item['item_id']);
-
-            if ($menuItem && $menuItem->stock >= $item['quantity']) {
-                $menuItem->stock -= $item['quantity'];
-                $menuItem->save();
-            } else {
-                // Handle insufficient stock case
-                return response()->json([
-                    'message' => 'Insufficient stock for item ID: ' . $menuItem->id
-                ], 400);
-            }
-        }
     }
 }
