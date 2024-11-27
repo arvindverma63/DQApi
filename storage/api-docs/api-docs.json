@@ -1497,14 +1497,25 @@
                 }
             }
         },
-        "/notification": {
+        "/notification/{id}": {
             "get": {
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Retrieve orders with pending notifications",
-                "description": "Fetches all orders where the notification status is 0.",
-                "operationId": "getPendingNotifications",
+                "summary": "Retrieve orders with pending notifications for a specific restaurant",
+                "description": "Fetches all orders where the notification status is 0 and matches the given restaurant ID.",
+                "operationId": "getPendingNotificationsByRestaurant",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the restaurant to filter orders by",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1516,6 +1527,10 @@
                                         "properties": {
                                             "id": {
                                                 "description": "Order ID",
+                                                "type": "integer"
+                                            },
+                                            "restaurantId": {
+                                                "description": "ID of the restaurant",
                                                 "type": "integer"
                                             },
                                             "notification": {
@@ -1532,6 +1547,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Restaurant not found or no orders with pending notifications"
                     },
                     "500": {
                         "description": "Internal server error"

@@ -382,11 +382,20 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/notification",
-     *     summary="Retrieve orders with pending notifications",
-     *     description="Fetches all orders where the notification status is 0.",
-     *     operationId="getPendingNotifications",
+     *     path="/notification/{id}",
+     *     summary="Retrieve orders with pending notifications for a specific restaurant",
+     *     description="Fetches all orders where the notification status is 0 and matches the given restaurant ID.",
+     *     operationId="getPendingNotificationsByRestaurant",
      *     tags={"Orders"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the restaurant to filter orders by",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -395,10 +404,15 @@ class OrderController extends Controller
      *             @OA\Items(
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", description="Order ID"),
+     *                 @OA\Property(property="restaurantId", type="integer", description="ID of the restaurant"),
      *                 @OA\Property(property="notification", type="integer", description="Notification status (0 or 1)"),
      *                 @OA\Property(property="other_field", type="string", description="Other fields in the order model")
      *             )
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurant not found or no orders with pending notifications"
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -406,9 +420,9 @@ class OrderController extends Controller
      *     )
      * )
      */
-    public function getNotification()
+    public function getNotification($id)
     {
-        $response = Order::where('notification', 0)->get();
+        $response = Order::where('restaurantId', $id)->where('notification', 0)->get();
         return response()->json($response);
     }
 }
