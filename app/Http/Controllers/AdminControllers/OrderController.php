@@ -329,9 +329,9 @@ class OrderController extends Controller
         if ($request->status === 'complete') {
             $orderDetails = json_decode($order->orderDetails, true);
 
-            // Calculate tax, discount, and totals (adjust logic as needed)
+            // Calculate totals
             $subTotal = collect($orderDetails)->sum(function ($item) {
-                return $item['price'] * $item['quantity'];
+                return floatval($item['price']) * intval($item['quantity']);
             });
 
             $tax = 0; // Example: 10% tax
@@ -343,10 +343,10 @@ class OrderController extends Controller
                 'user_id' => $order->user_id,
                 'items' => collect($orderDetails)->map(function ($item) {
                     return [
-                        'item_id' => $item['id'],
-                        'name' => $item['itemName'],
-                        'price' => $item['price'],
-                        'quantity' => $item['quantity'],
+                        'itemId' => $item['id'], // Ensure the key matches your database structure
+                        'itemName' => $item['item_name'] ?? $item['itemName'],
+                        'price' => floatval($item['price']),
+                        'quantity' => intval($item['quantity']),
                     ];
                 })->toArray(),
                 'tax' => $tax,
@@ -358,7 +358,7 @@ class OrderController extends Controller
             ];
 
             // Call TransactionController to add transaction
-            $transactionController = new TransactionController();
+            $transactionController = app(TransactionController::class);
             $transactionResponse = $transactionController->addTransaction(new Request($transactionData));
 
             if ($transactionResponse->getStatusCode() !== 201) {
@@ -369,7 +369,13 @@ class OrderController extends Controller
             }
 
             // Decrease stock after successful transaction creation
-            $this->decreaseStock($order);
+            $decreaseStockResult = $this->decreaseStock($order);
+
+            if (!$decreaseStockResult) {
+                return response()->json([
+                    'message' => 'Insufficient stock for one or more items.',
+                ], 400);
+            }
         }
 
         // Update the order status
