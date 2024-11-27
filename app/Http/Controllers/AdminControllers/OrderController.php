@@ -334,7 +334,7 @@ class OrderController extends Controller
                 return $item['price'] * $item['quantity'];
             });
 
-            $tax = $subTotal * 0.1; // Example: 10% tax
+            $tax = 0; // Example: 10% tax
             $discount = 0; // Adjust discount logic if applicable
             $total = $subTotal + $tax - $discount;
 
@@ -343,8 +343,8 @@ class OrderController extends Controller
                 'user_id' => $order->user_id,
                 'items' => collect($orderDetails)->map(function ($item) {
                     return [
-                        'item_id' => $item['item_id'],
-                        'name' => $item['item_name'],
+                        'item_id' => $item['id'],
+                        'name' => $item['itemName'],
                         'price' => $item['price'],
                         'quantity' => $item['quantity'],
                     ];
@@ -353,7 +353,7 @@ class OrderController extends Controller
                 'discount' => $discount,
                 'sub_total' => $subTotal,
                 'total' => $total,
-                'type' => 'credit_card', // Replace with actual payment type if available
+                'type' => 'web order', // Replace with actual payment type if available
                 'restaurantId' => $order->restaurantId,
             ];
 
