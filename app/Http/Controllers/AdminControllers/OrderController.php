@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Menu;
 use App\Models\UserProfile;
@@ -50,7 +51,7 @@ class OrderController extends Controller
     // Enhance orders with user and item details
     $enhancedOrders = $orders->map(function ($order) {
         // Fetch user profile details
-        $userDetails = UserProfile::where('userId', $order->user_id)->first();
+        $userDetails = Customer::where('id', $order->user_id)->first();
 
         // Decode the order details JSON
         $orderDetails = json_decode($order->orderDetails, true);
@@ -60,7 +61,7 @@ class OrderController extends Controller
 
         // Fetch item details for each item in the order
         $itemDetails = collect($orderDetails)->map(function ($item) use (&$total) {
-            $menuItem = Menu::where('id', $item['item_id'])->first();
+            $menuItem = Menu::where('id', $item['id'])->first();
 
             if ($menuItem) {
                 // Calculate the total (price * quantity)

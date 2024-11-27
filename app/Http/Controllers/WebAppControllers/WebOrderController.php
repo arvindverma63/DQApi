@@ -191,7 +191,7 @@ class WebOrderController extends Controller
             $validated = $request->validate([
                 'tableNumber' => 'nullable|string',
                 'restaurantId' => 'required|string',
-                'orderDetails' => 'required|array', // Order details must be a JSON object (array)
+                'orderDetails' => 'required', // Order details must be a JSON object (array)
                 'phoneNumber' => 'nullable|string',
                 'userName' => 'required|string',
                 'email' => 'nullable|string',
