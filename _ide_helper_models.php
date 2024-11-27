@@ -173,6 +173,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @mixin \Eloquent
+ * @property int $notification
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereNotification($value)
  */
 	class Order extends \Eloquent {}
 }

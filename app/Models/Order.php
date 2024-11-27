@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $tableNumber
@@ -34,7 +34,7 @@ class Order extends Model
     use HasFactory;
 
     protected $table = 'orders';
-    protected $fillable = ['tableNumber', 'restaurantId', 'orderDetails','user_id','status'];
+    protected $fillable = ['tableNumber', 'restaurantId', 'orderDetails','user_id','status','notification'];
 
     // Specify that orderDetails should be cast to an array (from JSON)
     protected $casts = [

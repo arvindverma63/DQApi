@@ -367,8 +367,6 @@ class OrderController extends Controller
                     'error' => $transactionResponse->getData(),
                 ], $transactionResponse->getStatusCode());
             }
-
-
         }
 
         // Update the order status
@@ -380,5 +378,37 @@ class OrderController extends Controller
             'message' => 'Order status updated successfully',
             'order' => $order,
         ], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/notification",
+     *     summary="Retrieve orders with pending notifications",
+     *     description="Fetches all orders where the notification status is 0.",
+     *     operationId="getPendingNotifications",
+     *     tags={"Orders"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", description="Order ID"),
+     *                 @OA\Property(property="notification", type="integer", description="Notification status (0 or 1)"),
+     *                 @OA\Property(property="other_field", type="string", description="Other fields in the order model")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function getNotification()
+    {
+        $response = Order::where('notification', 0)->get();
+        return response()->json($response);
     }
 }

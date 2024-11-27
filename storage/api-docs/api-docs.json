@@ -1497,6 +1497,48 @@
                 }
             }
         },
+        "/notification": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Retrieve orders with pending notifications",
+                "description": "Fetches all orders where the notification status is 0.",
+                "operationId": "getPendingNotifications",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "Order ID",
+                                                "type": "integer"
+                                            },
+                                            "notification": {
+                                                "description": "Notification status (0 or 1)",
+                                                "type": "integer"
+                                            },
+                                            "other_field": {
+                                                "description": "Other fields in the order model",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/qr/create": {
             "post": {
                 "tags": [
