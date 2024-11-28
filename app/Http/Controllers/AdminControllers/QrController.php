@@ -55,7 +55,7 @@ class QrController extends Controller
         $filePath = storage_path('app/public/' . $fileName); // Save it to the public disk
 
         // Generate the QR code using the QRcode::png method and save it as an image
-        QRcode::png($text, $filePath, 'L', 6, 2); // 'L' is error correction level, '6' is size, '2' is margin
+        QRcode::png($text, $filePath); // 'L' is error correction level, '6' is size, '2' is margin
 
         // Get the public URL of the QR code
         $qrCodeUrl = Storage::url($fileName); // Get URL for serving from the public disk
