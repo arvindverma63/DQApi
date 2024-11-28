@@ -45,38 +45,37 @@ class QrController extends Controller
     ]);
 
     // Generate the text for the QR code, including the full URL
-    $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
+    $text = env('MOBILE_URL') . "/menu/?restaurantId=" . urlencode($validated['restaurantId']) . "&tableNo=" . urlencode($validated['tableNo']);
 
-    // Generate the QR code
+    // Generate the QR code as a Base64 string
     $qrCode = QrCode::format('png')
-                    ->size(300)
-                    ->encoding('UTF-8')
+                    ->size(400)  // Size of the QR code
+                    ->errorCorrection('H')  // Error correction level
                     ->generate($text);
 
-    // Save the QR code as an image file in the 'public' disk
-    $fileName = 'qrcodes/' . time() . '.png';
-    Storage::disk('public')->put($fileName, $qrCode);
+    // Encode the QR code as Base64
+    $base64QrCode = base64_encode($qrCode);
 
-    // Get the public URL of the QR code
-    $qrCodeUrl = Storage::url($fileName);
-    $qrUrl = env('APP_URL').'/storage/app/public/'.$fileName;
+    // Optional: You can create a Data URL for the image (for easy embedding in HTML)
+    $dataUrl = 'data:image/png;base64,' . $base64QrCode;
 
-    // Store the QR code data in the database
+    // Store the Base64 encoded QR code in the database if needed
     DB::table('qr')->insert([
         'restaurantId' => $validated['restaurantId'],
-        'qrImage' => $fileName, // Save the file name, not full URL
-        'qrCodeUrl'=>$qrUrl,
+        'qrImageBase64' => $base64QrCode,  // Save the Base64 string to the database
         'created_at' => now(),
         'updated_at' => now(),
-        'tableNumber'=>$validated['tableNo'],
+        'tableNumber' => $validated['tableNo'],
     ]);
 
-    // Return the QR code URL in the response
+    // Return the Base64 string or Data URL in the response
     return response()->json([
         'message' => 'QR code generated and stored successfully!',
-        'qrCodeUrl' => $qrUrl // Include the full URL to the QR code image
+        'qrCodeBase64' => $base64QrCode,  // Base64 string
+        'qrCodeDataUrl' => $dataUrl,  // Data URL for embedding in HTML (optional)
     ], 200);
 }
+
 
 
    /**
