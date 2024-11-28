@@ -47,7 +47,7 @@ class QrController extends Controller
         $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
         // Path to the library
-        require_once(asset('phpqrcode/qrlib.php')); // Adjust path if needed
+        include(asset('phpqrcode/qrlib.php')); // Adjust path if needed
 
         // Generate the QR code
         // Set the file name where the QR code will be saved
