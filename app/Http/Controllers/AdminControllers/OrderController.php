@@ -425,4 +425,68 @@ class OrderController extends Controller
         $response = Order::where('restaurantId', $id)->where('notification', 0)->get();
         return response()->json($response);
     }
+
+    /**
+ * @OA\Put(
+ *     path="/orders/notification/{id}",
+ *     summary="Update notification status for an order",
+ *     description="Sets the notification status to 1 for the specified order, indicating that the notification has been sent.",
+ *     operationId="updateNotificationStatus",
+ *     tags={"Orders"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID of the order to update",
+ *         required=true,
+ *         @OA\Schema(
+ *             type="integer",
+ *             example=1
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Notification status updated successfully",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Notification status updated successfully")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Failed to update notification status",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Failed to update notification status")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="message", type="string", example="Internal server error")
+ *         )
+ *     )
+ * )
+ */
+
+    public function updateNotificationStatus($id)
+{
+    // Update the notification status to 1 for the given order ID
+    $response = Order::where('id', $id)->update([
+        'notification' => 1,
+    ]);
+
+    // Check if the update was successful
+    if ($response) {
+        return response()->json([
+            'message' => 'Notification status updated successfully'
+        ], 200); // HTTP Status Code 200: OK
+    } else {
+        return response()->json([
+            'message' => 'Failed to update notification status'
+        ], 400); // HTTP Status Code 400: Bad Request
+    }
+}
+
 }
