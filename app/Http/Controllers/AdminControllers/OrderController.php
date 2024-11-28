@@ -449,7 +449,7 @@ class OrderController extends Controller
  *         description="ID of the restaurant associated with the order",
  *         required=true,
  *         @OA\Schema(
- *             type="integer",
+ *             type="string",
  *             example=101
  *         )
  *     ),
@@ -483,7 +483,7 @@ public function updateNotificationStatus(Request $request, $id)
 {
     // Validate the restaurantId and id
     $validatedData = $request->validate([
-        'restaurantId' => 'required|integer|exists:restaurants,id',
+        'restaurantId' => 'required|string',
     ]);
 
     // Update the notification status to 1 for the given order ID

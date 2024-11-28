@@ -1582,7 +1582,7 @@
                         "description": "ID of the restaurant associated with the order",
                         "required": true,
                         "schema": {
-                            "type": "integer",
+                            "type": "string",
                             "example": 101
                         }
                     }
