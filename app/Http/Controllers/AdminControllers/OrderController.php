@@ -426,9 +426,9 @@ class OrderController extends Controller
         return response()->json($response);
     }
 
-    /**
+ /**
  * @OA\Put(
- *     path="/orders/notification/{id}",
+ *     path="/orders/status/notification/{id}",
  *     summary="Update notification status for an order",
  *     description="Sets the notification status to 1 for the specified order, indicating that the notification has been sent.",
  *     operationId="updateNotificationStatus",
@@ -441,6 +441,16 @@ class OrderController extends Controller
  *         @OA\Schema(
  *             type="integer",
  *             example=1
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="restaurantId",
+ *         in="query",
+ *         description="ID of the restaurant associated with the order",
+ *         required=true,
+ *         @OA\Schema(
+ *             type="integer",
+ *             example=101
  *         )
  *     ),
  *     @OA\Response(
@@ -469,13 +479,17 @@ class OrderController extends Controller
  *     )
  * )
  */
-
-    public function updateNotificationStatus($id)
+public function updateNotificationStatus(Request $request, $id)
 {
-    // Update the notification status to 1 for the given order ID
-    $response = Order::where('id', $id)->update([
-        'notification' => 1,
+    // Validate the restaurantId and id
+    $validatedData = $request->validate([
+        'restaurantId' => 'required|integer|exists:restaurants,id',
     ]);
+
+    // Update the notification status to 1 for the given order ID
+    $response = Order::where('restaurantId', $request->input('restaurantId'))
+                     ->where('id', $id)
+                     ->update(['notification' => 1]);
 
     // Check if the update was successful
     if ($response) {
@@ -488,5 +502,6 @@ class OrderController extends Controller
         ], 400); // HTTP Status Code 400: Bad Request
     }
 }
+
 
 }

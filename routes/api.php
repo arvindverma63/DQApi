@@ -94,6 +94,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
             Route::put('/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
             Route::get('/notification/{id}',[OrderController::class,'getNotification']);
+            Route::put('/status/notification/{id}',[OrderController::class,'updateNotificationStatus']);
         });
         Route::prefix('suppliers')->group(function () {
             // Get all suppliers

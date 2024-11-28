@@ -1557,7 +1557,7 @@
                 }
             }
         },
-        "/orders/notification/{id}": {
+        "/orders/status/notification/{id}": {
             "put": {
                 "tags": [
                     "Orders"
@@ -1574,6 +1574,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "ID of the restaurant associated with the order",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
                         }
                     }
                 ],
