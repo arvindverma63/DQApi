@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,47 +37,45 @@ class QrController extends Controller
      * )
      */
     public function createQr(Request $request)
-    {
-        // Validate the input
-        $validated = $request->validate([
-            'tableNo' => 'integer|required',
-            'restaurantId' => 'string|required'
-        ]);
+{
+    // Validate the input
+    $validated = $request->validate([
+        'tableNo' => 'integer|required',
+        'restaurantId' => 'string|required'
+    ]);
 
-        // Generate the text for the QR code, including the full URL
-        $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
+    // Generate the text for the QR code, including the full URL
+    $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
-        // Path to the library
-        include(asset('phpqrcode/qrlib.php')); // Adjust path if needed
+    // Generate the QR code
+    $qrCode = QrCode::format('png')
+                    ->size(300)
+                    ->generate($text);
 
-        // Generate the QR code
-        // Set the file name where the QR code will be saved
-        $fileName = 'qrcodes/' . time() . '.png';
-        $filePath = storage_path('app/public/' . $fileName); // Save it to the public disk
+    // Save the QR code as an image file in the 'public' disk
+    $fileName = 'qrcodes/' . time() . '.png';
+    Storage::disk('public')->put($fileName, $qrCode);
 
-        // Generate the QR code using the QRcode::png method and save it as an image
-        QRcode::png($text, $filePath); // 'L' is error correction level, '6' is size, '2' is margin
+    // Get the public URL of the QR code
+    $qrCodeUrl = Storage::url($fileName);
+    $qrUrl = env('APP_URL').'/storage/app/public/'.$fileName;
 
-        // Get the public URL of the QR code
-        $qrCodeUrl = Storage::url($fileName); // Get URL for serving from the public disk
-        $qrUrl = env('APP_URL') . '/storage/' . $fileName; // Full URL
+    // Store the QR code data in the database
+    DB::table('qr')->insert([
+        'restaurantId' => $validated['restaurantId'],
+        'qrImage' => $fileName, // Save the file name, not full URL
+        'qrCodeUrl'=>$qrUrl,
+        'created_at' => now(),
+        'updated_at' => now(),
+        'tableNumber'=>$validated['tableNo'],
+    ]);
 
-        // Store the QR code data in the database
-        DB::table('qr')->insert([
-            'restaurantId' => $validated['restaurantId'],
-            'qrImage' => $fileName, // Save the file name, not full URL
-            'qrCodeUrl' => $qrUrl,
-            'created_at' => now(),
-            'updated_at' => now(),
-            'tableNumber' => $validated['tableNo'],
-        ]);
-
-        // Return the QR code URL in the response
-        return response()->json([
-            'message' => 'QR code generated and stored successfully!',
-            'qrCodeUrl' => $qrCodeUrl // Include the full URL to the QR code image
-        ], 200);
-    }
+    // Return the QR code URL in the response
+    return response()->json([
+        'message' => 'QR code generated and stored successfully!',
+        'qrCodeUrl' => $qrCodeUrl // Include the full URL to the QR code image
+    ], 200);
+}
 
 
    /**
