@@ -23,7 +23,7 @@ class QrController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="restaurantId", type="string", example="12345"),
      *             @OA\Property(property="tableNo", type="integer", example="12"),
-     * 
+     *
      *         )
      *     ),
      *     @OA\Response(
@@ -73,7 +73,7 @@ class QrController extends Controller
     // Return the QR code URL in the response
     return response()->json([
         'message' => 'QR code generated and stored successfully!',
-        'qrCodeUrl' => $qrCodeUrl // Include the full URL to the QR code image
+        'qrCodeUrl' => $qrUrl // Include the full URL to the QR code image
     ], 200);
 }
 
