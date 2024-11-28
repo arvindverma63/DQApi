@@ -4,13 +4,12 @@ namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+// use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use BaconQrCode\Writer;
-use BaconQrCode\Renderer\Image\PngImageRenderer;
-use BaconQrCode\Renderer\Image\ImageRendererInterface;
-
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Writer\PngWriter;
 class QrController extends Controller
 {
     /**
@@ -50,21 +49,21 @@ class QrController extends Controller
     // Generate the text for the QR code, including the full URL
     $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
-    // Create an instance of the PNG renderer
-    $renderer = new PngImageRenderer(
-        ImageRendererInterface::IMG_FORMAT_PNG, // Format of the image (PNG)
-        200 // Size of the image
-    );
+    // Create an instance of the QR code
+    $qrCode = new QrCode($text);
+    $qrCode->setSize(200)  // Set the size of the QR code
+           ->setErrorCorrectionLevel(ErrorCorrectionLevel::LOW)  // Set error correction level
+           ->setMargin(10);  // Set margin around the QR code
 
-    // Create an instance of the Writer
-    $writer = new Writer($renderer);
+    // Create the writer
+    $writer = new PngWriter();
 
-    // Generate the QR code as a PNG image
-    $qrCode = $writer->writeString($text);
+    // Write the QR code as a PNG image
+    $qrCodeData = $writer->writeString($qrCode);
 
     // Save the QR code as an image file in the 'public' disk
     $fileName = 'qrcodes/' . time() . '.png';
-    Storage::disk('public')->put($fileName, $qrCode);
+    Storage::disk('public')->put($fileName, $qrCodeData);
 
     // Get the public URL of the QR code
     $qrCodeUrl = env('APP_URL') . '/storage/' . $fileName;
