@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use BaconQrCode\Writer;
+use BaconQrCode\Renderer\Image\PngImageRenderer;
+use BaconQrCode\Renderer\Image\ImageRendererInterface;
 
 class QrController extends Controller
 {
@@ -47,35 +50,39 @@ class QrController extends Controller
     // Generate the text for the QR code, including the full URL
     $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
-    // Generate the QR code
-    $qrCode = QrCode::format('png')
-                ->size(200)  // Reduce the size of the QR code to 200x200 (adjust as needed)
-                ->errorCorrection('L')  // Low error correction level for simpler QR codes
-                ->generate($text);
+    // Create an instance of the PNG renderer
+    $renderer = new PngImageRenderer(
+        ImageRendererInterface::IMG_FORMAT_PNG, // Format of the image (PNG)
+        200 // Size of the image
+    );
 
+    // Create an instance of the Writer
+    $writer = new Writer($renderer);
+
+    // Generate the QR code as a PNG image
+    $qrCode = $writer->writeString($text);
 
     // Save the QR code as an image file in the 'public' disk
     $fileName = 'qrcodes/' . time() . '.png';
     Storage::disk('public')->put($fileName, $qrCode);
 
     // Get the public URL of the QR code
-    $qrCodeUrl = Storage::url($fileName);
-    $qrUrl = env('APP_URL').'/storage/app/public/'.$fileName;
+    $qrCodeUrl = env('APP_URL') . '/storage/' . $fileName;
 
     // Store the QR code data in the database
     DB::table('qr')->insert([
         'restaurantId' => $validated['restaurantId'],
-        'qrImage' => $fileName, // Save the file name, not full URL
-        'qrCodeUrl'=>$qrUrl,
+        'qrImage' => $fileName, // Save the file name
+        'qrCodeUrl' => $qrCodeUrl,
         'created_at' => now(),
         'updated_at' => now(),
-        'tableNumber'=>$validated['tableNo'],
+        'tableNumber' => $validated['tableNo'],
     ]);
 
     // Return the QR code URL in the response
     return response()->json([
         'message' => 'QR code generated and stored successfully!',
-        'qrCodeUrl' => $qrUrl // Include the full URL to the QR code image
+        'qrCodeUrl' => $qrCodeUrl  // Return the final URL to the QR code image
     ], 200);
 }
 
