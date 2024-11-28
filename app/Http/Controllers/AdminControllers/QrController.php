@@ -47,28 +47,28 @@ class QrController extends Controller
     // Generate the text for the QR code, including the full URL
     $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
-    // Generate the QR code
-    $qrCode = QrCode::format('png')
-                    ->size( 600)
-                    ->errorCorrection('L')
-                    ->generate($text);
+    // Encode the URL text to ensure it's correctly formatted for the API request
+    $encodedText = urlencode($text);
 
-    // Save the QR code as an image file in the 'public' disk
+    // Use Google Chart API to generate the QR code image URL
+    $qrCodeUrl = 'https://chart.googleapis.com/chart?chs=600x600&cht=qr&chl=' . $encodedText;
+
+    // Save the QR code image to the 'public' disk (you can use the image URL from Google)
+    $imageContents = file_get_contents($qrCodeUrl);
     $fileName = 'qrcodes/' . time() . '.png';
-    Storage::disk('public')->put($fileName, $qrCode);
+    Storage::disk('public')->put($fileName, $imageContents);
 
     // Get the public URL of the QR code
-    $qrCodeUrl = Storage::url($fileName);
     $qrUrl = env('APP_URL').'/storage/app/public/'.$fileName;
 
     // Store the QR code data in the database
     DB::table('qr')->insert([
         'restaurantId' => $validated['restaurantId'],
         'qrImage' => $fileName, // Save the file name, not full URL
-        'qrCodeUrl'=>$qrUrl,
+        'qrCodeUrl' => $qrUrl,
         'created_at' => now(),
         'updated_at' => now(),
-        'tableNumber'=>$validated['tableNo'],
+        'tableNumber' => $validated['tableNo'],
     ]);
 
     // Return the QR code URL in the response
@@ -77,6 +77,7 @@ class QrController extends Controller
         'qrCodeUrl' => $qrUrl // Include the full URL to the QR code image
     ], 200);
 }
+
 
 
    /**
