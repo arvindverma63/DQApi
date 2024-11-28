@@ -49,8 +49,8 @@ class QrController extends Controller
 
     // Generate the QR code
     $qrCode = QrCode::format('png')
-                    ->size(150)
-                    ->encoding('UTF-8')
+                    ->size(300)
+                    ->encoding('GBK')
                     ->generate($text);
 
     // Save the QR code as an image file in the 'public' disk
