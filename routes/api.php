@@ -25,7 +25,8 @@ Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
 Route::get('/reports/{id}',[ReportController::class,'getDashboardStats']);
-
+Route::post('/qr/create', [QrController::class, 'createQr']);
+Route::get('/qr/{id}', [QrController::class, 'getQr']);
 
 
 // Protected routes
@@ -59,8 +60,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
         // QR management
-        Route::post('/qr/create', [QrController::class, 'createQr']);
-        Route::get('/qr/{id}', [QrController::class, 'getQr']);
+
         Route::put('/qr/update/{id}', [QrController::class, 'updateQr']);
         Route::delete('/qr/delete/{id}', [QrController::class, 'deleteQr']);
 
