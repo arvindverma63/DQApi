@@ -1840,7 +1840,7 @@
                     "Reports"
                 ],
                 "summary": "Get Dashboard Chart Data for a Year",
-                "description": "Fetches the total collection, total invoices, completed orders, and rejected orders for a given year, grouped by month.",
+                "description": "Fetches the total collection, total invoices, completed orders, and rejected orders for a given year, grouped by month for a specific restaurant.",
                 "operationId": "getDashboardChartData",
                 "parameters": [
                     {
@@ -1851,6 +1851,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 2024
+                        }
+                    },
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "The ID of the restaurant for which the chart data is being fetched.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "12345"
                         }
                     }
                 ],
@@ -1906,14 +1916,14 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid year parameter",
+                        "description": "Invalid year or restaurantId parameter",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "Invalid year format."
+                                            "example": "Invalid year or restaurantId format."
                                         }
                                     },
                                     "type": "object"
@@ -1922,14 +1932,14 @@
                         }
                     },
                     "404": {
-                        "description": "Data not found for the given year",
+                        "description": "Data not found for the given year and restaurant",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
                                             "type": "string",
-                                            "example": "No data found for the selected year."
+                                            "example": "No data found for the selected year and restaurant."
                                         }
                                     },
                                     "type": "object"

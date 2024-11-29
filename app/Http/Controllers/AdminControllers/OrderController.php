@@ -325,6 +325,12 @@ class OrderController extends Controller
             ], 404);
         }
 
+        if($request->status === 'reject'){
+            $order->update([
+                'status' => $request->status,
+            ]);
+        }
+
         // If the status is being changed to complete
         if ($request->status === 'complete') {
             $orderDetails = json_decode($order->orderDetails, true);
