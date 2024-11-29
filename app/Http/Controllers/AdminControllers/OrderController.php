@@ -370,9 +370,8 @@ class OrderController extends Controller
         }
 
         // Update the order status
-        $order->update([
-            'status' => $request->status,
-        ]);
+        $order->status = $request['status'];
+        $order->save();
 
         return response()->json([
             'message' => 'Order status updated successfully',
