@@ -1834,6 +1834,112 @@
                 }
             }
         },
+        "/dashboard/chart-data": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get Dashboard Chart Data for a Year",
+                "description": "Fetches the total collection, total invoices, completed orders, and rejected orders for a given year, grouped by month.",
+                "operationId": "getDashboardChartData",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "The year for which the chart data is requested.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2024
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "labels": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "datasets": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "label": {
+                                                        "type": "string",
+                                                        "example": "Total Collection"
+                                                    },
+                                                    "data": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "integer",
+                                                            "example": 1000
+                                                        }
+                                                    },
+                                                    "borderColor": {
+                                                        "type": "string",
+                                                        "example": "rgba(54, 162, 235, 1)"
+                                                    },
+                                                    "backgroundColor": {
+                                                        "type": "string",
+                                                        "example": "rgba(54, 162, 235, 0.2)"
+                                                    },
+                                                    "fill": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid year parameter",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid year format."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data not found for the given year",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No data found for the selected year."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [

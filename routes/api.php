@@ -25,6 +25,7 @@ Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
 Route::get('/reports/{id}',[ReportController::class,'getDashboardStats']);
+Route::post('/dashboard/chart-data',[ReportController::class,'getDashboardChartData']);
 Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 
