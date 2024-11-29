@@ -26,6 +26,7 @@ Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
 Route::get('/reports/{id}',[ReportController::class,'getDashboardStats']);
 Route::get('/dashboard/chart-data',[ReportController::class,'getDashboardChartData']);
+Route::get('/dashboard/weekly-chart-data',[ReportController::class,'getWeeklyChartData']);
 Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 
