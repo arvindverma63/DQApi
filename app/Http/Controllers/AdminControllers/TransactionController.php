@@ -379,7 +379,7 @@ public function getTransactionById($id)
                 'total' => $transaction->total,
                 'payment_type' => $transaction->payment_type,
                 'restaurantId' => $transaction->restaurantId,
-                'created_at' => $transaction->created_at->date_format('dd:mm:yyyy'),
+                'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
                 'updated_at' => $transaction->updated_at,
             ];
         });
