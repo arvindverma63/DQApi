@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Menu;
 use App\Models\MenuInventory;
@@ -294,4 +295,103 @@ class TransactionController extends Controller
             ], 500);
         }
     }
+
+    /**
+ * @OA\Get(
+ *     path="/transactionById/{id}",
+ *     summary="Get transaction details by ID",
+ *     description="Fetches transaction details for the specified transaction ID.",
+ *     operationId="getTransactionById",
+ *     tags={"Transaction"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID of the transaction to fetch",
+ *         @OA\Schema(
+ *             type="integer",
+ *             format="int64"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Transaction details retrieved successfully",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 type="object",
+ *                 @OA\Property(property="id", type="integer", description="Transaction ID"),
+ *                 @OA\Property(property="userName", type="string", description="Customer's name"),
+ *                 @OA\Property(property="items", type="array", @OA\Items(type="string"), description="List of items in the transaction"),
+ *                 @OA\Property(property="tax", type="number", format="float", description="Tax applied to the transaction"),
+ *                 @OA\Property(property="discount", type="number", format="float", description="Discount applied to the transaction"),
+ *                 @OA\Property(property="sub_total", type="number", format="float", description="Subtotal before tax and discount"),
+ *                 @OA\Property(property="total", type="number", format="float", description="Total after tax and discount"),
+ *                 @OA\Property(property="payment_type", type="string", description="Payment method used (e.g., credit card, cash)"),
+ *                 @OA\Property(property="restaurantId", type="integer", description="Restaurant ID associated with the transaction"),
+ *                 @OA\Property(property="created_at", type="string", format="date-time", description="Transaction creation date and time"),
+ *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Transaction last update date and time")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="No transactions found for the given ID",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example="false"),
+ *             @OA\Property(property="message", type="string", example="No transactions found.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example="false"),
+ *             @OA\Property(property="message", type="string", example="An error occurred while retrieving transactions.")
+ *         )
+ *     )
+ * )
+ */
+public function getTransactionById($id)
+{
+    try {
+        // Fetch transactions for the specified restaurant ID
+        $transactions = Transaction::where('id', $id)->get();
+
+        if ($transactions->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No transactions found.'
+            ], 404);
+        }
+
+        // Transform the data to match the desired structure
+        $responseData = $transactions->map(function ($transaction) {
+
+            $customer = Customer::where('id', $transaction->id)->get();
+            return [
+                'id' => $transaction->id,
+                'userName' => $customer->name,
+                'items' => $transaction->items, // Decode JSON to array
+                'tax' => $transaction->tax,
+                'discount' => $transaction->discount,
+                'sub_total' => $transaction->sub_total,
+                'total' => $transaction->total,
+                'payment_type' => $transaction->payment_type,
+                'restaurantId' => $transaction->restaurantId,
+                'created_at' => $transaction->created_at,
+                'updated_at' => $transaction->updated_at,
+            ];
+        });
+
+        return response()->json($responseData, 200);
+    } catch (\Exception $e) {
+        // Handle any unexpected errors
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while retrieving transactions.'
+        ], 500);
+    }
+}
+
 }

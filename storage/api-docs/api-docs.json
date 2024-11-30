@@ -2472,6 +2472,138 @@
                 }
             }
         },
+        "/transactionById/{id}": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get transaction details by ID",
+                "description": "Fetches transaction details for the specified transaction ID.",
+                "operationId": "getTransactionById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the transaction to fetch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "Transaction ID",
+                                                "type": "integer"
+                                            },
+                                            "userName": {
+                                                "description": "Customer's name",
+                                                "type": "string"
+                                            },
+                                            "items": {
+                                                "description": "List of items in the transaction",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "tax": {
+                                                "description": "Tax applied to the transaction",
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "discount": {
+                                                "description": "Discount applied to the transaction",
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "sub_total": {
+                                                "description": "Subtotal before tax and discount",
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "total": {
+                                                "description": "Total after tax and discount",
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "payment_type": {
+                                                "description": "Payment method used (e.g., credit card, cash)",
+                                                "type": "string"
+                                            },
+                                            "restaurantId": {
+                                                "description": "Restaurant ID associated with the transaction",
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "description": "Transaction creation date and time",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "description": "Transaction last update date and time",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No transactions found for the given ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No transactions found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": "false"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred while retrieving transactions."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "tags": [

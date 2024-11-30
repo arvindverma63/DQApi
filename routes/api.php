@@ -15,6 +15,7 @@ use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
+use App\Models\Transaction;
 use Tymon\JWTAuth\Claims\Custom;
 
 // Public routes
@@ -160,6 +161,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('/transactions', [TransactionController::class, 'addTransaction']);
     Route::get('/transactions/{id}', [TransactionController::class, 'getTransaction']);
+    Route::get('/transactionById/{id}',[TransactionController::class,'getTransactionById']);
 
     Route::get('/reports',[ReportController::class,'getDashboardStats']);
 
