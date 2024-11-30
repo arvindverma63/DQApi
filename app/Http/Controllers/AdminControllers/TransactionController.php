@@ -368,7 +368,7 @@ public function getTransactionById($id)
         // Transform the data to match the desired structure
         $responseData = $transactions->map(function ($transaction) {
 
-            $customer = Customer::where('id', $transaction->user_id)->get();
+            $customer = Customer::find($transaction->user_id);
             return [
                 'id' => $transaction->id,
                 'userName' => $customer->name,
