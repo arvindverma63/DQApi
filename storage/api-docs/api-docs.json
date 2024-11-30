@@ -2604,6 +2604,77 @@
                 }
             }
         },
+        "/rest-profile/{id}": {
+            "get": {
+                "tags": [
+                    "Restaurant Profile"
+                ],
+                "summary": "Get User Profile by Restaurant ID",
+                "operationId": "fae3c2f8cd0ba390d2c670d5fef33dec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "R1728231298"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "restaurantId": {
+                                            "type": "string",
+                                            "example": "R1728231298"
+                                        },
+                                        "userName": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "johndoe@example.com"
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "1234567890"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User profile not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Profile not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "tags": [
@@ -4140,6 +4211,10 @@
         }
     ],
     "tags": [
+        {
+            "name": "Restaurant Profile",
+            "description": "Operations related to user profiles"
+        },
         {
             "name": "Category",
             "description": "Category"

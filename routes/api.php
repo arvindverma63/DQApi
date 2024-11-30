@@ -16,6 +16,7 @@ use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
 use App\Models\Transaction;
+use App\Models\UserProfile;
 use Tymon\JWTAuth\Claims\Custom;
 
 // Public routes
@@ -61,6 +62,9 @@ Route::middleware(['auth:api'])->group(function () {
         // User-specific routes
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
+
+        Route::get('/rest-profile/{id}',[UserProfile::class,'getProfile']);
+
 
         // QR management
 
