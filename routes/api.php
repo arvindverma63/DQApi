@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminControllers\InventoryController;
 use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\TransactionController;
+use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
 use App\Models\Transaction;
@@ -63,7 +64,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/rest-profile/{id}',[UserProfile::class,'getProfile']);
+        Route::get('/rest-profile/{id}',[UserProfileController::class,'getProfile']);
 
 
         // QR management
