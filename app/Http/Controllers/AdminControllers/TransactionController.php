@@ -372,7 +372,7 @@ public function getTransactionById($id)
             return [
                 'id' => $transaction->id,
                 'userName' => $customer->name,
-                'items' => json_encode($transaction->items), // Decode JSON to array
+                'items' => json_decode($transaction->items), // Decode JSON to array
                 'tax' => $transaction->tax,
                 'discount' => $transaction->discount,
                 'sub_total' => $transaction->sub_total,
