@@ -8,6 +8,7 @@ use App\Models\Inventory;
 use App\Models\Menu;
 use App\Models\MenuInventory;
 use App\Models\Transaction;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -369,6 +370,7 @@ public function getTransactionById($id)
         $responseData = $transactions->map(function ($transaction) {
 
             $customer = Customer::find($transaction->user_id);
+            $restaurant = UserProfile::where('restaurantId',$transaction->restaurantId)->first();
             return [
                 'id' => $transaction->id,
                 'userName' => $customer->name,
@@ -377,6 +379,9 @@ public function getTransactionById($id)
                 'discount' => $transaction->discount,
                 'sub_total' => $transaction->sub_total,
                 'total' => $transaction->total,
+                'restaurantAddress'=>$restaurant->address,
+                'phoneNumber' => $restaurant->phoneNumber,
+                'restaurantEmail'=>$restaurant->email,
                 'payment_type' => $transaction->payment_type,
                 'restaurantId' => $transaction->restaurantId,
                 'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
