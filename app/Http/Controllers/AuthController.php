@@ -273,7 +273,7 @@ class AuthController extends Controller
 
     /**
  * @OA\Post(
- *     path="/api/auth/forgot-password",
+ *     path="/auth/forgot-password",
  *     summary="Send a password reset link",
  *     tags={"Authentication"},
  *     @OA\RequestBody(
@@ -344,7 +344,7 @@ public function forgotPassword(Request $request)
 
 /**
  * @OA\Post(
- *     path="/api/auth/reset-password",
+ *     path="/auth/reset-password",
  *     summary="Reset the user's password",
  *     tags={"Authentication"},
  *     @OA\RequestBody(
