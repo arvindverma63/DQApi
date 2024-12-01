@@ -11,9 +11,6 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Mail\OtpMail;
-use Exception;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Info(title="Category API", version="1.0")
@@ -115,34 +112,34 @@ class AuthController extends Controller
      * )
      */
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+     public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Invalid Credentials'], 401);
-        }
-
-        // Generate OTP
-        $otp = rand(100000, 999999); // A 6-digit OTP
-
-        // Set OTP expiration time (current time + 5 minutes in GMT)
-        $expireAt = now('UTC')->addMinutes(5);
-
-        // Update the user record with the OTP and expiration time
-        $user = auth()->user();
-        $user->otp = $otp;
-        $user->expire_at = $expireAt;
-        $user->save();
-
-        // Send OTP to the user's email
-        Mail::to($user->email)->send(new OtpMail($otp));
-
-        // Logout the user temporarily
-        auth()->logout();
-
-        return response()->json(['message' => 'OTP sent to your email']);
+    if (! $token = auth()->attempt($credentials)) {
+        return response()->json(['error' => 'Invalid Credentials'], 401);
     }
+
+    // Generate OTP
+    $otp = rand(100000, 999999); // A 6-digit OTP
+
+    // Set OTP expiration time (current time + 5 minutes in GMT)
+    $expireAt = now('UTC')->addMinutes(5);
+
+    // Update the user record with the OTP and expiration time
+    $user = auth()->user();
+    $user->otp = $otp;
+    $user->expire_at = $expireAt;
+    $user->save();
+
+    // Send OTP to the user's email
+    Mail::to($user->email)->send(new OtpMail($otp));
+
+    // Logout the user temporarily
+    auth()->logout();
+
+    return response()->json(['message' => 'OTP sent to your email']);
+}
 
 
 
@@ -174,50 +171,50 @@ class AuthController extends Controller
      * )
      */
     public function verifyOtp(Request $request)
-    {
-        // Validate the incoming request
-        $request->validate([
-            'otp' => 'required|string',
-            'email' => 'required|email',
-        ]);
+{
+    // Validate the incoming request
+    $request->validate([
+        'otp' => 'required|string',
+        'email' => 'required|email',
+    ]);
 
-        // Fetch the user by email
-        $user = User::where('email', $request->email)->first();
+    // Fetch the user by email
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Check if the OTP is correct and not expired
-        $currentUtcTime = now(); // Get the current UTC time
-        if ($user->otp !== $request->otp || $user->expire_at < $currentUtcTime) {
-            return response()->json(['error' => 'Invalid or expired OTP'], 401);
-        }
-
-        // Generate a JWT token for the user
-        $token = JWTAuth::fromUser($user);
-
-        // Clear the OTP fields after successful verification
-        $user->otp = null;
-        $user->expire_at = null;
-        $user->save();
-
-        // Check if the user is an admin
-        if ($user->role == 'admin') {
-            // Return token, user ID, and restaurant ID in the response for admins
-            return response()->json([
-                'token' => $token,
-                'user_id' => $user->id,
-                'restaurant_id' => $user->restaurantId,
-            ]);
-        }
-
-        // If the user is not an admin, return just the token in the response
-        return response()->json(['token' => $token]);
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
     }
 
+    // Check if the OTP is correct and not expired
+    $currentUtcTime = now(); // Get the current UTC time
+    if ($user->otp !== $request->otp || $user->expire_at < $currentUtcTime) {
+        return response()->json(['error' => 'Invalid or expired OTP'], 401);
+    }
 
-    /*
+    // Generate a JWT token for the user
+    $token = JWTAuth::fromUser($user);
+
+    // Clear the OTP fields after successful verification
+    $user->otp = null;
+    $user->expire_at = null;
+    $user->save();
+
+    // Check if the user is an admin
+    if ($user->role == 'admin') {
+        // Return token, user ID, and restaurant ID in the response for admins
+        return response()->json([
+            'token' => $token,
+            'user_id' => $user->id,
+            'restaurant_id' => $user->restaurantId,
+        ]);
+    }
+
+    // If the user is not an admin, return just the token in the response
+    return response()->json(['token' => $token]);
+}
+
+
+/*
     Whenever i need the token i simply use
 
     $token = Auth::token;
@@ -269,163 +266,5 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json(auth()->user());
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/auth/forgot-password",
-     *     summary="Send a password reset link",
-     *     tags={"Authentication"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password reset link sent successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="Password reset link sent successfully.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="User not found")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="An error occurred while sending the reset link")
-     *         )
-     *     )
-     * )
-     */
-    public function forgotPassword(Request $request)
-    {
-        // Log the start of the process
-        Log::info('Forgot Password request received.', ['email' => $request->input('email')]);
-
-        // Validate the email field
-        $rules = ['email' => 'required|email|exists:users,email'];
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            Log::warning('Forgot Password validation failed.', ['errors' => $validator->errors()]);
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $email = $request->only('email');
-        $user = User::where('email', $email['email'])->first();
-
-        if (!$user) {
-            Log::error('Forgot Password: User not found.', ['email' => $email]);
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        try {
-            $status = Password::sendResetLink($email);
-
-            if ($status === Password::RESET_LINK_SENT) {
-                Log::info('Password reset link sent successfully.', ['email' => $email['email']]);
-                return response()->json(['status' => __($status)], 200);
-            } else {
-                Log::error('Failed to send password reset link.', ['status' => $status]);
-                return response()->json(['error' => __($status)], 500);
-            }
-        } catch (Exception $e) {
-            Log::critical('Exception occurred while sending reset link.', ['email' => $email['email'], 'exception' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while sending the reset link'], 500);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/auth/reset-password",
-     *     summary="Reset the user's password",
-     *     tags={"Authentication"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email", "password", "password_confirmation", "token"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="newpassword123"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123"),
-     *             @OA\Property(property="token", type="string", example="reset-token-example")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password reset successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="Password has been reset successfully.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="An error occurred during password reset")
-     *         )
-     *     )
-     * )
-     */
-    public function resetPassword(Request $request)
-    {
-        // Log the start of the process
-        Log::info('Reset Password request received.', ['email' => $request->input('email')]);
-
-        // Validate the request fields
-        $rules = [
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|confirmed',
-            'token' => 'required'
-        ];
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            Log::warning('Reset Password validation failed.', ['errors' => $validator->errors()]);
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $credentials = $request->only('email', 'password', 'password_confirmation', 'token');
-
-        try {
-            $status = Password::reset($credentials, function ($user, $password) {
-                $user->password = bcrypt($password);
-                $user->save();
-                Log::info('Password reset successfully.', ['user_id' => $user->id]);
-            });
-
-            if ($status === Password::PASSWORD_RESET) {
-                Log::info('Password has been reset successfully.', ['email' => $credentials['email']]);
-                return response()->json(['status' => __($status)], 200);
-            } else {
-                Log::error('Failed to reset password.', ['status' => $status, 'email' => $credentials['email']]);
-                return response()->json(['error' => __($status)], 500);
-            }
-        } catch (Exception $e) {
-            Log::critical('Exception occurred during password reset.', ['email' => $credentials['email'], 'exception' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred during password reset'], 500);
-        }
     }
 }
