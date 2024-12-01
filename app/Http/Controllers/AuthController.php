@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Mail\OtpMail;
 use Exception;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Password;
 
 /**
  * @OA\Info(title="Category API", version="1.0")
