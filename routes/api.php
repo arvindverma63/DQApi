@@ -25,8 +25,8 @@ use Tymon\JWTAuth\Claims\Custom;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
-Route::post('forgotPassword',[AuthController::class,'forgotPassword']);
-Route::post('resetPassword',[AuthController::class,'resetPassword']);
+Route::post('/auth/forgot-password',[AuthController::class,'forgotPassword']);
+Route::post('/auth/reset-password',[AuthController::class,'resetPassword']);
 
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
