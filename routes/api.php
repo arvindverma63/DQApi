@@ -26,7 +26,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/auth/forgot-password',[AuthController::class,'forgotPassword']);
-Route::post('/auth/reset-password/{token}',[AuthController::class,'resetPassword'])->route('password.reset');
+Route::get('/auth/reset-password/{token}',[AuthController::class,'resetPassword'])->route('password.reset');
 
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
