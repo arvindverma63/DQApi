@@ -18,15 +18,12 @@ use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
 use App\Models\Transaction;
 use App\Models\UserProfile;
-use PharIo\Manifest\AuthorCollection;
 use Tymon\JWTAuth\Claims\Custom;
 
 // Public routes
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
-Route::post('/auth/forgot-password',[AuthController::class,'forgotPassword']);
-Route::get('/auth/reset-password/{token}',[AuthController::class,'resetPassword'])->route('password.reset');
 
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
