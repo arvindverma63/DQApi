@@ -2938,13 +2938,13 @@
                 }
             }
         },
-        "/api/auth/forgot-password": {
+        "/auth/forgot-password": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Send a password reset link",
-                "operationId": "cff9b52a898f73f39d684747bd69c4e1",
+                "operationId": "b13d5efc90e1de6d4e9900240fce9b4d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3032,13 +3032,13 @@
                 }
             }
         },
-        "/api/auth/reset-password": {
+        "/auth/reset-password": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Reset the user's password",
-                "operationId": "6af92e090f994419a2295111b391a205",
+                "operationId": "bbf02faac4cfbb998aad2b63a843b88c",
                 "requestBody": {
                     "required": true,
                     "content": {
