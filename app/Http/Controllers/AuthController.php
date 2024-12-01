@@ -272,142 +272,160 @@ class AuthController extends Controller
     }
 
     /**
- * @OA\Post(
- *     path="/auth/forgot-password",
- *     summary="Send a password reset link",
- *     tags={"Authentication"},
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"email"},
- *             @OA\Property(property="email", type="string", format="email", example="user@example.com")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Password reset link sent successfully",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="Password reset link sent successfully.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=422,
- *         description="Validation error",
- *         @OA\JsonContent(
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="User not found",
- *         @OA\JsonContent(
- *             @OA\Property(property="error", type="string", example="User not found")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Internal server error",
- *         @OA\JsonContent(
- *             @OA\Property(property="error", type="string", example="An error occurred while sending the reset link")
- *         )
- *     )
- * )
- */
-public function forgotPassword(Request $request)
-{
-    // Validate the email field
-    $rules = ['email' => 'required|email|exists:users,email'];
-    $validator = Validator::make($request->all(), $rules);
+     * @OA\Post(
+     *     path="/auth/forgot-password",
+     *     summary="Send a password reset link",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset link sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="Password reset link sent successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="User not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred while sending the reset link")
+     *         )
+     *     )
+     * )
+     */
+    public function forgotPassword(Request $request)
+    {
+        // Log the start of the process
+        Log::info('Forgot Password request received.', ['email' => $request->input('email')]);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+        // Validate the email field
+        $rules = ['email' => 'required|email|exists:users,email'];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::warning('Forgot Password validation failed.', ['errors' => $validator->errors()]);
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $email = $request->only('email');
+        $user = User::where('email', $email['email'])->first();
+
+        if (!$user) {
+            Log::error('Forgot Password: User not found.', ['email' => $email]);
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        try {
+            $status = Password::sendResetLink($email);
+
+            if ($status === Password::RESET_LINK_SENT) {
+                Log::info('Password reset link sent successfully.', ['email' => $email['email']]);
+                return response()->json(['status' => __($status)], 200);
+            } else {
+                Log::error('Failed to send password reset link.', ['status' => $status]);
+                return response()->json(['error' => __($status)], 500);
+            }
+        } catch (Exception $e) {
+            Log::critical('Exception occurred while sending reset link.', ['email' => $email['email'], 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while sending the reset link'], 500);
+        }
     }
 
-    $email = $request->only('email');
-    $user = User::where('email', $email['email'])->first();
+    /**
+     * @OA\Post(
+     *     path="/auth/reset-password",
+     *     summary="Reset the user's password",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password", "password_confirmation", "token"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="newpassword123"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123"),
+     *             @OA\Property(property="token", type="string", example="reset-token-example")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="Password has been reset successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred during password reset")
+     *         )
+     *     )
+     * )
+     */
+    public function resetPassword(Request $request)
+    {
+        // Log the start of the process
+        Log::info('Reset Password request received.', ['email' => $request->input('email')]);
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
+        // Validate the request fields
+        $rules = [
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|confirmed',
+            'token' => 'required'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::warning('Reset Password validation failed.', ['errors' => $validator->errors()]);
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $credentials = $request->only('email', 'password', 'password_confirmation', 'token');
+
+        try {
+            $status = Password::reset($credentials, function ($user, $password) {
+                $user->password = bcrypt($password);
+                $user->save();
+                Log::info('Password reset successfully.', ['user_id' => $user->id]);
+            });
+
+            if ($status === Password::PASSWORD_RESET) {
+                Log::info('Password has been reset successfully.', ['email' => $credentials['email']]);
+                return response()->json(['status' => __($status)], 200);
+            } else {
+                Log::error('Failed to reset password.', ['status' => $status, 'email' => $credentials['email']]);
+                return response()->json(['error' => __($status)], 500);
+            }
+        } catch (Exception $e) {
+            Log::critical('Exception occurred during password reset.', ['email' => $credentials['email'], 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred during password reset'], 500);
+        }
     }
-
-    try {
-        $status = Password::sendResetLink($email);
-
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['status' => __($status)], 200)
-            : response()->json(['error' => __($status)], 500);
-    } catch (Exception $e) {
-        return response()->json(['error' => 'An error occurred while sending the reset link'], 500);
-    }
-}
-
-
-/**
- * @OA\Post(
- *     path="/auth/reset-password",
- *     summary="Reset the user's password",
- *     tags={"Authentication"},
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"email", "password", "password_confirmation", "token"},
- *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
- *             @OA\Property(property="password", type="string", format="password", example="newpassword123"),
- *             @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123"),
- *             @OA\Property(property="token", type="string", example="reset-token-example")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Password reset successfully",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="Password has been reset successfully.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=422,
- *         description="Validation error",
- *         @OA\JsonContent(
- *             @OA\Property(property="errors", type="object")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Internal server error",
- *         @OA\JsonContent(
- *             @OA\Property(property="error", type="string", example="An error occurred during password reset")
- *         )
- *     )
- * )
- */
-public function resetPassword(Request $request)
-{
-    // Validate the request fields
-    $rules = [
-        'email' => 'required|email|exists:users,email',
-        'password' => 'required|confirmed',
-        'token' => 'required'
-    ];
-    $validator = Validator::make($request->all(), $rules);
-
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
-    }
-
-    $credentials = $request->only('email', 'password', 'password_confirmation', 'token');
-
-    try {
-        $status = Password::reset($credentials, function ($user, $password) {
-            $user->password = bcrypt($password);
-            $user->save();
-        });
-
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['status' => __($status)], 200)
-            : response()->json(['error' => __($status)], 500);
-    } catch (Exception $e) {
-        return response()->json(['error' => 'An error occurred during password reset'], 500);
-    }
-}
-
 }
