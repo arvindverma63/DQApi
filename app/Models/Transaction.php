@@ -31,6 +31,7 @@ class Transaction extends Model
         'payment_type',
         'restaurantId',
         'addedBy',
+        'tableNumber',
     ];
 
     /**
