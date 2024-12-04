@@ -113,7 +113,7 @@ class TransactionController extends Controller
                 'total' => 'required|numeric|min:0',
                 'type' => 'required|string',
                 'restaurantId' => 'required|string',
-                'tableNumber'=>'nullable',
+                'tableNumber'=>'nullable|integer',
             ]);
 
             Log::info('Transaction validation passed.', ['validated_data' => $validated]);
