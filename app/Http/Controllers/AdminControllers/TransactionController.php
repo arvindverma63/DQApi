@@ -286,6 +286,7 @@ class TransactionController extends Controller
                     'restaurantId' => $transaction->restaurantId,
                     'created_at' => $transaction->created_at,
                     'updated_at' => $transaction->updated_at,
+                    'tableNumber'=>$transaction->tableNumber,
                 ];
             });
 
