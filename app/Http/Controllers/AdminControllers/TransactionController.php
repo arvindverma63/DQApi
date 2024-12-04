@@ -389,6 +389,7 @@ public function getTransactionById($id)
                 'restaurantId' => $transaction->restaurantId,
                 'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
                 'updated_at' => $transaction->updated_at,
+                'tableNumber'=>$transaction->tableNumber,
             ];
         });
 
