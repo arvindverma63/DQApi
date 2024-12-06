@@ -510,9 +510,7 @@ class ReportController extends Controller
             ->select(
                 DB::raw('DATE(created_at) as day'),
                 DB::raw('SUM(total) as dailyTotal'),
-                DB::raw('COUNT(id) as totalTransactions'),
-                'id'
-            ) // Sum total for each day
+                DB::raw('COUNT(id) as totalTransactions'),            ) // Sum total for each day
             ->groupBy(DB::raw('DATE(created_at)'))  // Group by the date portion of created_at
             ->orderBy('day', 'asc')  // Order by day
             ->get();
