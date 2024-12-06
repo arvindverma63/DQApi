@@ -55,7 +55,7 @@ class ReportController extends Controller
      */
     public function getDashboardStats($id)
     {
-        $date = Carbon::now()+1; // Get the current date and time
+        $date = Carbon::now(); // Get the current date and time
         $todayDate = $date->toDateString();
         $weekStartDate = $date->startOfWeek()->toDateString();
         $monthStartDate = $date->startOfMonth()->toDateString();
