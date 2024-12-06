@@ -463,4 +463,61 @@ class ReportController extends Controller
         // Return the chart data as JSON
         return response()->json($chartData);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/reports/{id}/all-days",
+     *     summary="Get All Days Report for a Specific Restaurant",
+     *     tags={"Reports"},
+     *     description="Fetches the total sum of transactions and count of transactions grouped by date for a specific restaurant.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Restaurant ID",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful Response",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="day", type="string", example="2024-12-01"),
+     *                 @OA\Property(property="dailyTotal", type="number", format="float", example=350.00),
+     *                 @OA\Property(property="totalTransactions", type="integer", example=10),
+     *                 @OA\Property(property="id", type="integer", example=1)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurant Not Found"
+     *     )
+     * )
+     */
+    public function allDaysReport($id)
+    {
+        // Fetch total sum of 'total' grouped by date (formatted) for the given restaurant
+        $response = Transaction::where('restaurantId', $id)
+            ->select(
+                DB::raw('DATE(created_at) as day'),
+                DB::raw('SUM(total) as dailyTotal'),
+                DB::raw('COUNT(id) as totalTransactions'),
+                'id'
+            ) // Sum total for each day
+            ->groupBy(DB::raw('DATE(created_at)'))  // Group by the date portion of created_at
+            ->orderBy('day', 'asc')  // Order by day
+            ->get();
+
+        // Return the response in JSON format
+        return response()->json($response);
+    }
 }

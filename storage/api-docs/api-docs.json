@@ -2098,6 +2098,67 @@
                 }
             }
         },
+        "/reports/{id}/all-days": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get All Days Report for a Specific Restaurant",
+                "description": "Fetches the total sum of transactions and count of transactions grouped by date for a specific restaurant.",
+                "operationId": "1a93d5f648fcc07eaa1f8774b5223c27",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "day": {
+                                                "type": "string",
+                                                "example": "2024-12-01"
+                                            },
+                                            "dailyTotal": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 350
+                                            },
+                                            "totalTransactions": {
+                                                "type": "integer",
+                                                "example": 10
+                                            },
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Restaurant Not Found"
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [
