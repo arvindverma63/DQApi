@@ -1783,7 +1783,7 @@
                     "Reports"
                 ],
                 "summary": "Get Dashboard Statistics for a Specific Restaurant",
-                "description": "Fetches the dashboard statistics for a specific restaurant, including today's collection, total invoices, completed orders, and rejected orders.",
+                "description": "Fetches the dashboard statistics for a specific restaurant, including today's, weekly, and monthly collection, total invoices, completed orders, and rejected orders.",
                 "operationId": "e12d063b9dc00384af305459ed38f4d3",
                 "parameters": [
                     {
@@ -1811,13 +1811,45 @@
                                             "type": "integer",
                                             "example": 15
                                         },
-                                        "totalCompleteOrder": {
+                                        "totalCompleteOrderToday": {
                                             "type": "integer",
                                             "example": 10
                                         },
-                                        "totalRejectOrder": {
+                                        "totalRejectOrderToday": {
                                             "type": "integer",
                                             "example": 2
+                                        },
+                                        "weeklyCollection": {
+                                            "type": "number",
+                                            "example": 12345.67
+                                        },
+                                        "totalInvoiceWeekly": {
+                                            "type": "integer",
+                                            "example": 120
+                                        },
+                                        "totalCompleteOrderWeekly": {
+                                            "type": "integer",
+                                            "example": 80
+                                        },
+                                        "totalRejectOrderWeekly": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "monthlyCollection": {
+                                            "type": "number",
+                                            "example": 50000
+                                        },
+                                        "totalInvoiceMonthly": {
+                                            "type": "integer",
+                                            "example": 450
+                                        },
+                                        "totalCompleteOrderMonthly": {
+                                            "type": "integer",
+                                            "example": 300
+                                        },
+                                        "totalRejectOrderMonthly": {
+                                            "type": "integer",
+                                            "example": 50
                                         }
                                     },
                                     "type": "object"
@@ -2934,195 +2966,6 @@
                     },
                     "500": {
                         "description": "Internal server error"
-                    }
-                }
-            }
-        },
-        "/auth/forgot-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Send a password reset link",
-                "operationId": "b13d5efc90e1de6d4e9900240fce9b4d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password reset link sent successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Password reset link sent successfully."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "User not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An error occurred while sending the reset link"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/reset-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Reset the user's password",
-                "operationId": "bbf02faac4cfbb998aad2b63a843b88c",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password",
-                                    "password_confirmation",
-                                    "token"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "newpassword123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "newpassword123"
-                                    },
-                                    "token": {
-                                        "type": "string",
-                                        "example": "reset-token-example"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password reset successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Password has been reset successfully."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An error occurred during password reset"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
                     }
                 }
             }

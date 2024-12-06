@@ -16,7 +16,7 @@ class ReportController extends Controller
      *     path="/reports/{id}",
      *     summary="Get Dashboard Statistics for a Specific Restaurant",
      *     tags={"Reports"},
-     *     description="Fetches the dashboard statistics for a specific restaurant, including today's collection, total invoices, completed orders, and rejected orders.",
+     *     description="Fetches the dashboard statistics for a specific restaurant, including today's, weekly, and monthly collection, total invoices, completed orders, and rejected orders.",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -31,8 +31,16 @@ class ReportController extends Controller
      *             type="object",
      *             @OA\Property(property="todayCollection", type="number", example=1234.56),
      *             @OA\Property(property="totalInvoiceToday", type="integer", example=15),
-     *             @OA\Property(property="totalCompleteOrder", type="integer", example=10),
-     *             @OA\Property(property="totalRejectOrder", type="integer", example=2)
+     *             @OA\Property(property="totalCompleteOrderToday", type="integer", example=10),
+     *             @OA\Property(property="totalRejectOrderToday", type="integer", example=2),
+     *             @OA\Property(property="weeklyCollection", type="number", example=12345.67),
+     *             @OA\Property(property="totalInvoiceWeekly", type="integer", example=120),
+     *             @OA\Property(property="totalCompleteOrderWeekly", type="integer", example=80),
+     *             @OA\Property(property="totalRejectOrderWeekly", type="integer", example=15),
+     *             @OA\Property(property="monthlyCollection", type="number", example=50000.00),
+     *             @OA\Property(property="totalInvoiceMonthly", type="integer", example=450),
+     *             @OA\Property(property="totalCompleteOrderMonthly", type="integer", example=300),
+     *             @OA\Property(property="totalRejectOrderMonthly", type="integer", example=50)
      *         )
      *     ),
      *     @OA\Response(
@@ -47,26 +55,67 @@ class ReportController extends Controller
      */
     public function getDashboardStats($id)
     {
-        $date = Carbon::now()->toDateString(); // Ensure only the date part is used
+        $date = Carbon::now(); // Get the current date and time
+        $todayDate = $date->toDateString();
+        $weekStartDate = $date->startOfWeek()->toDateString();
+        $monthStartDate = $date->startOfMonth()->toDateString();
 
         // Fetch today's collection
-        $todayCollection = Transaction::whereDate('created_at', $date)
+        $todayCollection = Transaction::whereDate('created_at', $todayDate)
             ->where('restaurantId', $id)
             ->sum('total');
 
         // Fetch the total number of invoices for today
-        $totalInvoiceToday = Transaction::whereDate('created_at', $date)
+        $totalInvoiceToday = Transaction::whereDate('created_at', $todayDate)
             ->where('restaurantId', $id)
             ->count();
 
         // Fetch the total number of completed orders for today
-        $totalCompleteOrder = Order::whereDate('created_at', $date)
+        $totalCompleteOrderToday = Order::whereDate('created_at', $todayDate)
             ->where('restaurantId', $id)
             ->where('status', 'complete')
             ->count();
 
         // Fetch the total number of rejected orders for today
-        $totalRejectOrder = Order::whereDate('created_at', $date)
+        $totalRejectOrderToday = Order::whereDate('created_at', $todayDate)
+            ->where('restaurantId', $id)
+            ->where('status', 'reject')
+            ->count();
+
+        // Fetch weekly statistics
+        $weeklyCollection = Transaction::whereBetween('created_at', [$weekStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->sum('total');
+
+        $totalInvoiceWeekly = Transaction::whereBetween('created_at', [$weekStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->count();
+
+        $totalCompleteOrderWeekly = Order::whereBetween('created_at', [$weekStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->where('status', 'complete')
+            ->count();
+
+        $totalRejectOrderWeekly = Order::whereBetween('created_at', [$weekStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->where('status', 'reject')
+            ->count();
+
+        // Fetch monthly statistics
+        $monthlyCollection = Transaction::whereBetween('created_at', [$monthStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->sum('total');
+
+        $totalInvoiceMonthly = Transaction::whereBetween('created_at', [$monthStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->count();
+
+        $totalCompleteOrderMonthly = Order::whereBetween('created_at', [$monthStartDate, $todayDate])
+            ->where('restaurantId', $id)
+            ->where('status', 'complete')
+            ->count();
+
+        $totalRejectOrderMonthly = Order::whereBetween('created_at', [$monthStartDate, $todayDate])
             ->where('restaurantId', $id)
             ->where('status', 'reject')
             ->count();
@@ -75,10 +124,19 @@ class ReportController extends Controller
         return response()->json([
             'todayCollection' => $todayCollection,
             'totalInvoiceToday' => $totalInvoiceToday,
-            'totalCompleteOrder' => $totalCompleteOrder,
-            'totalRejectOrder' => $totalRejectOrder,
+            'totalCompleteOrderToday' => $totalCompleteOrderToday,
+            'totalRejectOrderToday' => $totalRejectOrderToday,
+            'weeklyCollection' => $weeklyCollection,
+            'totalInvoiceWeekly' => $totalInvoiceWeekly,
+            'totalCompleteOrderWeekly' => $totalCompleteOrderWeekly,
+            'totalRejectOrderWeekly' => $totalRejectOrderWeekly,
+            'monthlyCollection' => $monthlyCollection,
+            'totalInvoiceMonthly' => $totalInvoiceMonthly,
+            'totalCompleteOrderMonthly' => $totalCompleteOrderMonthly,
+            'totalRejectOrderMonthly' => $totalRejectOrderMonthly,
         ]);
     }
+
 
     /**
      * @OA\Get(
