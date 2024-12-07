@@ -44,10 +44,6 @@ class OrderController extends Controller
         // Fetch orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
 
-        // Return a 404 response if no orders are found
-        if ($orders->isEmpty()) {
-            return response()->json(['message' => 'No orders found for this restaurant'], 404);
-        }
 
         // Preload customers and menu items for optimization
         $customerIds = $orders->pluck('user_id')->unique();
