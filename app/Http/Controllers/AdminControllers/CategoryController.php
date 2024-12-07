@@ -286,7 +286,7 @@ class CategoryController extends Controller
         // Check if any menu item is linked to this category
         $linkedMenu = Menu::where('category', $category->id)->exists();
         if ($linkedMenu) {
-            return response()->json(['message' => 'You cannot delete this category as an item is linked to it'], 400);
+            return response()->json(['message' => 'You cannot delete this category as an item is linked to it']);
         }
 
         // Delete the associated image if it exists
