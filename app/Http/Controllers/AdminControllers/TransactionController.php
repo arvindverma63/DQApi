@@ -265,12 +265,6 @@ class TransactionController extends Controller
             // Fetch transactions for the specified restaurant ID
             $transactions = Transaction::where('restaurantId', $id)->get();
 
-            if ($transactions->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No transactions found.'
-                ], 404);
-            }
 
             // Transform the data to match the desired structure
             $responseData = $transactions->map(function ($transaction) {
