@@ -124,7 +124,7 @@ class AuthController extends Controller
     $otp = rand(100000, 999999); // A 6-digit OTP
 
     // Set OTP expiration time (current time + 5 minutes in GMT)
-    $expireAt = now('UTC')->addMinutes(5);
+    $expireAt = now('Asia/Kolkata')->addMinutes(5);
 
     // Update the user record with the OTP and expiration time
     $user = auth()->user();
