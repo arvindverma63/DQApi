@@ -308,95 +308,80 @@ class OrderController extends Controller
      * )
      */
     public function updateStatus(Request $request, $id)
-{
-    // Validate the request
-    $request->validate([
-        'status' => 'required|in:processing,accept,reject,complete',
-    ]);
+    {
+        $request->validate([
+            'status' => 'required|in:processing,accept,reject,complete',
+        ]);
 
-    // Find the order by ID
-    $order = Order::find($id);
+        $order = Order::find($id);
 
-    // If the order doesn't exist, return a 404 response
-    if (!$order) {
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found.',
+            ], 404);
+        }
+
+        if($request->status === 'reject'){
+            $order->update([
+                'status' => $request->status,
+            ]);
+        }
+
+        // If the status is being changed to complete
+        if ($request->status === 'complete') {
+            $orderDetails = json_decode($order->orderDetails, true);
+
+            // Calculate totals
+            $subTotal = collect($orderDetails)->sum(function ($item) {
+                return floatval($item['price']) * intval($item['quantity']);
+            });
+
+            $tax = 0; // Example: 10% tax
+            $discount = 0; // Adjust discount logic if applicable
+            $total = $subTotal + $tax - $discount;
+
+            // Prepare transaction data
+            $transactionData = [
+                'user_id' => $order->user_id,
+                'items' => collect($orderDetails)->map(function ($item) {
+                    return [
+                        'itemId' => $item['id'], // Ensure the key matches your database structure
+                        'itemName' => $item['item_name'] ?? $item['itemName'],
+                        'price' => floatval($item['price']),
+                        'quantity' => intval($item['quantity']),
+                    ];
+                })->toArray(),
+                'tax' => $tax,
+                'discount' => $discount,
+                'sub_total' => $subTotal,
+                'total' => $total,
+                'type' => 'web order', // Replace with actual payment type if available
+                'restaurantId' => $order->restaurantId,
+            ];
+
+            // Call TransactionController to add transaction
+            $transactionController = app(TransactionController::class);
+            $transactionResponse = $transactionController->addTransaction(new Request($transactionData));
+            // Update the order status
+            $order->update([
+                'status' => $request->status,
+            ]);
+
+            if ($transactionResponse->getStatusCode() !== 201) {
+                return response()->json([
+                    'message' => 'Failed to create transaction.',
+                    'error' => $transactionResponse->getData(),
+                ], $transactionResponse->getStatusCode());
+            }
+        }
+
+
+
         return response()->json([
-            'message' => 'Order not found.',
-        ], 404);
-    }
-
-    // Handle rejection status
-    if ($request->status === 'reject') {
-        $order->update(['status' => $request->status]);
-
-        return response()->json([
-            'message' => 'Order rejected successfully.',
+            'message' => 'Order status updated successfully',
             'order' => $order,
         ], 200);
     }
-
-    // Handle completion status
-    if ($request->status === 'complete') {
-        $orderDetails = json_decode($order->orderDetails, true);
-
-        if (!is_array($orderDetails)) {
-            return response()->json([
-                'message' => 'Invalid order details format.',
-            ], 400);
-        }
-
-        // Calculate totals
-        $subTotal = collect($orderDetails)->sum(function ($item) {
-            return floatval($item['price']) * intval($item['quantity']);
-        });
-
-        $tax = $subTotal * 0.10; // Example: 10% tax
-        $discount = 0; // Add your discount logic here
-        $total = $subTotal + $tax - $discount;
-
-        // Prepare transaction data
-        $transactionData = [
-            'user_id' => $order->user_id,
-            'items' => collect($orderDetails)->map(function ($item) {
-                return [
-                    'itemId' => $item['id'], // Ensure the key matches your database structure
-                    'itemName' => $item['item_name'] ?? $item['itemName'],
-                    'price' => floatval($item['price']),
-                    'quantity' => intval($item['quantity']),
-                ];
-            })->toArray(),
-            'tax' => $tax,
-            'discount' => $discount,
-            'sub_total' => $subTotal,
-            'total' => $total,
-            'type' => 'web order', // Replace with actual payment type if available
-            'restaurantId' => $order->restaurantId,
-        ];
-
-        // Call TransactionController to add the transaction
-        $transactionController = app(TransactionController::class);
-        $transactionResponse = $transactionController->addTransaction(new Request($transactionData));
-
-        // Check if the transaction was created successfully
-        if ($transactionResponse->getStatusCode() !== 201) {
-            return response()->json([
-                'message' => 'Failed to create transaction.',
-                'error' => $transactionResponse->getData(),
-            ], $transactionResponse->getStatusCode());
-        }
-
-        // Update the order status
-        $order->update(['status' => $request->status]);
-    } else {
-        // For other statuses, simply update the status
-        $order->update(['status' => $request->status]);
-    }
-
-    return response()->json([
-        'message' => 'Order status updated successfully.',
-        'order' => $order,
-    ], 200);
-}
-
 
     /**
      * @OA\Get(
