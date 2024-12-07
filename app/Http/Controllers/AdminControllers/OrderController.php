@@ -357,6 +357,7 @@ class OrderController extends Controller
                 'total' => $total,
                 'type' => 'web order', // Replace with actual payment type if available
                 'restaurantId' => $order->restaurantId,
+                'tableNumber' => $order->tableNumber,
             ];
 
             // Call TransactionController to add transaction
