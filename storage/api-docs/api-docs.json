@@ -2159,7 +2159,7 @@
                 }
             }
         },
-        "/api/getReportByType/{id}": {
+        "/getReportByType/{id}": {
             "get": {
                 "tags": [
                     "Reports"
@@ -2174,7 +2174,7 @@
                         "description": "The ID of the report type",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],

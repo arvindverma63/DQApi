@@ -522,7 +522,7 @@ class ReportController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/getReportByType/{id}",
+     *     path="/getReportByType/{id}",
      *     summary="Get transaction reports grouped by payment type and day",
      *     description="Retrieve transaction reports grouped by payment type and day, ordered by the day in ascending order.",
      *     operationId="getReportByType",
@@ -533,7 +533,7 @@ class ReportController extends Controller
      *         description="The ID of the report type",
      *         required=true,
      *         @OA\Schema(
-     *             type="integer"
+     *             type="string"
      *         )
      *     ),
      *     @OA\Response(

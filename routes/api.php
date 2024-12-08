@@ -33,6 +33,7 @@ Route::get('/dashboard/weekly-chart-data',[ReportController::class,'getWeeklyCha
 Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days',[ReportController::class,'allDaysReport']);
+Route::get('/getReportById/{id}',[ReportController::class,'getReportByType']);
 
 
 // Protected routes
