@@ -510,12 +510,73 @@ class ReportController extends Controller
             ->select(
                 DB::raw('DATE(created_at) as day'),
                 DB::raw('SUM(total) as dailyTotal'),
-                DB::raw('COUNT(id) as totalTransactions'),            ) // Sum total for each day
+                DB::raw('COUNT(id) as totalTransactions'),
+            ) // Sum total for each day
             ->groupBy(DB::raw('DATE(created_at)'))  // Group by the date portion of created_at
             ->orderBy('day', 'asc')  // Order by day
             ->get();
 
         // Return the response in JSON format
+        return response()->json($response);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/getReportByType/{id}",
+     *     summary="Get transaction reports grouped by payment type and day",
+     *     description="Retrieve transaction reports grouped by payment type and day, ordered by the day in ascending order.",
+     *     operationId="getReportByType",
+     *     tags={"Reports"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="The ID of the report type",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response with transaction reports",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="paymentType",
+     *                     type="string",
+     *                     description="Payment type of the transaction"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="day",
+     *                     type="string",
+     *                     format="date",
+     *                     description="Date of the transaction"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Report type not found"
+     *     )
+     * )
+     */
+    public function getReportByType($id)
+    {
+        $date = Carbon::now();
+        $today = $date->toDateString();
+
+        $response = Transaction::select('paymentType')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('day', 'asc')
+            ->get();
+
         return response()->json($response);
     }
 }

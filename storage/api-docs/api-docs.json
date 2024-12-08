@@ -2159,6 +2159,59 @@
                 }
             }
         },
+        "/api/getReportByType/{id}": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get transaction reports grouped by payment type and day",
+                "description": "Retrieve transaction reports grouped by payment type and day, ordered by the day in ascending order.",
+                "operationId": "getReportByType",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the report type",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with transaction reports",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "paymentType": {
+                                                "description": "Payment type of the transaction",
+                                                "type": "string"
+                                            },
+                                            "day": {
+                                                "description": "Date of the transaction",
+                                                "type": "string",
+                                                "format": "date"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Report type not found"
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [
