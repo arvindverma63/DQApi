@@ -337,7 +337,6 @@ class MenuController extends Controller
              'price' => 'required|numeric|min:0',
              'categoryId' => 'required|integer',
          ]);
-
          Log::info('Validated data for update menu:', $validatedData);
 
          // Start a database transaction
