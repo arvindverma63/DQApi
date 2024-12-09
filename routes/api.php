@@ -66,8 +66,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
+        Route::put('/profile/{id}',[UserProfileController::class,'updateProfile']);
 
-        Route::put('/profile/{id}', [ReportController::class, 'getReportByType']);
+        Route::put('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
 
         // QR management
