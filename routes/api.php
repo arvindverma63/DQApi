@@ -27,13 +27,12 @@ Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 
 Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
 
-Route::get('/reports/{id}',[ReportController::class,'getDashboardStats']);
-Route::get('/dashboard/chart-data',[ReportController::class,'getDashboardChartData']);
-Route::get('/dashboard/weekly-chart-data',[ReportController::class,'getWeeklyChartData']);
+Route::get('/reports/{id}', [ReportController::class, 'getDashboardStats']);
+Route::get('/dashboard/chart-data', [ReportController::class, 'getDashboardChartData']);
+Route::get('/dashboard/weekly-chart-data', [ReportController::class, 'getWeeklyChartData']);
 Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
-Route::get('/reports/{id}/all-days',[ReportController::class,'allDaysReport']);
-Route::get('/getReportByType/{id}',[ReportController::class,'getReportByType']);
+Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
 
 
 // Protected routes
@@ -66,7 +65,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/rest-profile/{id}',[UserProfileController::class,'getProfile']);
+        Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
+
+        Route::put('/profile/{id}', [ReportController::class, 'getReportByType']);
 
 
         // QR management
@@ -89,7 +90,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         // Menu management
 
-         // QR management
+        // QR management
         Route::post('/qr/create', [QrController::class, 'createQr']);
         Route::get('/qr/{id}', [QrController::class, 'getQr']);
         Route::put('/qr/update/{id}', [QrController::class, 'updateQr']);
@@ -103,8 +104,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update');
             Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
             Route::put('/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
-            Route::get('/notification/{id}',[OrderController::class,'getNotification']);
-            Route::put('/status/notification/{id}',[OrderController::class,'updateNotificationStatus']);
+            Route::get('/notification/{id}', [OrderController::class, 'getNotification']);
+            Route::put('/status/notification/{id}', [OrderController::class, 'updateNotificationStatus']);
         });
         Route::prefix('suppliers')->group(function () {
             // Get all suppliers
@@ -168,9 +169,9 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('/transactions', [TransactionController::class, 'addTransaction']);
     Route::get('/transactions/{id}', [TransactionController::class, 'getTransaction']);
-    Route::get('/transactionById/{id}',[TransactionController::class,'getTransactionById']);
+    Route::get('/transactionById/{id}', [TransactionController::class, 'getTransactionById']);
 
-    Route::get('/reports',[ReportController::class,'getDashboardStats']);
+    Route::get('/reports', [ReportController::class, 'getDashboardStats']);
 
 
 
@@ -179,17 +180,15 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
     });
-
-
 });
 
-     //Web App Api's
+//Web App Api's
 
-     Route::get('/webMenu',[WebOrderController::class,'menu']);
-     Route::post('/addOrder',[WebOrderController::class,'addTransaction']);
-     Route::get('/webMenu/categories',[WebOrderController::class,'getAllCategories']);
-     Route::get('/menu/category/{id}',[WebOrderController::class,'searchMenuByCategory']);
-    // Api's for mobile app
+Route::get('/webMenu', [WebOrderController::class, 'menu']);
+Route::post('/addOrder', [WebOrderController::class, 'addTransaction']);
+Route::get('/webMenu/categories', [WebOrderController::class, 'getAllCategories']);
+Route::get('/menu/category/{id}', [WebOrderController::class, 'searchMenuByCategory']);
+// Api's for mobile app
 
-    Route::get('/app/menu',[MobileMenuController::class,'getMenu']);
-    Route::get('/app/menu/all',[MobileMenuController::class,'getAllMenu']);
+Route::get('/app/menu', [MobileMenuController::class, 'getMenu']);
+Route::get('/app/menu/all', [MobileMenuController::class, 'getAllMenu']);
