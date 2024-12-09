@@ -338,22 +338,31 @@ class MenuController extends Controller
             'categoryId' => 'required|integer',
         ]);
 
-        Log::info('valided data for udpate menu: ',$validatedData);
+        Log::info('valided data for udpate menu: ', $validatedData);
 
         // Start a database transaction
         DB::beginTransaction();
 
         try {
             // Handle item image update if a new image file is provided
-            if ($request->hasFile('itemImage')) {
-                // Delete the old image if it exists
-                if ($menu->itemImage) {
-                    Storage::disk('public')->delete($menu->itemImage);
+            if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                // Store the image directly in the public/menus folder
+                $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                $publicPath = public_path('menus');
+
+                // Create the directory if it doesn't exist
+                if (!file_exists($publicPath)) {
+                    mkdir($publicPath, 0777, true);
                 }
 
-                // Store the new image and set its path in validated data
-                $imagePath = $request->file('itemImage')->store('menu_images', 'public');
-                $validatedData['itemImage'] = $imagePath;
+                // Move the file to the public/menus directory
+                $request->file('itemImage')->move($publicPath, $imageName);
+
+                // Generate the public URL manually
+                $publicImageUrl = url('menus/' . $imageName);
+                $menu->update(['itemImage' => $publicImageUrl]);
+
+                Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
             }
 
             // Update the menu item with validated data, including optional new image
