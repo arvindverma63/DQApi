@@ -338,6 +338,8 @@ class MenuController extends Controller
             'categoryId' => 'required|integer',
         ]);
 
+        Log::info('valided data for udpate menu: ',$validatedData);
+
         // Start a database transaction
         DB::beginTransaction();
 
