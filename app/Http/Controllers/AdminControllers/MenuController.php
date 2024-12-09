@@ -53,349 +53,336 @@ class MenuController extends Controller
      *     )
      * )
      */
-   public function index(Request $request)
-{
-    $request->validate([
-        'restaurantId' => 'required|string',
-    ]);
+    public function index(Request $request)
+    {
+        $request->validate([
+            'restaurantId' => 'required|string',
+        ]);
 
-    // Fetch menu items for the given restaurantId
-    $menus = Menu::where('restaurantId', $request->restaurantId)->get();
+        // Fetch menu items for the given restaurantId
+        $menus = Menu::where('restaurantId', $request->restaurantId)->get();
 
-    // Retrieve stock items from MenuInventory related to these menus
-    $stockItems = MenuInventory::whereIn('menuId', $menus->pluck('id'))->get();
+        // Retrieve stock items from MenuInventory related to these menus
+        $stockItems = MenuInventory::whereIn('menuId', $menus->pluck('id'))->get();
 
-    // Fetch related inventory items for stock names
-    $inventoryItems = Inventory::whereIn('id', $stockItems->pluck('stockId'))->get()->keyBy('id');
+        // Fetch related inventory items for stock names
+        $inventoryItems = Inventory::whereIn('id', $stockItems->pluck('stockId'))->get()->keyBy('id');
 
-    // Transform each menu item to include full image URLs and stock item names
-    $menus->transform(function ($menu) use ($stockItems, $inventoryItems) {
-        if ($menu->itemImage) {
-            // Correctly generate the public URL for the image stored in the 'public/menus' folder
-            $menu->itemImage = url('menus/' . basename($menu->itemImage));
-        }
+        // Transform each menu item to include full image URLs and stock item names
+        $menus->transform(function ($menu) use ($stockItems, $inventoryItems) {
+            if ($menu->itemImage) {
+                // Correctly generate the public URL for the image stored in the 'public/menus' folder
+                $menu->itemImage = url('menus/' . basename($menu->itemImage));
+            }
 
-        // Map stock items for the specific menu and include itemName from Inventory
-        $menu->stockItems = $stockItems->where('menuId', $menu->id)->map(function ($stockItem) use ($inventoryItems) {
-            return [
-                'stockId' => $stockItem->stockId,
-                'quantity' => $stockItem->quantity,
-                'name' => $inventoryItems[$stockItem->stockId]->itemName ?? '', // Include itemName from Inventory if available
-            ];
-        })->values();
+            // Map stock items for the specific menu and include itemName from Inventory
+            $menu->stockItems = $stockItems->where('menuId', $menu->id)->map(function ($stockItem) use ($inventoryItems) {
+                return [
+                    'stockId' => $stockItem->stockId,
+                    'quantity' => $stockItem->quantity,
+                    'name' => $inventoryItems[$stockItem->stockId]->itemName ?? '', // Include itemName from Inventory if available
+                ];
+            })->values();
 
-        return $menu;
-    });
+            return $menu;
+        });
 
-    // Fetch all inventory items for the dropdown options
-    $inventoryOptions = Inventory::all(['id', 'itemName']);
+        // Fetch all inventory items for the dropdown options
+        $inventoryOptions = Inventory::all(['id', 'itemName']);
 
-    // Return JSON response with both menu items and inventory options
-    return response()->json([
-        'data' => [
-            'menus' => $menus,
-            'inventoryOptions' => $inventoryOptions,
-        ],
-        'message' => 'Menus and inventory options retrieved successfully.',
-    ], 200);
-}
+        // Return JSON response with both menu items and inventory options
+        return response()->json([
+            'data' => [
+                'menus' => $menus,
+                'inventoryOptions' => $inventoryOptions,
+            ],
+            'message' => 'Menus and inventory options retrieved successfully.',
+        ], 200);
+    }
 
 
 
     /**
- * @OA\Post(
- *     path="/menu",
- *     summary="Create a new menu item",
- *     tags={"Menu"},
- *     security={{"bearerAuth":{}}},
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 required={"itemName", "price", "categoryId", "restaurantId", "stock", "stockItems"},
- *                 @OA\Property(property="itemName", type="string", example="Pizza", description="Name of the menu item"),
- *                 @OA\Property(property="itemImage", type="string", format="binary", description="Menu item image"),
- *                 @OA\Property(property="price", type="number", format="float", example=9.99, description="Price of the menu item"),
- *                 @OA\Property(property="categoryId", type="string", example="1", description="Category ID for the menu item"),
- *                 @OA\Property(property="restaurantId", type="string", example="1", description="Restaurant ID for the menu item"),
- *                 @OA\Property(property="stock", type="integer", example=100, description="Available stock for the menu item"),
- *                 @OA\Property(
- *                     property="stockItems",
- *                     type="array",
- *                     description="Array of stock items with their quantities",
- *                     @OA\Items(
- *                         @OA\Property(property="stockId", type="integer", example=1, description="Stock ID"),
- *                         @OA\Property(property="quantity", type="number", example=10.5, description="Quantity for this stock item")
- *                     )
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=201,
- *         description="Menu item created",
- *         @OA\JsonContent(
- *             @OA\Property(property="data", type="object", ref="#/components/schemas/Menu"),
- *             @OA\Property(property="message", type="string", example="Menu item created successfully with associated stock.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Validation Error",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="The total stock must be equal to or greater than the sum of stock item quantities.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Server Error",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Failed to create menu item and stock: [Error message here]")
- *         )
- *     )
- * )
- */
+     * @OA\Post(
+     *     path="/menu",
+     *     summary="Create a new menu item",
+     *     tags={"Menu"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"itemName", "price", "categoryId", "restaurantId", "stock", "stockItems"},
+     *                 @OA\Property(property="itemName", type="string", example="Pizza", description="Name of the menu item"),
+     *                 @OA\Property(property="itemImage", type="string", format="binary", description="Menu item image"),
+     *                 @OA\Property(property="price", type="number", format="float", example=9.99, description="Price of the menu item"),
+     *                 @OA\Property(property="categoryId", type="string", example="1", description="Category ID for the menu item"),
+     *                 @OA\Property(property="restaurantId", type="string", example="1", description="Restaurant ID for the menu item"),
+     *                 @OA\Property(property="stock", type="integer", example=100, description="Available stock for the menu item"),
+     *                 @OA\Property(
+     *                     property="stockItems",
+     *                     type="array",
+     *                     description="Array of stock items with their quantities",
+     *                     @OA\Items(
+     *                         @OA\Property(property="stockId", type="integer", example=1, description="Stock ID"),
+     *                         @OA\Property(property="quantity", type="number", example=10.5, description="Quantity for this stock item")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Menu item created",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/Menu"),
+     *             @OA\Property(property="message", type="string", example="Menu item created successfully with associated stock.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The total stock must be equal to or greater than the sum of stock item quantities.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to create menu item and stock: [Error message here]")
+     *         )
+     *     )
+     * )
+     */
 
-public function store(Request $request)
-{
-    Log::info('Reached store method');
+    public function store(Request $request)
+    {
+        Log::info('Reached store method');
 
-    try {
-        // Validate the request
+        try {
+            // Validate the request
+            $validatedData = $request->validate([
+                'itemName' => 'required|string|max:255',
+                'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'price' => 'required|numeric|min:0',
+                'categoryId' => 'required|integer',
+                'restaurantId' => 'required|string|max:255',
+                'stockItems' => 'required|array|min:1',
+                'stockItems.*.stockId' => 'required|integer',
+                'stockItems.*.quantity' => 'required|numeric|min:0.001',
+            ]);
+
+            Log::info('Validated Data:', $validatedData);
+
+            // Start a database transaction
+            DB::beginTransaction();
+
+            // Create the menu item
+            $menu = Menu::create([
+                'itemName' => $validatedData['itemName'],
+                'price' => $validatedData['price'],
+                'categoryId' => $validatedData['categoryId'],
+                'restaurantId' => $validatedData['restaurantId'],
+            ]);
+
+            Log::info('Menu created:', $menu->toArray());
+
+            // Handle image upload if present
+            if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                // Store the image directly in the public/menus folder
+                $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                $publicPath = public_path('menus');
+
+                // Create the directory if it doesn't exist
+                if (!file_exists($publicPath)) {
+                    mkdir($publicPath, 0777, true);
+                }
+
+                // Move the file to the public/menus directory
+                $request->file('itemImage')->move($publicPath, $imageName);
+
+                // Generate the public URL manually
+                $publicImageUrl = url('menus/' . $imageName);
+                $menu->update(['itemImage' => $publicImageUrl]);
+
+                Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
+            }
+
+            // Check and log each stock item being added to the MenuInventory table
+            foreach ($validatedData['stockItems'] as $stockItem) {
+                try {
+                    Log::info('Processing stock item:', $stockItem);
+
+                    $menuInventory = MenuInventory::create([
+                        'menuId' => $menu->id,
+                        'restaurantId' => $validatedData['restaurantId'],
+                        'stockId' => $stockItem['stockId'],
+                        'quantity' => $stockItem['quantity'],
+                    ]);
+
+                    Log::info('Stock item created for menu in inventory:', [
+                        'menuId' => $menu->id,
+                        'stockId' => $stockItem['stockId'],
+                        'quantity' => $stockItem['quantity']
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Error adding stock item to inventory:', [
+                        'error' => $e->getMessage(),
+                        'menuId' => $menu->id,
+                        'stockId' => $stockItem['stockId'],
+                        'quantity' => $stockItem['quantity']
+                    ]);
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+            Log::info('Transaction committed successfully.');
+
+            // Return success response in JSON format with the image URL and stock items
+            return response()->json([
+                'data' => [
+                    'menu' => $menu,
+                    'itemImage' => $menu->itemImage ?? null,
+                    'stockItems' => $validatedData['stockItems'],
+                ],
+                'message' => 'Menu item created successfully with associated stock.'
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+            Log::error('Failed to create menu item and associated stock items:', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Failed to create menu item and stock: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+
+
+    /**
+     * @OA\Put(
+     *     path="/menu/{id}",
+     *     summary="Update a menu item",
+     *     tags={"Menu"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Menu item ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"itemName", "price", "categoryId"},
+     *                 @OA\Property(property="itemName", type="string", example="Burger", description="Name of the menu item"),
+     *                 @OA\Property(property="itemImage", type="file", description="Image of the menu item"),
+     *                 @OA\Property(property="price", type="number", format="float", example=5.99, description="Price of the menu item"),
+     *                 @OA\Property(property="categoryId", type="integer", example=1, description="Category ID of the menu item"),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Menu item updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
+     *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
+     *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation error")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Menu item not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Menu item not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to update menu item",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to update menu item")
+     *         )
+     *     )
+     * )
+     */
+
+    public function update(Request $request, $id)
+    {
+        // Find the menu item by ID
+        $menu = Menu::find($id);
+
+        // Return a 404 response if the menu item is not found
+        if (!$menu) {
+            return response()->json(['message' => 'Menu item not found'], 404);
+        }
+
+        // Validate incoming request data
         $validatedData = $request->validate([
             'itemName' => 'required|string|max:255',
             'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
             'categoryId' => 'required|integer',
-            'restaurantId' => 'required|string|max:255',
-            'stockItems' => 'required|array|min:1',
-            'stockItems.*.stockId' => 'required|integer',
-            'stockItems.*.quantity' => 'required|numeric|min:0.001',
         ]);
-
-        Log::info('Validated Data:', $validatedData);
 
         // Start a database transaction
         DB::beginTransaction();
 
-        // Create the menu item
-        $menu = Menu::create([
-            'itemName' => $validatedData['itemName'],
-            'price' => $validatedData['price'],
-            'categoryId' => $validatedData['categoryId'],
-            'restaurantId' => $validatedData['restaurantId'],
-        ]);
+        try {
+            // Handle item image update if a new image file is provided
+            if ($request->hasFile('itemImage')) {
+                // Delete the old image if it exists
+                if ($menu->itemImage) {
+                    Storage::disk('public')->delete($menu->itemImage);
+                }
 
-        Log::info('Menu created:', $menu->toArray());
-
-        // Handle image upload if present
-        if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
-            // Store the image directly in the public/menus folder
-            $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
-            $publicPath = public_path('menus');
-            
-            // Create the directory if it doesn't exist
-            if (!file_exists($publicPath)) {
-                mkdir($publicPath, 0777, true);
+                // Store the new image and set its path in validated data
+                $imagePath = $request->file('itemImage')->store('menu_images', 'public');
+                $validatedData['itemImage'] = $imagePath;
             }
 
-            // Move the file to the public/menus directory
-            $request->file('itemImage')->move($publicPath, $imageName);
+            // Update the menu item with validated data, including optional new image
+            $menu->update([
+                'itemName' => $validatedData['itemName'],
+                'itemImage' => $validatedData['itemImage'] ?? $menu->itemImage,
+                'price' => $validatedData['price'],
+                'categoryId' => $validatedData['categoryId'],
+            ]);
 
-            // Generate the public URL manually
-            $publicImageUrl = url('menus/' . $imageName);
-            $menu->update(['itemImage' => $publicImageUrl]);
+            // Commit transaction after successful updates
+            DB::commit();
 
-            Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
-        }
-        
-        // Check and log each stock item being added to the MenuInventory table
-        foreach ($validatedData['stockItems'] as $stockItem) {
-            try {
-                Log::info('Processing stock item:', $stockItem);
-
-                $menuInventory = MenuInventory::create([
-                    'menuId' => $menu->id,
-                    'restaurantId' => $validatedData['restaurantId'],
-                    'stockId' => $stockItem['stockId'],
-                    'quantity' => $stockItem['quantity'],
-                ]);
-
-                Log::info('Stock item created for menu in inventory:', [
-                    'menuId' => $menu->id,
-                    'stockId' => $stockItem['stockId'],
-                    'quantity' => $stockItem['quantity']
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Error adding stock item to inventory:', [
-                    'error' => $e->getMessage(),
-                    'menuId' => $menu->id,
-                    'stockId' => $stockItem['stockId'],
-                    'quantity' => $stockItem['quantity']
-                ]);
+            // Generate a public URL for the updated image if it exists
+            if ($menu->itemImage) {
+                $menu->itemImage = Storage::url($menu->itemImage);
             }
-        }
 
-        // Commit the transaction
-        DB::commit();
-        Log::info('Transaction committed successfully.');
-
-        // Return success response in JSON format with the image URL and stock items
-        return response()->json([
-            'data' => [
-                'menu' => $menu,
+            // Return a success response with updated menu data
+            return response()->json([
+                'data' => $menu,
                 'itemImage' => $menu->itemImage ?? null,
-                'stockItems' => $validatedData['stockItems'],
-            ],
-            'message' => 'Menu item created successfully with associated stock.'
-        ], 200);
-    } catch (\Exception $e) {
-        // Rollback the transaction in case of an error
-        DB::rollBack();
-        Log::error('Failed to create menu item and associated stock items:', ['error' => $e->getMessage()]);
-        return response()->json(['message' => 'Failed to create menu item and stock: ' . $e->getMessage()], 500);
+                'message' => 'Menu item updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollBack();
+            Log::error('Failed to update menu item:', ['error' => $e->getMessage(), 'request_data' => $request->all()]);
+            return response()->json(['message' => 'Failed to update menu item'], 500);
+        }
     }
-}
-
-
-
-
- /**
- * @OA\Put(
- *     path="/menu/{id}",
- *     summary="Update a menu item",
- *     tags={"Menu"},
- *     security={{"bearerAuth":{}}},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         description="Menu item ID",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 required={"itemName", "price", "categoryId"},
- *                 @OA\Property(property="itemName", type="string", example="Burger", description="Name of the menu item"),
- *                 @OA\Property(property="itemImage", type="file", description="Image of the menu item"),
- *                 @OA\Property(property="price", type="number", format="float", example=5.99, description="Price of the menu item"),
- *                 @OA\Property(property="categoryId", type="integer", example=1, description="Category ID of the menu item"),
- *                 @OA\Property(
- *                     property="stockItems",
- *                     type="array",
- *                     description="List of stock items with IDs and quantities",
- *                     @OA\Items(
- *                         @OA\Property(property="stockId", type="integer", description="ID of the stock item"),
- *                         @OA\Property(property="quantity", type="number", format="float", description="Quantity of the stock item", example=10)
- *                     )
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Menu item updated successfully",
- *         @OA\JsonContent(
- *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
- *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
- *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Validation error",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Validation error")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Menu item not found",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Menu item not found")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Failed to update menu item",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Failed to update menu item")
- *         )
- *     )
- * )
- */
-
-     public function update(Request $request, $id)
-     {
-         // Find the menu item by ID
-         $menu = Menu::find($id);
-
-         // Return a 404 response if the menu item is not found
-         if (!$menu) {
-             return response()->json(['message' => 'Menu item not found'], 404);
-         }
-
-         // Validate incoming request data
-         $validatedData = $request->validate([
-             'itemName' => 'required|string|max:255',
-             'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-             'price' => 'required|numeric|min:0',
-             'categoryId' => 'required|integer',
-         ]);
-
-         // Start a database transaction
-         DB::beginTransaction();
-
-         try {
-             // Handle item image update if a new image file is provided
-             if ($request->hasFile('itemImage')) {
-                 // Delete the old image if it exists
-                 if ($menu->itemImage) {
-                     Storage::disk('public')->delete($menu->itemImage);
-                 }
-
-                 // Store the new image and set its path in validated data
-                 $imagePath = $request->file('itemImage')->store('menu_images', 'public');
-                 $validatedData['itemImage'] = $imagePath;
-             }
-
-
-
-
-             // Update the menu item with validated data, including optional new image
-             $menu->update([
-                 'itemName' => $validatedData['itemName'],
-                 'itemImage' => $validatedData['itemImage'] ?? $menu->itemImage,
-                 'price' => $validatedData['price'],
-                 'categoryId' => $validatedData['categoryId'],
-             ]);
-
-             // Commit transaction after successful updates
-             DB::commit();
-
-             // Generate a public URL for the updated image if it exists
-             if ($menu->itemImage) {
-                 $menu->itemImage = Storage::url($menu->itemImage);
-             }
-
-             // Return a success response with updated menu data
-             return response()->json([
-                 'data' => $menu,
-                 'itemImage' => $menu->itemImage ?? null,
-                 'message' => 'Menu item updated successfully'
-             ], 200);
-
-         } catch (\Exception $e) {
-             // Rollback transaction on error
-             DB::rollBack();
-             Log::error('Failed to update menu item:', ['error' => $e->getMessage()]);
-             return response()->json(['message' => 'Failed to update menu item'], 500);
-         }
-     }
 
 
 

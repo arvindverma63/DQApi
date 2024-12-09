@@ -863,25 +863,6 @@
                                         "description": "Category ID of the menu item",
                                         "type": "integer",
                                         "example": 1
-                                    },
-                                    "stockItems": {
-                                        "description": "List of stock items with IDs and quantities",
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "stockId": {
-                                                    "description": "ID of the stock item",
-                                                    "type": "integer"
-                                                },
-                                                "quantity": {
-                                                    "description": "Quantity of the stock item",
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 10
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
                                     }
                                 },
                                 "type": "object"
