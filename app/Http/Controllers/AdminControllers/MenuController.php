@@ -394,7 +394,7 @@ class MenuController extends Controller
              // Rollback transaction on error
              DB::rollBack();
              Log::error('Failed to update menu item:', ['error' => $e->getMessage(), 'request_data' => $request->all()]);
-             return response()->json(['message' => 'Failed to update menu item'], 500);
+             return response()->json(['message' => 'Failed to update menu item','error'=>$e], 500);
          }
      }
 
