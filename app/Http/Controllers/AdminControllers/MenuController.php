@@ -335,7 +335,7 @@ class MenuController extends Controller
              'itemName' => 'required|string|max:255',
              'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
              'price' => 'required|numeric|min:0',
-             'categoryId' => 'required|integer',
+             'categoryId' => 'nullable|integer',
          ]);
          Log::info('Validated data for update menu:', $validatedData);
 
@@ -378,7 +378,7 @@ class MenuController extends Controller
              $menu->update([
                  'itemName' => $validatedData['itemName'],
                  'price' => $validatedData['price'],
-                 'categoryId' => $validatedData['categoryId'],
+                 'categoryId' => $validatedData['categoryId'] ?? $menu->categoryId,
              ]);
 
              // Commit transaction after successful updates
