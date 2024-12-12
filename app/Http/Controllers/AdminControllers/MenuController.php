@@ -262,63 +262,91 @@ class MenuController extends Controller
 
 
     /**
-     * @OA\Put(
-     *     path="/menu/{id}",
-     *     summary="Update a menu item",
-     *     tags={"Menu"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Menu item ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 required={"itemName", "price", "categoryId"},
-     *                 @OA\Property(property="itemName", type="string", example="Burger", description="Name of the menu item"),
-     *                 @OA\Property(property="itemImage", type="file", description="Image of the menu item"),
-     *                 @OA\Property(property="price", type="number", format="float", example=5.99, description="Price of the menu item"),
-     *                 @OA\Property(property="categoryId", type="integer", example=1, description="Category ID of the menu item"),
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Menu item updated successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
-     *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
-     *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Validation error")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Menu item not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Menu item not found")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to update menu item",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Failed to update menu item")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Put(
+ *     path="/menu/{id}",
+ *     summary="Update a menu item",
+ *     tags={"Menu"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Menu item ID",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"itemName", "price", "categoryId"},
+ *                 @OA\Property(
+ *                     property="itemName",
+ *                     type="string",
+ *                     example="Burger",
+ *                     description="Name of the menu item"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="itemImage",
+ *                     type="file",
+ *                     description="Image of the menu item (optional)"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="price",
+ *                     type="number",
+ *                     format="float",
+ *                     example=5.99,
+ *                     description="Price of the menu item"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="categoryId",
+ *                     type="integer",
+ *                     example=1,
+ *                     description="Category ID of the menu item"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Menu item updated successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
+ *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
+ *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Validation error",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Validation error")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Authorization token not found")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Menu item not found",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Menu item not found")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Failed to update menu item",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Failed to update menu item")
+ *         )
+ *     )
+ * )
+ */
+
 
      public function update(Request $request, $id)
 {

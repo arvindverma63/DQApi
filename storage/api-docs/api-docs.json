@@ -850,7 +850,7 @@
                                         "example": "Burger"
                                     },
                                     "itemImage": {
-                                        "description": "Image of the menu item",
+                                        "description": "Image of the menu item (optional)",
                                         "type": "file"
                                     },
                                     "price": {
@@ -903,6 +903,22 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Validation error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Authorization token not found"
                                         }
                                     },
                                     "type": "object"
