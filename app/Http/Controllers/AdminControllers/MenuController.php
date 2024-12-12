@@ -320,64 +320,95 @@ class MenuController extends Controller
      * )
      */
 
-     public function update(Request $request, $id)
-     {
-         // Find the menu item by ID
-         $menu = Menu::find($id);
+    public function update(Request $request, $id)
+    {
+        // Find the menu item by ID
+        $menu = Menu::find($id);
 
-         // Return a 404 response if the menu item is not found
-         if (!$menu) {
-             return response()->json(['message' => 'Menu item not found'], 404);
-         }
+        // Return a 404 response if the menu item is not found
+        if (!$menu) {
+            return response()->json(['message' => 'Menu item not found'], 404);
+        }
 
-         // Validate incoming request data
-         $validatedData = $request->validate([
-             'itemName' => 'required|string|max:255',
-             'itemImage' => 'nullable|image',
-             'price' => 'required|numeric|min:0',
-             'categoryId' => 'nullable|integer',
-         ]);
-         Log::info('Validated data for update menu:', $validatedData);
+        // Validate incoming request data
+        $validatedData = $request->validate([
+            'itemName' => 'required|string|max:255',
+            'itemImage' => 'nullable|image',
+            'price' => 'required|numeric|min:0',
+            'categoryId' => 'nullable|integer',
+        ]);
 
-         // Start a database transaction
-         DB::beginTransaction();
+        Log::info('Validated data for update menu:', $validatedData);
 
-         try {
-             // Handle item image update if a new image file is provided
-             if ($request->hasFile('itemImage')) {
+        // Start a database transaction
+        DB::beginTransaction();
+
+        try {
+            // Handle item image update if a new image file is provided
+            if ($request->hasFile('itemImage')) {
                 // Delete old image if exists
-                if ($menu->itemImage && file_exists(public_path($menu->itemImage))) {
-                    unlink(public_path($menu->itemImage));
-                }
+                $this->deleteOldImage($menu->itemImage);
 
                 // Upload new image
-                $imageName = time() . '_' . $request->itemImage . '.' . $request->itemImage->extension();
-                $request->itemImage->move(public_path('menus'), $imageName);
-                $validatedData['itemImage'] = 'menus/' . $imageName; // Store image path
+                $imagePath = $this->uploadNewImage($request->file('itemImage'));
+                $validatedData['itemImage'] = $imagePath; // Store new image path
             }
-             // Update the menu item with validated data, including the new itemImage if present
-             $menu->update([
-                 'itemName' => $validatedData['itemName'],
-                 'price' => $validatedData['price'],
-                 'categoryId' => $validatedData['categoryId'] ?? $menu->categoryId,
-             ]);
 
-             // Commit transaction after successful updates
-             DB::commit();
+            // Update the menu item with validated data
+            $menu->update([
+                'itemName' => $validatedData['itemName'],
+                'price' => $validatedData['price'],
+                'categoryId' => $validatedData['categoryId'] ?? $menu->categoryId,
+                'itemImage' => $validatedData['itemImage'] ?? $menu->itemImage,
+            ]);
 
-             // Return a success response with updated menu data
-             return response()->json([
-                 'data' => $menu,
-                 'itemImage' => $menu->itemImage ?? null,
-                 'message' => 'Menu item updated successfully'
-             ], 200);
-         } catch (\Exception $e) {
-             // Rollback transaction on error
-             DB::rollBack();
-             Log::error('Failed to update menu item:', ['error' => $e->getMessage(), 'request_data' => $request->all()]);
-             return response()->json(['message' => 'Failed to update menu item','error'=>$e], 500);
-         }
-     }
+            // Commit transaction after successful updates
+            DB::commit();
+
+            // Return a success response with updated menu data
+            return response()->json([
+                'data' => $menu,
+                'message' => 'Menu item updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollBack();
+            Log::error('Failed to update menu item:', [
+                'error' => $e->getMessage(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json(['message' => 'Failed to update menu item'], 500);
+        }
+    }
+
+    /**
+     * Deletes the old image if it exists.
+     *
+     * @param string|null $imagePath
+     * @return void
+     */
+    private function deleteOldImage(?string $imagePath)
+    {
+        if ($imagePath && file_exists(public_path($imagePath))) {
+            unlink(public_path($imagePath));
+        }
+    }
+
+    /**
+     * Uploads a new image and returns its path.
+     *
+     * @param \Illuminate\Http\UploadedFile $image
+     * @return string
+     */
+    private function uploadNewImage($image)
+    {
+        $imageName = time() . '_' . uniqid() . '.' . $image->extension();
+        $image->move(public_path('menus'), $imageName);
+
+        return 'menus/' . $imageName;
+    }
+
 
 
 
