@@ -368,7 +368,6 @@ class MenuController extends Controller
 
                  // Generate the public URL for the uploaded image
                  $publicImageUrl = url('menus/' . $imageName);
-
                  // Update the menu with the new image URL
                  $menu->itemImage = $publicImageUrl;
                  Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
