@@ -815,13 +815,13 @@
                 ]
             }
         },
-        "/menu/{id}": {
+        "/menu/update/{id}": {
             "put": {
                 "tags": [
                     "Menu"
                 ],
                 "summary": "Update a menu item",
-                "operationId": "b34ab9d213ec80e3a7cb89c0e52c7620",
+                "operationId": "8a399772de013a4880ea846fc2b25628",
                 "parameters": [
                     {
                         "name": "id",
@@ -964,7 +964,9 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/menu/{id}": {
             "delete": {
                 "tags": [
                     "Menu"
