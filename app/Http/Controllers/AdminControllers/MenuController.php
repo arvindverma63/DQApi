@@ -333,7 +333,7 @@ class MenuController extends Controller
          // Validate incoming request data
          $validatedData = $request->validate([
              'itemName' => 'required|string|max:255',
-             'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
+             'itemImage' => 'nullable|image',
              'price' => 'required|numeric|min:0',
              'categoryId' => 'nullable|integer',
          ]);
