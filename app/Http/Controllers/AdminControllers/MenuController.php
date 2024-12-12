@@ -322,13 +322,7 @@ class MenuController extends Controller
 
      public function update(Request $request, $id)
      {
-         // Find the menu item by ID
-         $menu = Menu::find($id);
 
-         // Return a 404 response if the menu item is not found
-         if (!$menu) {
-             return response()->json(['message' => 'Menu item not found'], 404);
-         }
 
          // Validate incoming request data
          $validatedData = $request->validate([
@@ -337,10 +331,16 @@ class MenuController extends Controller
              'price' => 'required|numeric|min:0',
              'categoryId' => 'required|integer',
          ]);
+
          Log::info('Validated data for update menu:', $validatedData);
 
-         // Start a database transaction
-         DB::beginTransaction();
+         // Find the menu item by ID
+         $menu = Menu::find($id);
+
+         // Return a 404 response if the menu item is not found
+         if (!$menu) {
+             return response()->json(['message' => 'Menu item not found'], 404);
+         }
 
          try {
              // Handle item image update if a new image file is provided
@@ -368,6 +368,7 @@ class MenuController extends Controller
 
                  // Generate the public URL for the uploaded image
                  $publicImageUrl = url('menus/' . $imageName);
+
                  // Update the menu with the new image URL
                  $menu->itemImage = $publicImageUrl;
                  Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
@@ -380,8 +381,6 @@ class MenuController extends Controller
                  'categoryId' => $validatedData['categoryId'],
              ]);
 
-             // Commit transaction after successful updates
-             DB::commit();
 
              // Return a success response with updated menu data
              return response()->json([
