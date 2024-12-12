@@ -344,36 +344,17 @@ class MenuController extends Controller
 
          try {
              // Handle item image update if a new image file is provided
-             if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
-                 // Delete the old image if it exists
-                 if ($menu->itemImage) {
-                     // Delete old image from the public folder
-                     $oldImagePath = public_path('menus/' . basename($menu->itemImage));
-                     if (file_exists($oldImagePath)) {
-                         unlink($oldImagePath); // Delete the old image
-                     }
-                 }
+             if ($request->hasFile('itemImage')) {
+                // Delete old image if exists
+                if ($menu->itemImage && file_exists(public_path($menu->itemImage))) {
+                    unlink(public_path($menu->itemImage));
+                }
 
-                 // Generate a unique name for the image
-                 $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
-                 $publicPath = public_path('menus');
-
-                 // Create the directory if it doesn't exist
-                 if (!file_exists($publicPath)) {
-                     mkdir($publicPath, 0777, true);
-                 }
-
-                 // Move the file to the public/menus directory
-                 $request->file('itemImage')->move($publicPath, $imageName);
-
-                 // Generate the public URL for the uploaded image
-                 $publicImageUrl = url('menus/' . $imageName);
-
-                 // Update the menu with the new image URL
-                 $menu->itemImage = $publicImageUrl;
-                 Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
-             }
-
+                // Upload new image
+                $imageName = time() . '_' . $request->itemImage . '.' . $request->itemImage->extension();
+                $request->itemImage->move(public_path('menus'), $imageName);
+                $validatedData['itemImage'] = 'menus/' . $imageName; // Store image path
+            }
              // Update the menu item with validated data, including the new itemImage if present
              $menu->update([
                  'itemName' => $validatedData['itemName'],
