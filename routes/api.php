@@ -67,6 +67,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::put('/profile/{id}',[UserProfileController::class,'updateProfile']);
+        Route::patch('/profile/{id}',[UserProfileController::class,'updateProfilePhoto']);
 
         Route::put('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 

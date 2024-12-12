@@ -299,5 +299,42 @@ class UserProfileController extends Controller
         }
     }
 
+    public function updateProfilePhoto($id, Request $request){
+        $validatedData = $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $profile = UserProfile::find($id);
+
+        if (!$profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
+        if ($request->hasFile('image')) {
+            if ($profile->image) {
+                Storage::disk('public')->delete($profile->image);
+            }
+
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $imagePath = $request->file('image')->storeAs('profile_images', $imageName, 'public');
+
+            $profile->image = $imagePath;
+        }
+
+        try {
+            $profile->save();
+
+            return response()->json([
+                'message' => 'Profile Photo Updated Successfully',
+                'data' => $profile
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update profile photo',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }
