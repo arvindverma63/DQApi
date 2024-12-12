@@ -342,9 +342,25 @@ class MenuController extends Controller
                 // Delete old image if exists
                 $this->deleteOldImage($menu->itemImage);
 
-                // Upload new image
-                $imagePath = $this->uploadNewImage($request->file('itemImage'));
-                $validatedData['itemImage'] = $imagePath; // Store new image path
+                if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                    // Store the image directly in the public/menus folder
+                    $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                    $publicPath = public_path('menus');
+
+                    // Create the directory if it doesn't exist
+                    if (!file_exists($publicPath)) {
+                        mkdir($publicPath, 0777, true);
+                    }
+
+                    // Move the file to the public/menus directory
+                    $request->file('itemImage')->move($publicPath, $imageName);
+
+                    // Generate the public URL manually
+                    $publicImageUrl = url('menus/' . $imageName);
+                    $menu->update(['itemImage' => $publicImageUrl]);
+
+                    Log::info('Image uploaded and stored in public folder:', ['path' => $publicImageUrl]);
+                }
             }
 
             // Update the menu item with validated data
