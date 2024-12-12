@@ -250,7 +250,7 @@ class UserProfileController extends Controller
             'email' => 'nullable|email|max:255',
         ]);
 
-        // Find the profile by ID
+        // Find the profile by ID here
         $profile = UserProfile::find($id);
 
         if (!$profile) {
