@@ -263,7 +263,7 @@ class MenuController extends Controller
 
     /**
  * @OA\Put(
- *     path="/menu/{id}",
+ *     path="/menu/update/{id}",
  *     summary="Update a menu item",
  *     tags={"Menu"},
  *     security={{"bearerAuth":{}}},

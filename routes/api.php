@@ -87,7 +87,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
         Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
         Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.show');
-        Route::put('/menu/{id}', [MenuController::class, 'update'])->name('menu.update');
+        Route::put('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
         Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
 
         // Menu management
