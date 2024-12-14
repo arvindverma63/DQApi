@@ -350,15 +350,8 @@ class MenuController extends Controller
 
      public function update(Request $request, $id)
 {
-    // Validate incoming request data
-    $validatedData = $request->validate([
-        'itemName' => 'required|string|max:255',
-        'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
-        'price' => 'required|numeric|min:0',
-        'categoryId' => 'required|integer',
-    ]);
 
-    Log::info('Validated data for update menu:', $validatedData);
+    Log::info('Validated data for update menu:', $request);
 
     // Find the menu item by ID
     $menu = Menu::find($id);
@@ -401,9 +394,9 @@ class MenuController extends Controller
 
         // Update the menu item with validated data, including the new itemImage if present
         $menu->update([
-            'itemName' => $validatedData['itemName'],
-            'price' => $validatedData['price'],
-            'categoryId' => $validatedData['categoryId'],
+            'itemName' => $request['itemName'],
+            'price' => $request['price'],
+            'categoryId' => $request['categoryId'],
         ]);
 
         // Commit the transaction
