@@ -351,7 +351,7 @@ class MenuController extends Controller
      public function update(Request $request, $id)
 {
 
-    Log::info('Validated data for update menu:', $request);
+    Log::info('request data for update menu:', $request);
 
     // Find the menu item by ID
     $menu = Menu::find($id);
