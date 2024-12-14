@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Exception;
 use Illuminate\Http\Request;
+use Log;
 
 /**
  * @OA\Schema(
@@ -123,6 +124,80 @@ class CustomerController extends Controller
             return response()->json($data);
         } else {
             return response()->json(['error' => 'Customer data not found'], 404);
+        }
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/customer/{id}",
+     *     summary="Delete Customer by ID",
+     *     description="Delete customer data by the provided ID.",
+     *     operationId="deleteCustomer",
+     *     tags={"Customer"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the customer to delete",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Customer successfully deleted",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Customer deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Customer not found for the given ID",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Customer not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Failed to delete customer")
+     *         )
+     *     )
+     * )
+     */
+    public function deleteCustomer($id)
+    {
+        try {
+            // Find the customer by ID
+            $customer = Customer::find($id);
+
+            // Check if the customer exists
+            if (!$customer) {
+                return response()->json([
+                    'error' => 'Customer not found'
+                ], 404);
+            }
+
+            // Delete the customer
+            $customer->delete();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Customer deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Failed to delete customer:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
+            // Return error response
+            return response()->json([
+                'error' => 'Failed to delete customer'
+            ], 500);
         }
     }
 }

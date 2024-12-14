@@ -167,6 +167,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::post('/customer', [CustomerController::class, 'createCustomer'])->name('create.customer');
+    Route::delete('/customer/{id}',[CustomerController::class,'deleteCustomer'])->name('delete.customer');
 
 
     Route::post('/transactions', [TransactionController::class, 'addTransaction']);
