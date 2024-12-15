@@ -885,12 +885,12 @@
             }
         },
         "/menu/update/{id}": {
-            "put": {
+            "post": {
                 "tags": [
                     "Menu"
                 ],
                 "summary": "Update a menu item",
-                "operationId": "8a399772de013a4880ea846fc2b25628",
+                "operationId": "8489b41e4f6e14ffebcea26b7b0c3cb2",
                 "parameters": [
                     {
                         "name": "id",

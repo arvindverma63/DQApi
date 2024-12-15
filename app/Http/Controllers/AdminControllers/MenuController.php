@@ -262,7 +262,7 @@ class MenuController extends Controller
 
 
     /**
- * @OA\Put(
+ * @OA\Post(
  *     path="/menu/update/{id}",
  *     summary="Update a menu item",
  *     tags={"Menu"},
