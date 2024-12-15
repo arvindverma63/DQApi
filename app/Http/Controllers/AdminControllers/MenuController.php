@@ -352,6 +352,9 @@ class MenuController extends Controller
  {
      Log::info('Request received for updating menu:', $request->except('itemImage'));
 
+     return response()->json([
+        'message' => json_encode($request->all())
+     ]);
      // Validate the incoming request
      $request->validate([
          'itemName' => 'required|string|max:255',
