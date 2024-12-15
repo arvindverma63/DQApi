@@ -577,12 +577,12 @@ class ReportController extends Controller
     public function getReportByType($id)
     {
         $response = Transaction::select(
-            'paymentType',
+            'payment_type',
             DB::raw('DATE(created_at) as day'),
             DB::raw('SUM(total) as total')
         )
-            ->where('reportTypeId', $id) // Assuming there's a reportTypeId to filter
-            ->groupBy('paymentType', DB::raw('DATE(created_at)'))
+            ->where('restaurantId', $id) // Assuming there's a reportTypeId to filter
+            ->groupBy('payment_type', DB::raw('DATE(created_at)'))
             ->orderBy('day', 'asc')
             ->get();
 
