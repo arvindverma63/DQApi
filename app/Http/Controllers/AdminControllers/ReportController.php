@@ -553,6 +553,12 @@ class ReportController extends Controller
      *                     type="string",
      *                     format="date",
      *                     description="Date of the transaction"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="total",
+     *                     type="number",
+     *                     format="float",
+     *                     description="Total transaction amount for the payment type"
      *                 )
      *             )
      *         )
@@ -567,13 +573,16 @@ class ReportController extends Controller
      *     )
      * )
      */
+
     public function getReportByType($id)
     {
-        $date = Carbon::now();
-        $today = $date->toDateString();
-
-        $response = Transaction::select('paymentType')
-            ->groupBy(DB::raw('DATE(created_at)'))
+        $response = Transaction::select(
+            'payment_type',
+            DB::raw('DATE(created_at) as day'),
+            DB::raw('SUM(total) as total')
+        )
+            ->where('restaurantId', $id) // Assuming there's a reportTypeId to filter
+            ->groupBy('payment_type', DB::raw('DATE(created_at)'))
             ->orderBy('day', 'asc')
             ->get();
 

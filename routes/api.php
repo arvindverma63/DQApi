@@ -34,6 +34,7 @@ Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
 
+Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {
@@ -68,7 +69,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
 
-        Route::put('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
 
         // QR management

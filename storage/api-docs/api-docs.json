@@ -2263,6 +2263,11 @@
                                                 "description": "Date of the transaction",
                                                 "type": "string",
                                                 "format": "date"
+                                            },
+                                            "total": {
+                                                "description": "Total transaction amount for the payment type",
+                                                "type": "number",
+                                                "format": "float"
                                             }
                                         },
                                         "type": "object"
