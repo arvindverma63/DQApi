@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Mail\OtpMail;
+use App\Models\UserProfile;
 
 /**
  * @OA\Info(title="Category API", version="1.0")
@@ -202,9 +203,12 @@ class AuthController extends Controller
     // Check if the user is an admin
     if ($user->role == 'admin') {
         // Return token, user ID, and restaurant ID in the response for admins
+
+        $userProfile = UserProfile::where('restaurantId', $user->restaurantId)->first();
         return response()->json([
             'token' => $token,
             'user_id' => $user->id,
+            'profile_image' => isset($userProfile->image) ? url($userProfile->image) : "https://placehold.co/100",
             'restaurant_id' => $user->restaurantId,
         ]);
     }
