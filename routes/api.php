@@ -80,7 +80,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/category', [CategoryController::class, 'addCategory']);
         Route::get('/categories', [CategoryController::class, 'getAllCategories']);
         Route::get('/category/{id}', [CategoryController::class, 'getCategoryById']);
-        Route::put('/category/{id}', [CategoryController::class, 'updateCategory']);
+        Route::post('/category/{id}', [CategoryController::class, 'updateCategory']);
         Route::delete('/category/{id}', [CategoryController::class, 'deleteCategory']);
 
         Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
