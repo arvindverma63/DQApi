@@ -162,6 +162,7 @@ class UserProfileController extends Controller
         $response = UserProfile::where('restaurantId', $id)->first();
 
         if ($response) {
+            $response->image = url($response->image);
             return response()->json($response);
         }
 
@@ -232,8 +233,10 @@ class UserProfileController extends Controller
      * )
      */
 
-    public function updateProfile($id, Request $request)
+    public function updateProfile(Request $request, $id)
     {
+
+
         // Validate the incoming request data
         $validatedData = $request->validate([
             'firstName' => 'nullable|string|max:255',
@@ -268,69 +271,45 @@ class UserProfileController extends Controller
         $profile->restaurantId = $validatedData['restaurantId'];
         $profile->identity = $validatedData['identity'] ?? $profile->identity;
         $profile->identityNumber = $validatedData['identityNumber'] ?? $profile->identityNumber;
-        $profile->email = $validatedData['email'];
+        $profile->email = $validatedData['email'] ?? $profile->email;
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($profile->image) {
-                Storage::disk('public')->delete($profile->image);
-            }
 
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
-            $imagePath = $request->file('image')->storeAs('profile_images', $imageName, 'public');
+            $imagePath = public_path('profile_images');
 
-            $profile->image = $imagePath;
+            if (!file_exists($imagePath)) {
+                mkdir($imagePath, 0777, true);
+            }
+            if($profile->image){
+                unlink($profile->image);
+            }
+
+            $request->file('image')->move($imagePath, $imageName);
+            $publicImageUrl = 'profile_images/' . $imageName;
+
+            $profile->image = $publicImageUrl;
+
         }
 
         // Save the updated profile
         try {
             $profile->save();
 
+            $profile->image = url($profile->image);
             return response()->json([
                 'message' => 'Profile updated successfully',
                 'data' => $profile
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to update profile',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
 
-    public function updateProfilePhoto($id, Request $request){
-        $validatedData = $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $profile = UserProfile::find($id);
-
-        if (!$profile) {
-            return response()->json(['message' => 'Profile not found'], 404);
-        }
-
-        if ($request->hasFile('image')) {
-            if ($profile->image) {
-                Storage::disk('public')->delete($profile->image);
+            if (isset($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
             }
 
-            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
-            $imagePath = $request->file('image')->storeAs('profile_images', $imageName, 'public');
-
-            $profile->image = $imagePath;
-        }
-
-        try {
-            $profile->save();
-
             return response()->json([
-                'message' => 'Profile Photo Updated Successfully',
-                'data' => $profile
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to update profile photo',
+                'message' => 'Failed to update profile',
                 'error' => $e->getMessage()
             ], 500);
         }
