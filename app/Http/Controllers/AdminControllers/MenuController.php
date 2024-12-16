@@ -245,7 +245,7 @@ class MenuController extends Controller
             return response()->json([
                 'data' => [
                     'menu' => $menu,
-                    'itemImage' => $menu->itemImage ?? null,
+                    'itemImage' => ((!str_starts_with($menu->itemImage, 'http')) ? url($menu->itemImage) : $menu->itemImage) ?? null,
                     'stockItems' => $validatedData['stockItems'],
                 ],
                 'message' => 'Menu item created successfully with associated stock.'
@@ -262,7 +262,7 @@ class MenuController extends Controller
 
 
     /**
- * @OA\Post(
+ * @OA\Put(
  *     path="/menu/update/{id}",
  *     summary="Update a menu item",
  *     tags={"Menu"},
@@ -352,9 +352,6 @@ class MenuController extends Controller
  {
      Log::info('Request received for updating menu:', $request->except('itemImage'));
 
-     return response()->json([
-        'message' => json_encode($request->all())
-     ]);
      // Validate the incoming request
      $request->validate([
          'itemName' => 'required|string|max:255',
@@ -374,20 +371,39 @@ class MenuController extends Controller
          DB::transaction(function () use ($request, $menu) {
              // Handle item image update
              if ($request->hasFile('itemImage')) {
-                 // Delete old image if exists
-                 if ($menu->itemImage) {
-                     Storage::delete('public/menus/' . basename($menu->itemImage));
+
+
+                 $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                 $imagePath = public_path('menus');
+
+                 if (!file_exists($menu->itemImage)) {
+                     mkdir($menu->itemImage, 0777, true);
+                 }
+                 if($menu->itemImage && !str_starts_with($menu->itemImage, 'http') && !is_dir($menu->itemImage)){
+                     unlink($menu->itemImage);
+                 }elseif($menu->itemImage){
+                    $imageFromUrl = implode('/', array_slice(explode('/', trim(parse_url($menu->itemImage, PHP_URL_PATH), '/')), -2));
+                    if(strpos($imageFromUrl, '.') !== false && !is_dir($imageFromUrl)){
+                        unlink($imageFromUrl);
+                    }
                  }
 
-                 // Store new image
-                 $path = $request->file('itemImage')->store('menus', 'public');
-                 $menu->itemImage = Storage::url($path);
+                 $request->file('itemImage')->move($imagePath, $imageName);
+                 $publicImageUrl = 'menus/' . $imageName;
 
-                 Log::info('New image uploaded:', ['path' => $menu->itemImage]);
+                 $request['itemImage'] = $publicImageUrl;
+                 $request->itemImage = $publicImageUrl;
+
              }
 
              // Update menu details
-             $menu->update($request->only(['itemName', 'price', 'categoryId']));
+            //  $menu->update($request->only(['itemName', 'price', 'categoryId', 'itemImage']));
+             $menu->update([
+                'itemImage' => $request->itemImage,
+                'price' => $request->price,
+                'categoryId' => $request->categoryId,
+                'itemImage' => $request->itemImage
+             ]);
          });
 
          return response()->json([
@@ -400,7 +416,7 @@ class MenuController extends Controller
              'request_data' => $request->except('itemImage'),
          ]);
 
-         return response()->json(['message' => 'Failed to update menu item'], 500);
+         return response()->json(['message' => 'Failed to update menu item : '. $e->getMessage()], 500);
      }
  }
 
@@ -441,15 +457,22 @@ class MenuController extends Controller
         try {
             DB::transaction(function () use ($menu, $id) {
                 // Delete the associated image if it exists
-                if ($menu->itemImage) {
-                    Storage::disk('public')->delete($menu->itemImage);
+                if($menu->itemImage && !str_starts_with($menu->itemImage, 'http') && !is_dir($menu->itemImage)){
+                    unlink($menu->itemImage);
+
+                }elseif($menu->itemImage){
+                   $imageFromUrl = implode('/', array_slice(explode('/', trim(parse_url($menu->itemImage, PHP_URL_PATH), '/')), -2));
+
+                   if(strpos($imageFromUrl, '.') !== false && !is_dir($imageFromUrl)){
+                       unlink($imageFromUrl);
+                    }
                 }
 
                 // Delete the menu item
                 $menu->delete();
 
                 // Remove entries from MenuInventory
-                MenuInventory::where('menuId', $id)->delete();
+               MenuInventory::where('menuId', $id)->delete();
             });
 
             return response()->json(null, 204);
