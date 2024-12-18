@@ -63,12 +63,14 @@ class InvoiceController extends Controller
         $recipientEmail = $request->input('email');
 
         try {
-            // Use raw HTML content for the email body
-            Mail::send([], [], function ($message) use ($htmlContent, $recipientEmail) {
-                $message->to($recipientEmail)
-                        ->subject('Invoice')
-                        ->setBody($htmlContent, 'text/html');
-            });
+            // Use Symfony's Email class to create the email
+            $email = (new Email())
+                ->to($recipientEmail)
+                ->subject('Invoice')
+                ->html($htmlContent);
+
+            // Use Laravel's Mail facade to send the email
+            Mail::mailer('smtp')->send($email);
 
             return response()->json(['success' => true, 'message' => 'Invoice sent successfully.']);
         } catch (\Exception $e) {
@@ -86,5 +88,4 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
-
 }
