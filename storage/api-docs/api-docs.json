@@ -2831,6 +2831,10 @@
                                                 "description": "Customer's name",
                                                 "type": "string"
                                             },
+                                            "userEmail": {
+                                                "description": "Customer's email",
+                                                "type": "string"
+                                            },
                                             "items": {
                                                 "description": "List of items in the transaction",
                                                 "type": "array",

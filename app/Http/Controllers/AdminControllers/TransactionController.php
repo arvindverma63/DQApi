@@ -320,6 +320,7 @@ class TransactionController extends Controller
  *                 type="object",
  *                 @OA\Property(property="id", type="integer", description="Transaction ID"),
  *                 @OA\Property(property="userName", type="string", description="Customer's name"),
+ *                 @OA\Property(property="userEmail", type="string", description="Customer's email"),
  *                 @OA\Property(property="items", type="array", @OA\Items(type="string"), description="List of items in the transaction"),
  *                 @OA\Property(property="tax", type="number", format="float", description="Tax applied to the transaction"),
  *                 @OA\Property(property="discount", type="number", format="float", description="Discount applied to the transaction"),
@@ -371,6 +372,7 @@ public function getTransactionById($id)
             return [
                 'id' => $transaction->id,
                 'userName' => $customer->name,
+                'userEmail' => $customer->email ?? null,
                 'items' => json_decode($transaction->items), // Decode JSON to array
                 'tax' => floatval($transaction->tax),
                 'discount' => floatval($transaction->discount),
