@@ -63,18 +63,16 @@ class InvoiceController extends Controller
         $recipientEmail = $request->input('email');
 
         try {
-            // Create the email using Symfony Mime
-            $email = (new Email())
-                ->to($recipientEmail)
-                ->subject('Invoice')
-                ->html($htmlContent);
-
-            // Send the email
-            Mail::mailer('smtp')->send($email);
+            // Use raw HTML content for the email body
+            Mail::send([], [], function ($message) use ($htmlContent, $recipientEmail) {
+                $message->to($recipientEmail)
+                        ->subject('Invoice')
+                        ->setBody($htmlContent, 'text/html');
+            });
 
             return response()->json(['success' => true, 'message' => 'Invoice sent successfully.']);
-        } catch (\Throwable $e) {
-            // Log the error
+        } catch (\Exception $e) {
+            // Log the error details
             Log::error('Failed to send invoice email', [
                 'recipientEmail' => $recipientEmail,
                 'error' => $e->getMessage(),
@@ -88,4 +86,5 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
+
 }
