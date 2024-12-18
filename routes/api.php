@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminControllers\MenuController;
 use App\Http\Controllers\AdminControllers\OrderController;
 use App\Http\Controllers\AdminControllers\SupplierController;
 use App\Http\Controllers\AdminControllers\InventoryController;
+use App\Http\Controllers\AdminControllers\InvoiceController;
 use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\TransactionController;
@@ -69,6 +70,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
 
+        Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
 
 
         // QR management

@@ -714,6 +714,109 @@
                 }
             }
         },
+        "/send-invoice-email": {
+            "post": {
+                "tags": [
+                    "Admin - Invoice"
+                ],
+                "summary": "Send invoice email",
+                "description": "Send an HTML invoice to the specified email address.",
+                "operationId": "508439df1fcd4d9765ab3ac3d9386cfb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "htmlContent",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "htmlContent": {
+                                        "description": "HTML content of the invoice",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "Recipient's email address",
+                                        "type": "string",
+                                        "format": "email"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Invoice sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invoice sent successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to send invoice."
+                                        },
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/menu": {
             "get": {
                 "tags": [
@@ -885,12 +988,12 @@
             }
         },
         "/menu/update/{id}": {
-            "post": {
+            "put": {
                 "tags": [
                     "Menu"
                 ],
                 "summary": "Update a menu item",
-                "operationId": "8489b41e4f6e14ffebcea26b7b0c3cb2",
+                "operationId": "8a399772de013a4880ea846fc2b25628",
                 "parameters": [
                     {
                         "name": "id",
@@ -4654,6 +4757,10 @@
         {
             "name": "Inventory",
             "description": "Inventory"
+        },
+        {
+            "name": "Admin - Invoice",
+            "description": "Admin - Invoice"
         },
         {
             "name": "Menu",
