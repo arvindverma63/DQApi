@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\InvoiceMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -63,14 +64,8 @@ class InvoiceController extends Controller
         $recipientEmail = $request->input('email');
 
         try {
-            // Use Symfony's Email class to create the email
-            $email = (new Email())
-                ->to($recipientEmail)
-                ->subject('Invoice')
-                ->html($htmlContent);
-
-            // Use Laravel's Mail facade to send the email
-            Mail::mailer('smtp')->send($email);
+            // Send the email using the InvoiceMail class
+            Mail::to($recipientEmail)->send(new InvoiceMail($htmlContent));
 
             return response()->json(['success' => true, 'message' => 'Invoice sent successfully.']);
         } catch (\Exception $e) {
