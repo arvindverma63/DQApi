@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -17,6 +16,8 @@ class InvoiceMail extends Mailable
 
     /**
      * Create a new message instance.
+     *
+     * @param string $htmlContent
      */
     public function __construct($htmlContent)
     {
@@ -29,18 +30,21 @@ class InvoiceMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Invoice Mail',
+            subject: 'Invoice Mail', // Set the subject here
         );
     }
 
     /**
      * Get the message content definition.
      */
-    public function content()
+    public function content(): Content
     {
-        return $this->subject('Invoice')
-                    ->view('emails.invoice') // Use the Blade view
-                    ->with(['htmlContent' => $this->htmlContent]);
+        return new Content(
+            view: 'emails.invoice', // Reference the Blade view
+            with: [
+                'htmlContent' => $this->htmlContent, // Pass data to the view
+            ],
+        );
     }
 
     /**
