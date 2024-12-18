@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -68,7 +69,18 @@ class InvoiceController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Invoice sent successfully.']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Failed to send invoice.', 'error' => $e->getMessage()]);
+            // Log the error details
+            Log::error('Failed to send invoice email', [
+                'recipientEmail' => $recipientEmail,
+                'error' => $e->getMessage(),
+                'stackTrace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send invoice.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

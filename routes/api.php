@@ -70,7 +70,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
 
-        Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
 
 
         // QR management
@@ -196,3 +195,4 @@ Route::get('/menu/category/{id}', [WebOrderController::class, 'searchMenuByCateg
 
 Route::get('/app/menu', [MobileMenuController::class, 'getMenu']);
 Route::get('/app/menu/all', [MobileMenuController::class, 'getAllMenu']);
+Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
