@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\HtmlPart;
 
 class InvoiceController extends Controller
 {
@@ -61,15 +63,18 @@ class InvoiceController extends Controller
         $recipientEmail = $request->input('email');
 
         try {
-            Mail::send([], [], function ($message) use ($htmlContent, $recipientEmail) {
-                $message->to($recipientEmail)
-                        ->subject('Invoice')
-                        ->setBody($htmlContent, 'text/html');
-            });
+            // Create the email using Symfony Mime
+            $email = (new Email())
+                ->to($recipientEmail)
+                ->subject('Invoice')
+                ->html($htmlContent);
+
+            // Send the email
+            Mail::mailer('smtp')->send($email);
 
             return response()->json(['success' => true, 'message' => 'Invoice sent successfully.']);
-        } catch (\Exception $e) {
-            // Log the error details
+        } catch (\Throwable $e) {
+            // Log the error
             Log::error('Failed to send invoice email', [
                 'recipientEmail' => $recipientEmail,
                 'error' => $e->getMessage(),
