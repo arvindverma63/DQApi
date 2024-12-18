@@ -39,7 +39,8 @@ class InvoiceMail extends Mailable
     public function content()
     {
         return $this->subject('Invoice')
-                    ->html($this->htmlContent);
+                    ->view('emails.invoice') // Use the Blade view
+                    ->with(['htmlContent' => $this->htmlContent]);
     }
 
     /**
