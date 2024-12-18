@@ -369,10 +369,13 @@ public function getTransactionById($id)
 
             $customer = Customer::find($transaction->user_id);
             $restaurant = UserProfile::where('restaurantId',$transaction->restaurantId)->first();
+            $appUrl = env('APP_URL');
+            $avatar = $appUrl.'/'.$restaurant->image;
             return [
                 'id' => $transaction->id,
                 'userName' => $customer->name,
                 'userEmail' => $customer->email ?? null,
+                'restaurantLogo'=>$avatar ?? null,
                 'items' => json_decode($transaction->items), // Decode JSON to array
                 'tax' => floatval($transaction->tax),
                 'discount' => floatval($transaction->discount),
