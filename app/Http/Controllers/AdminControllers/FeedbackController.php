@@ -9,6 +9,5 @@ class FeedbackController extends Controller
 {
     public function addFeedback(Request $request){
 
-
     }
 }
