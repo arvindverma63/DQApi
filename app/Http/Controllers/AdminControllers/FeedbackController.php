@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 class FeedbackController extends Controller
 {
     public function addFeedback(Request $request){
+        $validated = $request->validate([
+            'feedback'=>'nullable',
+            'short'=>'nullable',
 
+        ]);
     }
 }

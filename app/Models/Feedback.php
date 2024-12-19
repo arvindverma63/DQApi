@@ -14,6 +14,7 @@ class Feedback extends Model
     protected $fillable = [
         'id',
         'customerId',
+        'short',
         'feedback',
         'created_at',
         'updated_at'
