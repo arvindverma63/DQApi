@@ -17,4 +17,17 @@ class Feedback extends Model
         'feedback',
     ];
 
+    // Enable timestamps if they exist in the table
+    public $timestamps = true;
+
+    // Define casts if needed
+    protected $casts = [
+        'customerId' => 'integer',
+    ];
+
+    // Define relationships
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customerId');
+    }
 }
