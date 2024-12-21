@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminControllers\QrController;
 use App\Http\Controllers\AdminControllers\CategoryController;
 use App\Http\Controllers\AdminControllers\CustomerController;
+use App\Http\Controllers\AdminControllers\FeedbackController;
 use App\Http\Controllers\AdminControllers\MenuController;
 use App\Http\Controllers\AdminControllers\OrderController;
 use App\Http\Controllers\AdminControllers\SupplierController;
@@ -69,6 +70,8 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
+
+        Route::post('/admin/feedback/add',[FeedbackController::class,'addFeedback']);
 
 
 

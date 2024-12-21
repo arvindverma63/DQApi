@@ -524,6 +524,93 @@
                 }
             }
         },
+        "/admin/feedback/add": {
+            "post": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Add a new feedback entry",
+                "description": "Allows an admin to add feedback.",
+                "operationId": "06eaafcf4ca7c1ad78016cc008afb67c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customerId"
+                                ],
+                                "properties": {
+                                    "feedback": {
+                                        "type": "string",
+                                        "example": "Great service!"
+                                    },
+                                    "short": {
+                                        "type": "string",
+                                        "example": "Service Feedback"
+                                    },
+                                    "customerId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Feedback successfully added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Feedback added successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/inventories": {
             "get": {
                 "tags": [
@@ -4757,6 +4844,10 @@
         {
             "name": "Customer",
             "description": "Customer"
+        },
+        {
+            "name": "Feedback",
+            "description": "Feedback"
         },
         {
             "name": "Inventory",
