@@ -1,1 +1,1 @@
-<p>Your OTP for login is: {{ $otp }}</p>
+<p>Your OTP for login is : {{ $otp }}</p>
