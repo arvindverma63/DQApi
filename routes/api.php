@@ -38,6 +38,9 @@ Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport'])
 
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
+
+Route::post('/admin/feedback/add',[FeedbackController::class,'addFeedback']);
+
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {
 
@@ -71,7 +74,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
 
-        Route::post('/admin/feedback/add',[FeedbackController::class,'addFeedback']);
 
 
 
