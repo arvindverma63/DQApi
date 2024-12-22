@@ -130,7 +130,7 @@ class MenuInventoryController extends Controller
             'menuId' => 'required|integer',
             'restaurantId' => 'required|string',
             'quantity' => 'required|numeric|min:0.001',
-            'stockId' => 'required|integer|exists:inventory,id',
+            'stockId' => 'required|integer|exists:inventories,id',
         ]);
 
         if ($validator->fails()) {
@@ -287,7 +287,7 @@ public function saveInventoryItems(Request $request)
             'menuId' => 'integer',
             'restaurantId' => 'string',
             'quantity' => 'numeric|min:0.001',
-            'stockId' => 'integer|exists:inventory,id',
+            'stockId' => 'integer|exists:inventories,id',
         ]);
 
         if ($validator->fails()) {
