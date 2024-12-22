@@ -1735,6 +1735,14 @@
                                             "complete"
                                         ],
                                         "example": "complete"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "online",
+                                            "offline"
+                                        ],
+                                        "example": "Onlilne"
                                     }
                                 },
                                 "type": "object"
