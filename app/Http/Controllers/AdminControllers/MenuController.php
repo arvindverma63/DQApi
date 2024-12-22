@@ -78,6 +78,7 @@ class MenuController extends Controller
             // Map stock items for the specific menu and include itemName from Inventory
             $menu->stockItems = $stockItems->where('menuId', $menu->id)->map(function ($stockItem) use ($inventoryItems) {
                 return [
+                    'id'=>$stockItem->id,
                     'stockId' => $stockItem->stockId,
                     'quantity' => $stockItem->quantity,
                     'name' => $inventoryItems[$stockItem->stockId]->itemName ?? '', // Include itemName from Inventory if available
