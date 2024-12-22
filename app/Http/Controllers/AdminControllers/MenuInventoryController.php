@@ -192,6 +192,68 @@ public function saveInventoryItem(Request $request)
     ], 201);
 }
 
+/**
+ * @OA\Post(
+ *     path="/menu_inventory/save",
+ *     summary="Create or update multiple menu inventory items",
+ *     description="Add or update multiple items in the menu inventory",
+ *     tags={"MenuInventory"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/MenuInventory"))
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Menu inventory items processed successfully",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="successCount", type="integer"),
+ *             @OA\Property(property="errors", type="array", @OA\Items(type="object"))
+ *         )
+ *     ),
+ *     @OA\Response(response=400, description="Invalid input")
+ * )
+ */
+public function saveInventoryItems(Request $request)
+{
+    $items = $request->all();
+    $successCount = 0;
+    $errors = [];
+
+    foreach ($items as $key => $item) {
+        $validator = Validator::make($item, [
+            'id' => 'nullable|integer|exists:menu_inventory,id',
+            'menuId' => 'required|integer',
+            'restaurantId' => 'required|string',
+            'quantity' => 'required|numeric|min:0.001',
+            'stockId' => 'required|integer|exists:inventories,id',
+        ]);
+
+        if ($validator->fails()) {
+            $errors[$key] = $validator->errors()->toArray();
+            continue;
+        }
+
+        MenuInventory::updateOrCreate(
+            ['id' => $item['id'] ?? null],
+            [
+                'menuId' => $item['menuId'],
+                'restaurantId' => $item['restaurantId'],
+                'quantity' => $item['quantity'],
+                'stockId' => $item['stockId'],
+            ]
+        );
+
+        $successCount++;
+    }
+
+    return response()->json([
+        'successCount' => $successCount,
+        'errors' => $errors,
+    ], 201);
+}
+
+
 
     /**
      * @OA\Put(
