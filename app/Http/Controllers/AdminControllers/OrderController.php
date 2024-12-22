@@ -290,7 +290,8 @@ class OrderController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"status"},
-     *             @OA\Property(property="status", type="string", example="complete", enum={"processing", "accept", "reject", "complete"})
+     *             @OA\Property(property="status", type="string", example="complete", enum={"processing", "accept", "reject", "complete"}),
+     *             @OA\Property(property="type", type="string", example="Onlilne", enum={"online", "offline"})
      *         )
      *     ),
      *     @OA\Response(
@@ -311,6 +312,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'status' => 'required|in:processing,accept,reject,complete',
+            'type'=> 'nullable',
         ]);
 
         $order = Order::find($id);
@@ -355,7 +357,7 @@ class OrderController extends Controller
                 'discount' => $discount,
                 'sub_total' => $subTotal,
                 'total' => $total,
-                'type' => 'web order', // Replace with actual payment type if available
+                'type' => $request['type'], // Replace with actual payment type if available
                 'restaurantId' => $order->restaurantId,
                 'tableNumber' => $order->tableNumber,
             ];
