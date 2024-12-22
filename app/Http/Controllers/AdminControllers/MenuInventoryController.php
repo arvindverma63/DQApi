@@ -194,7 +194,7 @@ public function saveInventoryItem(Request $request)
 
 /**
  * @OA\Post(
- *     path="/menu_inventory/save",
+ *     path="/menu_inventory/save-all",
  *     summary="Create or update multiple menu inventory items",
  *     description="Add or update multiple items in the menu inventory",
  *     tags={"MenuInventory"},

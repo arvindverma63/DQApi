@@ -1483,6 +1483,55 @@
                 }
             }
         },
+        "/menu_inventory/save-all": {
+            "post": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Create or update multiple menu inventory items",
+                "description": "Add or update multiple items in the menu inventory",
+                "operationId": "4ce8366a582ff14101453af334f127cd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MenuInventory"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu inventory items processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "successCount": {
+                                            "type": "integer"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
         "/orders": {
             "get": {
                 "tags": [
