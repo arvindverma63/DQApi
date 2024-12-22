@@ -1448,6 +1448,41 @@
                 }
             }
         },
+        "/menu_inventory/save": {
+            "post": {
+                "tags": [
+                    "MenuInventory"
+                ],
+                "summary": "Create or update a menu inventory item",
+                "description": "Add a new item to the menu inventory or update an existing one",
+                "operationId": "65619b6ef8710b1281f5f53dc86fdc0b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MenuInventory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu inventory item created or updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MenuInventory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
         "/orders": {
             "get": {
                 "tags": [
