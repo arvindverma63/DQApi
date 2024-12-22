@@ -167,7 +167,7 @@ public function saveInventoryItem(Request $request)
         'menuId' => 'required|integer',
         'restaurantId' => 'required|string',
         'quantity' => 'required|numeric|min:0.001',
-        'stockId' => 'required|integer|exists:inventory,id',
+        'stockId' => 'required|integer|exists:inventories,id',
     ]);
 
     if ($validator->fails()) {
