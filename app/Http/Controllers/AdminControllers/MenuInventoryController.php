@@ -143,6 +143,57 @@ class MenuInventoryController extends Controller
     }
 
     /**
+ * @OA\Post(
+ *     path="/menu_inventory/save",
+ *     summary="Create or update a menu inventory item",
+ *     description="Add a new item to the menu inventory or update an existing one",
+ *     tags={"MenuInventory"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/MenuInventory")
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Menu inventory item created or updated successfully",
+ *         @OA\JsonContent(ref="#/components/schemas/MenuInventory")
+ *     ),
+ *     @OA\Response(response=400, description="Invalid input")
+ * )
+ */
+public function saveInventoryItem(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'id' => 'nullable|integer|exists:menu_inventory,id',
+        'menuId' => 'required|integer',
+        'restaurantId' => 'required|string',
+        'quantity' => 'required|numeric|min:0.001',
+        'stockId' => 'required|integer|exists:inventory,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 400);
+    }
+
+    $menuInventory = MenuInventory::updateOrCreate(
+        ['id' => $request->id],
+        [
+            'menuId' => $request->menuId,
+            'restaurantId' => $request->restaurantId,
+            'quantity' => $request->quantity,
+            'stockId' => $request->stockId,
+        ]
+    );
+
+    return response()->json([
+        'data' => $menuInventory,
+        'message' => $menuInventory->wasRecentlyCreated
+            ? 'Menu inventory item created successfully'
+            : 'Menu inventory item updated successfully'
+    ], 201);
+}
+
+
+    /**
      * @OA\Put(
      *     path="/menu_inventory/{id}",
      *     summary="Update a menu inventory item",

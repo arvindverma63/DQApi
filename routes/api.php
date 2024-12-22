@@ -162,6 +162,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/', [MenuInventoryController::class, 'createMenuInventory'])
             ->name('menu-inventory.create');
 
+        // Route to create or update menu inventory item
+        Route::post('/save', [MenuInventoryController::class, 'saveInventoryItem'])
+            ->name('menu-inventory.save');
+
         // Route to update an existing menu inventory item
         Route::put('/{id}', [MenuInventoryController::class, 'updateMenuInventory'])
             ->name('menu-inventory.update');
