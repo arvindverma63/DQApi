@@ -357,7 +357,7 @@ class OrderController extends Controller
                 'discount' => $discount,
                 'sub_total' => $subTotal,
                 'total' => $total,
-                'type' => $request->type, // Replace with actual payment type if available
+                'type' => $request->type ?? "Web Order", // Replace with actual payment type if available
                 'restaurantId' => $order->restaurantId,
                 'tableNumber' => $order->tableNumber,
             ];
