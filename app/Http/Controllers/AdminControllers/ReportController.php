@@ -208,97 +208,102 @@ class ReportController extends Controller
      * )
      */
     public function getDashboardChartData(Request $request)
-    {
-        // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
-        $validated = $request->validate([
-            'year' => 'required|integer', // Year must be provided
-            'restaurantId' => 'required|string' // Restaurant ID must be provided
-        ]);
+{
+    // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
+    $validated = $request->validate([
+        'year' => 'required|integer', // Year must be provided
+        'restaurantId' => 'required|string' // Restaurant ID must be provided
+    ]);
 
-        $year = $validated['year'];
-        $restaurantId = $validated['restaurantId'];
+    $year = $validated['year'];
+    $restaurantId = $validated['restaurantId'];
 
-        // Fetch total collection (sales) for the entire year
-        $totalCollection = Transaction::where('restaurantId', $restaurantId)
-            ->whereYear('created_at', $year)
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->selectRaw('MONTH(created_at) as month, sum(total) as total_collection')
-            ->get();
+    // Fetch total collection (sales) for the entire year
+    $totalCollection = Transaction::where('restaurantId', $restaurantId)
+        ->whereYear('created_at', $year)
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->selectRaw('MONTH(created_at) as month, sum(total) as total_collection')
+        ->get();
 
-        // Fetch total number of invoices for the entire year
-        $totalInvoices = Transaction::where('restaurantId', $restaurantId)
-            ->whereYear('created_at', $year)
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->selectRaw('MONTH(created_at) as month, count(id) as total_invoices')
-            ->get();
+    // Fetch total number of invoices for the entire year
+    $totalInvoices = Transaction::where('restaurantId', $restaurantId)
+        ->whereYear('created_at', $year)
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->selectRaw('MONTH(created_at) as month, count(id) as total_invoices')
+        ->get();
 
-        // Fetch total completed orders for the entire year
-        $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
-            ->whereYear('created_at', $year)
-            ->where('status', 'complete')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->selectRaw('MONTH(created_at) as month, count(id) as complete_orders')
-            ->get();
+    // Fetch total completed orders for the entire year
+    $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
+        ->whereYear('created_at', $year)
+        ->where('status', 'complete')
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->selectRaw('MONTH(created_at) as month, count(id) as complete_orders')
+        ->get();
 
-        // Fetch total rejected orders for the entire year
-        $totalRejectOrder = Order::where('restaurantId', $restaurantId)
-            ->whereYear('created_at', $year)
-            ->where('status', 'reject')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->selectRaw('MONTH(created_at) as month, count(id) as reject_orders')
-            ->get();
+    // Fetch total rejected orders for the entire year
+    $totalRejectOrder = Order::where('restaurantId', $restaurantId)
+        ->whereYear('created_at', $year)
+        ->where('status', 'reject')
+        ->groupBy(DB::raw('MONTH(created_at)'))
+        ->selectRaw('MONTH(created_at) as month, count(id) as reject_orders')
+        ->get();
 
-        // Prepare the data for the chart
-        $months = range(1, 12);  // Months from 1 to 12
-        $chartData = [
-            'labels' => $months, // Labels for the X-axis (months of the year)
-            'datasets' => [
-                [
-                    'label' => 'Total Collection',
-                    'data' => array_map(function ($month) use ($totalCollection) {
-                        $data = $totalCollection->firstWhere('month', $month);
-                        return $data ? $data->total_collection : 0;
-                    }, $months),
-                    'borderColor' => 'rgba(54, 162, 235, 1)', // Line color for Total Collection
-                    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
-                    'fill' => false, // No fill for the line chart
-                ],
-                [
-                    'label' => 'Total Invoices',
-                    'data' => array_map(function ($month) use ($totalInvoices) {
-                        $data = $totalInvoices->firstWhere('month', $month);
-                        return $data ? $data->total_invoices : 0;
-                    }, $months),
-                    'borderColor' => 'rgba(75, 192, 192, 1)', // Line color for Total Invoices
-                    'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
-                    'fill' => false, // No fill for the line chart
-                ],
-                [
-                    'label' => 'Completed Orders',
-                    'data' => array_map(function ($month) use ($totalCompleteOrder) {
-                        $data = $totalCompleteOrder->firstWhere('month', $month);
-                        return $data ? $data->complete_orders : 0;
-                    }, $months),
-                    'borderColor' => 'rgba(153, 102, 255, 1)', // Line color for Completed Orders
-                    'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
-                    'fill' => false, // No fill for the line chart
-                ],
-                [
-                    'label' => 'Rejected Orders',
-                    'data' => array_map(function ($month) use ($totalRejectOrder) {
-                        $data = $totalRejectOrder->firstWhere('month', $month);
-                        return $data ? $data->reject_orders : 0;
-                    }, $months),
-                    'borderColor' => 'rgba(255, 99, 132, 1)', // Line color for Rejected Orders
-                    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                    'fill' => false, // No fill for the line chart
-                ],
+    // Convert month numbers to month names
+    $months = array_map(function ($month) {
+        return date('F', mktime(0, 0, 0, $month, 1)); // Convert month number to name
+    }, range(1, 12));
+
+    // Prepare the data for the chart
+    $chartData = [
+        'labels' => $months, // Labels for the X-axis (month names)
+        'datasets' => [
+            [
+                'label' => 'Total Collection',
+                'data' => array_map(function ($month) use ($totalCollection) {
+                    $data = $totalCollection->firstWhere('month', $month);
+                    return $data ? $data->total_collection : 0;
+                }, range(1, 12)), // Use numeric months for matching
+                'borderColor' => 'rgba(54, 162, 235, 1)', // Line color for Total Collection
+                'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                'fill' => false, // No fill for the line chart
             ],
-        ];
+            [
+                'label' => 'Total Invoices',
+                'data' => array_map(function ($month) use ($totalInvoices) {
+                    $data = $totalInvoices->firstWhere('month', $month);
+                    return $data ? $data->total_invoices : 0;
+                }, range(1, 12)), // Use numeric months for matching
+                'borderColor' => 'rgba(75, 192, 192, 1)', // Line color for Total Invoices
+                'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                'fill' => false, // No fill for the line chart
+            ],
+            [
+                'label' => 'Completed Orders',
+                'data' => array_map(function ($month) use ($totalCompleteOrder) {
+                    $data = $totalCompleteOrder->firstWhere('month', $month);
+                    return $data ? $data->complete_orders : 0;
+                }, range(1, 12)), // Use numeric months for matching
+                'borderColor' => 'rgba(153, 102, 255, 1)', // Line color for Completed Orders
+                'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
+                'fill' => false, // No fill for the line chart
+            ],
+            [
+                'label' => 'Rejected Orders',
+                'data' => array_map(function ($month) use ($totalRejectOrder) {
+                    $data = $totalRejectOrder->firstWhere('month', $month);
+                    return $data ? $data->reject_orders : 0;
+                }, range(1, 12)), // Use numeric months for matching
+                'borderColor' => 'rgba(255, 99, 132, 1)', // Line color for Rejected Orders
+                'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                'fill' => false, // No fill for the line chart
+            ],
+        ],
+    ];
 
-        // Return the chart data as JSON
-        return response()->json($chartData);
-    }
+    // Return the chart data as JSON
+    return response()->json($chartData);
+}
+
 
 
     /**
