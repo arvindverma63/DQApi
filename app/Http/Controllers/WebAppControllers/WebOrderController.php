@@ -93,6 +93,9 @@ class WebOrderController extends Controller
         $data = [];
 
         foreach ($menuItems as $menu) {
+            // Correctly generate the public URL for the image stored in the 'public/menus' folder
+            $menu->itemImage = $menu->itemImage ? url('menus/' . basename($menu->itemImage)) : null;
+
             $category = $categories->get($menu->categoryId);
 
             // Map ingredients for the current menu item
@@ -331,60 +334,61 @@ class WebOrderController extends Controller
     }
 
     /**
- * Search menu items by category.
- *
- * @OA\Get(
- *     path="/menu/category/{id}",
- *     summary="Search menu by category",
- *     description="Retrieve all menu items based on the provided category ID.",
- *     operationId="searchMenuByCategory",
- *     tags={"WebAppMenu"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID of the category to filter menu items",
- *         @OA\Schema(type="integer", example=1)
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Successful response",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(
- *                 type="object",
- *                 @OA\Property(property="id", type="integer", description="Menu item ID", example=101),
- *                 @OA\Property(property="itemName", type="string", description="Menu item name", example="Margherita Pizza"),
- *                 @OA\Property(property="itemImage", type="string", description="URL of the menu item image", example="http://example.com/images/pizza.jpg"),
- *                 @OA\Property(property="price", type="number", format="float", description="Price of the menu item", example=8.99),
- *                 @OA\Property(property="category", type="string", description="Category name", example="Pizza"),
- *                 @OA\Property(
- *                     property="ingredients",
- *                     type="array",
- *                     description="List of ingredients for the menu item",
- *                     @OA\Items(
- *                         type="object",
- *                         @OA\Property(property="ingredientName", type="string", description="Ingredient name", example="Cheese"),
- *                         @OA\Property(property="quantity", type="number", format="float", description="Ingredient quantity", example=1.5),
- *                         @OA\Property(property="unit", type="string", description="Unit of the ingredient quantity", example="kg")
- *                     )
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="No menu found for the given category ID",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="message", type="string", example="No menu found for the given restaurant ID.")
- *         )
- *     )
- * )
- */
+     * Search menu items by category.
+     *
+     * @OA\Get(
+     *     path="/menu/category/{id}",
+     *     summary="Search menu by category",
+     *     description="Retrieve all menu items based on the provided category ID.",
+     *     operationId="searchMenuByCategory",
+     *     tags={"WebAppMenu"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the category to filter menu items",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful response",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", description="Menu item ID", example=101),
+     *                 @OA\Property(property="itemName", type="string", description="Menu item name", example="Margherita Pizza"),
+     *                 @OA\Property(property="itemImage", type="string", description="URL of the menu item image", example="http://example.com/images/pizza.jpg"),
+     *                 @OA\Property(property="price", type="number", format="float", description="Price of the menu item", example=8.99),
+     *                 @OA\Property(property="category", type="string", description="Category name", example="Pizza"),
+     *                 @OA\Property(
+     *                     property="ingredients",
+     *                     type="array",
+     *                     description="List of ingredients for the menu item",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="ingredientName", type="string", description="Ingredient name", example="Cheese"),
+     *                         @OA\Property(property="quantity", type="number", format="float", description="Ingredient quantity", example=1.5),
+     *                         @OA\Property(property="unit", type="string", description="Unit of the ingredient quantity", example="kg")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No menu found for the given category ID",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No menu found for the given restaurant ID.")
+     *         )
+     *     )
+     * )
+     */
 
 
-    public function searchMenuByCategory($id){
+    public function searchMenuByCategory($id)
+    {
         // Fetch all menu items for the given restaurant
         $menuItems = Menu::where('categoryId', $id)->get();
 
