@@ -248,14 +248,14 @@ class ReportController extends Controller
         ->selectRaw('MONTH(created_at) as month, count(id) as reject_orders')
         ->get();
 
-    // Convert month numbers to month names
+    // Convert month numbers to short month names (e.g., Jan, Feb)
     $months = array_map(function ($month) {
-        return date('F', mktime(0, 0, 0, $month, 1)); // Convert month number to name
+        return date('M', mktime(0, 0, 0, $month, 1)); // Convert month number to short name
     }, range(1, 12));
 
     // Prepare the data for the chart
     $chartData = [
-        'labels' => $months, // Labels for the X-axis (month names)
+        'labels' => $months, // Labels for the X-axis (short month names)
         'datasets' => [
             [
                 'label' => 'Total Collection',
