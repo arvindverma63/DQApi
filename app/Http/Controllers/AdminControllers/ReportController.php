@@ -432,8 +432,8 @@ class ReportController extends Controller
                          $data = $totalCollection->firstWhere('week', $week);
                          return $data ? $data->total_collection : 0;
                      }, $weeks),
-                     'borderColor' => 'rgba(54, 162, 235, 1)', // Line color for Total Collection
-                     'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                     'borderColor' => 'rgb(0, 153, 255)', // Line color for Total Collection
+                     'backgroundColor' => 'rgba(0, 153, 255, 0.2)',
                      'fill' => false, // No fill for the line chart
                  ],
                  [
@@ -442,8 +442,8 @@ class ReportController extends Controller
                          $data = $totalInvoices->firstWhere('week', $week);
                          return $data ? $data->total_invoices : 0;
                      }, $weeks),
-                     'borderColor' => 'rgba(75, 192, 192, 1)', // Line color for Total Invoices
-                     'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                     'borderColor' => 'rgb(0, 255, 255)', // Line color for Total Invoices
+                     'backgroundColor' => 'rgba(0, 255, 255, 0.2)',
                      'fill' => false, // No fill for the line chart
                  ],
                  [
@@ -452,7 +452,7 @@ class ReportController extends Controller
                          $data = $totalCompleteOrder->firstWhere('week', $week);
                          return $data ? $data->complete_orders : 0;
                      }, $weeks),
-                     'borderColor' => 'rgba(153, 102, 255, 1)', // Line color for Completed Orders
+                     'borderColor' => 'rgb(85, 0, 255)', // Line color for Completed Orders
                      'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
                      'fill' => false, // No fill for the line chart
                  ],
@@ -462,7 +462,7 @@ class ReportController extends Controller
                          $data = $totalRejectOrder->firstWhere('week', $week);
                          return $data ? $data->reject_orders : 0;
                      }, $weeks),
-                     'borderColor' => 'rgba(255, 99, 132, 1)', // Line color for Rejected Orders
+                     'borderColor' => 'rgb(255, 0, 55)', // Line color for Rejected Orders
                      'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
                      'fill' => false, // No fill for the line chart
                  ],
