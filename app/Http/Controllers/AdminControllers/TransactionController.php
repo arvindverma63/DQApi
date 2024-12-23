@@ -178,17 +178,17 @@ class TransactionController extends Controller
                 Log::info('Stock fetched.', ['stock_id' => $stock->id]);
 
                 // Check and update stock
-                if ($stock->quantity < $requiredQuantity) {
-                    Log::warning('Not enough stock.', [
-                        'stock_id' => $stock->id,
-                        'available_quantity' => $stock->quantity,
-                        'required_quantity' => $requiredQuantity,
-                    ]);
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Not enough stock for item ID {$data['itemId']}.",
-                    ], 400);
-                }
+                // if ($stock->quantity < $requiredQuantity) {
+                //     Log::warning('Not enough stock.', [
+                //         'stock_id' => $stock->id,
+                //         'available_quantity' => $stock->quantity,
+                //         'required_quantity' => $requiredQuantity,
+                //     ]);
+                //     return response()->json([
+                //         'success' => false,
+                //         'message' => "Not enough stock for item ID {$data['itemId']}.",
+                //     ], 400);
+                // }
 
                 $stock->quantity -= $requiredQuantity;
                 $stock->save();
