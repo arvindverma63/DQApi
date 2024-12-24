@@ -4191,30 +4191,49 @@
                                         "example": "R1728231298"
                                     },
                                     "orderDetails": {
-                                        "description": "List of items in the transaction",
                                         "type": "array",
                                         "items": {
+                                            "required": [
+                                                "id",
+                                                "itemName",
+                                                "category",
+                                                "price",
+                                                "ingredients",
+                                                "imageUrl",
+                                                "quantity"
+                                            ],
                                             "properties": {
-                                                "item_id": {
-                                                    "description": "Item ID",
-                                                    "type": "integer",
-                                                    "example": 101
-                                                },
-                                                "name": {
-                                                    "description": "Item name",
+                                                "id": {
                                                     "type": "string",
-                                                    "example": "Pizza"
+                                                    "example": "204"
+                                                },
+                                                "itemName": {
+                                                    "type": "string",
+                                                    "example": "Tanddori Momos"
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "MOMOS"
                                                 },
                                                 "price": {
-                                                    "description": "Item price",
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 200.5
+                                                    "example": 120
+                                                },
+                                                "ingredients": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "MAIDA"
+                                                    }
+                                                },
+                                                "imageUrl": {
+                                                    "type": "string",
+                                                    "example": "https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"
                                                 },
                                                 "quantity": {
-                                                    "description": "Item quantity",
                                                     "type": "integer",
-                                                    "example": 2
+                                                    "example": 1
                                                 }
                                             },
                                             "type": "object"
