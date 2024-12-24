@@ -44,25 +44,25 @@ class OrderController extends Controller
         // Fetch orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
 
-
         // Preload customers and menu items for optimization
         $customerIds = $orders->pluck('user_id')->unique();
         $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
 
         $menuItemIds = $orders->flatMap(function ($order) {
-            return collect(json_decode($order->orderDetails, true))->pluck('id');
+            $orderDetails = is_string($order->orderDetails) ? json_decode($order->orderDetails, true) : $order->orderDetails;
+            return collect($orderDetails)->pluck('id');
         })->unique();
         $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
 
         // Map orders with user and item details
         $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
             $userDetails = $customers->get($order->user_id);
-            $orderDetails = collect(json_decode($order->orderDetails, true));
+            $orderDetails = is_string($order->orderDetails) ? json_decode($order->orderDetails, true) : $order->orderDetails;
 
             $total = 0;
 
             // Map item details and calculate totals
-            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+            $itemDetails = collect($orderDetails)->map(function ($item) use ($menuItems, &$total) {
                 $menuItem = $menuItems->get($item['id']);
                 if ($menuItem) {
                     $itemTotal = $menuItem->price * $item['quantity'];
@@ -95,6 +95,7 @@ class OrderController extends Controller
         // Return the enhanced orders with user and item details
         return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
     }
+
 
 
 
@@ -312,7 +313,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'status' => 'required|in:processing,accept,reject,complete',
-            'type'=> 'nullable',
+            'type' => 'nullable',
         ]);
 
         $order = Order::find($id);
@@ -323,7 +324,7 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if($request->status === 'reject'){
+        if ($request->status === 'reject') {
             $order->update([
                 'status' => $request->status,
             ]);
