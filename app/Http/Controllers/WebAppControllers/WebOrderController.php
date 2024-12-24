@@ -138,18 +138,25 @@ class WebOrderController extends Controller
      *             type="object",
      *             @OA\Property(property="tableNumber", type="string", description="Table number", example="12"),
      *             @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298"),
-     *             @OA\Property(
-     *                 property="orderDetails",
-     *                 type="array",
-     *                 description="List of items in the transaction",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="item_id", type="integer", description="Item ID", example=101),
-     *                     @OA\Property(property="name", type="string", description="Item name", example="Pizza"),
-     *                     @OA\Property(property="price", type="number", format="float", description="Item price", example=200.50),
-     *                     @OA\Property(property="quantity", type="integer", description="Item quantity", example=2)
-     *                 )
-     *             ),
+     *            @OA\Property(
+    *                 property="orderDetails",
+    *                 type="array",
+    *                 @OA\Items(
+    *                     type="object",
+    *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
+    *                     @OA\Property(property="id", type="string", example="204"),
+    *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
+    *                     @OA\Property(property="category", type="string", example="MOMOS"),
+    *                     @OA\Property(property="price", type="number", format="float", example=120.0),
+    *                     @OA\Property(
+    *                         property="ingredients",
+    *                         type="array",
+    *                         @OA\Items(type="string", example="MAIDA")
+    *                     ),
+    *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
+    *                     @OA\Property(property="quantity", type="integer", example=1)
+    *                 )
+    *             ),
      *             @OA\Property(property="phoneNumber", type="string", description="Customer phone number", example="9876543210"),
      *             @OA\Property(property="userName", type="string", description="Customer name", example="John Doe"),
      *             @OA\Property(property="email", type="string", description="Customer email", example="john.doe@example.com"),
