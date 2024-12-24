@@ -1586,38 +1586,56 @@
                                     },
                                     "user_id": {
                                         "type": "integer",
-                                        "example": "1"
+                                        "example": 1
                                     },
                                     "orderDetails": {
-                                        "properties": {
-                                            "item1": {
-                                                "properties": {
-                                                    "item_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "quantity": {
-                                                        "type": "integer",
-                                                        "example": 2
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "id",
+                                                "itemName",
+                                                "category",
+                                                "price",
+                                                "ingredients",
+                                                "imageUrl",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "204"
+                                                },
+                                                "itemName": {
+                                                    "type": "string",
+                                                    "example": "Tanddori Momos"
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "MOMOS"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 120
+                                                },
+                                                "ingredients": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "MAIDA"
                                                     }
                                                 },
-                                                "type": "object"
+                                                "imageUrl": {
+                                                    "type": "string",
+                                                    "example": "https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
                                             },
-                                            "item2": {
-                                                "properties": {
-                                                    "item_id": {
-                                                        "type": "integer",
-                                                        "example": 2
-                                                    },
-                                                    "quantity": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "type": "object"
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
