@@ -44,26 +44,26 @@ class OrderController extends Controller
         // Fetch orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
 
+
         // Preload customers and menu items for optimization
         $customerIds = $orders->pluck('user_id')->unique();
         $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
 
         $menuItemIds = $orders->flatMap(function ($order) {
-            $orderDetails = is_string($order->orderDetails) ? json_decode($order->orderDetails, true) : $order->orderDetails;
-            return collect($orderDetails)->pluck('id');
+            return collect(json_decode($order->orderDetails, true))->pluck('id');
         })->unique();
         $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
 
         // Map orders with user and item details
         $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
             $userDetails = $customers->get($order->user_id);
-            $orderDetails = is_string($order->orderDetails) ? json_decode($order->orderDetails, true) : $order->orderDetails;
+            $orderDetails = collect(json_decode($order->orderDetails, true));
 
             $total = 0;
 
             // Map item details and calculate totals
-            $itemDetails = collect($orderDetails)->map(function ($item) use ($menuItems, &$total) {
-                $menuItem = $menuItems->get($item['item']);
+            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+                $menuItem = $menuItems->get($item['id']);
                 if ($menuItem) {
                     $itemTotal = $menuItem->price * $item['quantity'];
                     $total += $itemTotal;
