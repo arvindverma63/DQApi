@@ -176,7 +176,7 @@ public function getAllInventory(Request $request)
         // Validate the request with decimal quantity (up to 3 decimal places)
         $validator = Validator::make($request->all(), [
             'itemName' => 'string|max:255',
-            'quantity' => ['numeric', 'regex:/^\d+(\.\d{1,3})?$/'], // Decimal with up to 3 decimal places
+            'quantity' => 'numeric', // Decimal with up to 3 decimal places
             'unit' => 'string|max:10',
             'supplierId' => 'exists:suppliers,id',
             'restaurantId' => 'string|max:255',
