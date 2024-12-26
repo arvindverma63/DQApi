@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $menuId
@@ -36,5 +36,9 @@ class MenuInventory extends Model
         'quantity',
         'stockId',
     ];
+    public function stockItem()
+    {
+        return $this->belongsTo(Inventory::class, 'stockId', 'id');
+    }
     use HasFactory;
 }
