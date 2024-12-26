@@ -63,7 +63,7 @@ class MenuController extends Controller
         $menus = Menu::where('restaurantId', $request->restaurantId)->get();
 
         // Retrieve stock items from MenuInventory related to these menus
-        $stockItems = MenuInventory::whereIn('menuId', $menus->pluck('id'))->get();
+        $stockItems = MenuInventory::whereIn('menuId', $menus->id)->get();
 
         // Fetch related inventory items for stock names
         $inventoryItems = Inventory::whereIn('id', $stockItems->pluck('stockId'))->get()->keyBy('id');
