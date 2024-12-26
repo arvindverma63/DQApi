@@ -89,7 +89,7 @@ class MenuController extends Controller
         });
 
         // Fetch all inventory items for the dropdown options
-        $inventoryOptions = Inventory::where('restuarantId',$request->restaurantId);
+        $inventoryOptions = Inventory::where('restaurantId',$request->restaurantId);
 
         // Return JSON response with both menu items and inventory options
         return response()->json([
