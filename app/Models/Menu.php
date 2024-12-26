@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $itemName
@@ -35,6 +35,7 @@ class Menu extends Model
 {
     protected $table = 'menu';
     protected $fillable = ['itemName',
+    'id',
     'itemImage',
     'price',
     'categoryId',
