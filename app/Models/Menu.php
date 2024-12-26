@@ -34,24 +34,17 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $table = 'menu';
-    protected $fillable = [
-        'itemName',
-        'id',
-        'itemImage',
-        'price',
-        'categoryId',
-        'restaurantId',
-        'stock'
-    ];
+    protected $fillable = ['itemName',
+    'itemImage',
+    'price',
+    'categoryId',
+    'restaurantId',
+    'stock'];
     use HasFactory;
 
     public function stockItems()
-    {
-        return $this->hasMany(MenuInventory::class, 'menuId');
-    }
+{
+    return $this->hasMany(MenuInventory::class, 'menuId');
+}
 
-    public function menuInventory()
-    {
-        return $this->hasMany(MenuInventory::class, 'menuId', 'id');
-    }
 }

@@ -59,28 +59,42 @@ class MenuController extends Controller
             'restaurantId' => 'required|string',
         ]);
 
-        // Fetch menu items for the given restaurantId along with related MenuInventory and Inventory
-        $menu = Menu::where('restaurantId', $request->restaurantId)
-            ->with(['menuInventory.stockItem' => function ($query) {
-                $query->select('id', 'itemName');
-            }])
-            ->get();
+        // Fetch menu items for the given restaurantId
+        $menus = Menu::where('restaurantId', $request->restaurantId)->get();
 
-        // Iterate over the menu and add image URL and stock items with inventory names
-        $menu->transform(function ($menu) {
+        // Initialize an empty array for stock items and inventory items
+        $allStockItems = [];
+        $allInventoryItems = [];
+
+        // Fetch all stock items related to the menus
+        foreach ($menus as $menu) {
+            // Retrieve stock items for each menu
+            $stockItems = MenuInventory::where('menuId', $menu->id)->get();
+
+            foreach ($stockItems as $stockItem) {
+                // Fetch the related inventory item based on the stockId
+                $inventoryItem = Inventory::find($stockItem->stockId);
+
+                // Store the related stock items and their inventory items
+                $allStockItems[] = [
+                    'menuId' => $menu->id,
+                    'stockId' => $stockItem->stockId,
+                    'quantity' => $stockItem->quantity,
+                    'inventoryItem' => $inventoryItem ? $inventoryItem->itemName : null
+                ];
+            }
+        }
+
+        // Now, we transform the menu items with stock items and image URLs
+        $menus->transform(function ($menu) use ($allStockItems) {
             // Correctly generate the public URL for the image stored in the 'public/menus' folder
             if ($menu->itemImage) {
                 $menu->itemImage = url('menus/' . basename($menu->itemImage));
             }
 
             // Map stock items for the specific menu and include itemName from Inventory
-            $menu->stockItems = $menu->menuInventory->map(function ($stockItem) {
-                return [
-                    'id' => $stockItem->id,
-                    'stockId' => $stockItem->stockId,
-                    'quantity' => $stockItem->quantity,
-                    'name' => $stockItem->stockItem->itemName ?? '', // Include itemName from Inventory if available
-                ];
+            $menu->stockItems = array_filter($allStockItems, function ($stockItem) use ($menu) {
+                return $stockItem['menuId'] == $menu->id;
             });
 
             return $menu;
@@ -92,12 +106,13 @@ class MenuController extends Controller
         // Return JSON response with both menu items and inventory options
         return response()->json([
             'data' => [
-                'menus' => $menu,
+                'menus' => $menus,
                 'inventoryOptions' => $inventoryOptions,
             ],
             'message' => 'Menus and inventory options retrieved successfully.',
         ], 200);
     }
+
 
 
 

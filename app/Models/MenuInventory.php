@@ -36,9 +36,5 @@ class MenuInventory extends Model
         'quantity',
         'stockId',
     ];
-    public function stockItem()
-    {
-        return $this->belongsTo(Inventory::class, 'stockId', 'id');
-    }
     use HasFactory;
 }
