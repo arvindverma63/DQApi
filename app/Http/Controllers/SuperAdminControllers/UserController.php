@@ -100,7 +100,7 @@ class UserController extends Controller
     public function getAllUsers()
     {
         $users = User::where('role','admin')->with('userProfile')->get();
-        return response()->json(['data' => $users], 200);
+        return response()->json($users, 200);
     }
 
     /**
