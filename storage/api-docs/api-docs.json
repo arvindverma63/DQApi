@@ -2613,7 +2613,7 @@
                                     },
                                     "restaurantId": {
                                         "description": "ID of the restaurant",
-                                        "type": "integer",
+                                        "type": "string",
                                         "example": 123
                                     }
                                 },

@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Log;
 
 class ReportController extends Controller
 {
@@ -625,7 +626,7 @@ class ReportController extends Controller
      *             ),
      *             @OA\Property(
      *                 property="restaurantId",
-     *                 type="integer",
+     *                 type="string",
      *                 description="ID of the restaurant",
      *                 example=123
      *             )
@@ -679,7 +680,7 @@ class ReportController extends Controller
         $request->validate([
             'startDate' => 'required|date',
             'endDate' => 'required|date',
-            'restaurantId' => 'required|integer',
+            'restaurantId' => 'required|string',
         ]);
 
         // Parse dates using Carbon
