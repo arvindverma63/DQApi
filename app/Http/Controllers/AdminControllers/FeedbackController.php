@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 
@@ -100,8 +101,22 @@ class FeedbackController extends Controller
      */
     public function getAllFeedbacks($id)
     {
-        $response = Feedback::where('restaurantId', $id)->get();
+        $customer = Customer::where('restaurantId', $id)->get();
 
-        return response()->json($response);
+        foreach($customer as $c){
+            $feedback = Feedback::where('customerId',$c->id)->get();
+
+            $response = [
+                'customerName'=>$c->name,
+                'phoneNumber'=>$c->phoneNumber,
+                'email'=>$c->email,
+                'feedback'=>$feedback->feedback,
+                'short'=>$feedback->short,
+                'date'=>$feedback->created_at,
+            ];
+
+            return response()->json($response);
+        }
+
     }
 }
