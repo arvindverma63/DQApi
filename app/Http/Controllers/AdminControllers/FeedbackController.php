@@ -101,22 +101,30 @@ class FeedbackController extends Controller
      */
     public function getAllFeedbacks($id)
     {
-        $customer = Customer::where('restaurantId', $id)->get();
+        // Get all customers associated with the restaurant
+        $customers = Customer::where('restaurantId', $id)->get();
 
-        foreach($customer as $c){
-            $feedback = Feedback::where('customerId',$c->id)->get();
+        // Initialize an array to hold the feedback responses
+        $responses = [];
 
-            $response = [
-                'customerName'=>$c->name,
-                'phoneNumber'=>$c->phoneNumber,
-                'email'=>$c->email,
-                'feedback'=>$feedback->feedback,
-                'short'=>$feedback->short,
-                'date'=>$feedback->created_at,
-            ];
+        foreach ($customers as $customer) {
+            // Get all feedbacks for the current customer
+            $feedbacks = Feedback::where('customerId', $customer->id)->get();
 
-            return response()->json($response);
+            foreach ($feedbacks as $feedback) {
+                // Add each feedback along with customer details to the response array
+                $responses[] = [
+                    'customerName' => $customer->name,
+                    'phoneNumber' => $customer->phoneNumber,
+                    'email' => $customer->email,
+                    'feedback' => $feedback->feedback,
+                    'short' => $feedback->short,
+                    'date' => $feedback->created_at,
+                ];
+            }
         }
 
+        // Return the consolidated response
+        return response()->json($responses);
     }
 }
