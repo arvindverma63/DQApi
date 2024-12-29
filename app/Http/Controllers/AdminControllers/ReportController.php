@@ -691,7 +691,7 @@ class ReportController extends Controller
         // Query to fetch data
         $response = Transaction::where('restaurantId', $restaurantId)
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->select('payment_type', DB::raw('COUNT(*) as total_count'), DB::raw('SUM(amount) as total_amount'))
+            ->select('payment_type', DB::raw('COUNT(*) as total_count'), DB::raw('SUM(total) as total_amount'))
             ->groupBy('payment_type')
             ->get();
 
