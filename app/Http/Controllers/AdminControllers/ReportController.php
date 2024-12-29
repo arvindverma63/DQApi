@@ -208,101 +208,101 @@ class ReportController extends Controller
      * )
      */
     public function getDashboardChartData(Request $request)
-{
-    // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
-    $validated = $request->validate([
-        'year' => 'required|integer', // Year must be provided
-        'restaurantId' => 'required|string' // Restaurant ID must be provided
-    ]);
+    {
+        // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
+        $validated = $request->validate([
+            'year' => 'required|integer', // Year must be provided
+            'restaurantId' => 'required|string' // Restaurant ID must be provided
+        ]);
 
-    $year = $validated['year'];
-    $restaurantId = $validated['restaurantId'];
+        $year = $validated['year'];
+        $restaurantId = $validated['restaurantId'];
 
-    // Fetch total collection (sales) for the entire year
-    $totalCollection = Transaction::where('restaurantId', $restaurantId)
-        ->whereYear('created_at', $year)
-        ->groupBy(DB::raw('MONTH(created_at)'))
-        ->selectRaw('MONTH(created_at) as month, sum(total) as total_collection')
-        ->get();
+        // Fetch total collection (sales) for the entire year
+        $totalCollection = Transaction::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->selectRaw('MONTH(created_at) as month, sum(total) as total_collection')
+            ->get();
 
-    // Fetch total number of invoices for the entire year
-    $totalInvoices = Transaction::where('restaurantId', $restaurantId)
-        ->whereYear('created_at', $year)
-        ->groupBy(DB::raw('MONTH(created_at)'))
-        ->selectRaw('MONTH(created_at) as month, count(id) as total_invoices')
-        ->get();
+        // Fetch total number of invoices for the entire year
+        $totalInvoices = Transaction::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->selectRaw('MONTH(created_at) as month, count(id) as total_invoices')
+            ->get();
 
-    // Fetch total completed orders for the entire year
-    $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
-        ->whereYear('created_at', $year)
-        ->where('status', 'complete')
-        ->groupBy(DB::raw('MONTH(created_at)'))
-        ->selectRaw('MONTH(created_at) as month, count(id) as complete_orders')
-        ->get();
+        // Fetch total completed orders for the entire year
+        $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->where('status', 'complete')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->selectRaw('MONTH(created_at) as month, count(id) as complete_orders')
+            ->get();
 
-    // Fetch total rejected orders for the entire year
-    $totalRejectOrder = Order::where('restaurantId', $restaurantId)
-        ->whereYear('created_at', $year)
-        ->where('status', 'reject')
-        ->groupBy(DB::raw('MONTH(created_at)'))
-        ->selectRaw('MONTH(created_at) as month, count(id) as reject_orders')
-        ->get();
+        // Fetch total rejected orders for the entire year
+        $totalRejectOrder = Order::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->where('status', 'reject')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->selectRaw('MONTH(created_at) as month, count(id) as reject_orders')
+            ->get();
 
-    // Convert month numbers to short month names (e.g., Jan, Feb)
-    $months = array_map(function ($month) {
-        return date('M', mktime(0, 0, 0, $month, 1)); // Convert month number to short name
-    }, range(1, 12));
+        // Convert month numbers to short month names (e.g., Jan, Feb)
+        $months = array_map(function ($month) {
+            return date('M', mktime(0, 0, 0, $month, 1)); // Convert month number to short name
+        }, range(1, 12));
 
-    // Prepare the data for the chart
-    $chartData = [
-        'labels' => $months, // Labels for the X-axis (short month names)
-        'datasets' => [
-            [
-                'label' => 'Total Collection',
-                'data' => array_map(function ($month) use ($totalCollection) {
-                    $data = $totalCollection->firstWhere('month', $month);
-                    return $data ? $data->total_collection : 0;
-                }, range(1, 12)), // Use numeric months for matching
-                'borderColor' => 'rgba(54, 162, 235, 1)', // Line color for Total Collection
-                'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
-                'fill' => false, // No fill for the line chart
+        // Prepare the data for the chart
+        $chartData = [
+            'labels' => $months, // Labels for the X-axis (short month names)
+            'datasets' => [
+                [
+                    'label' => 'Total Collection',
+                    'data' => array_map(function ($month) use ($totalCollection) {
+                        $data = $totalCollection->firstWhere('month', $month);
+                        return $data ? $data->total_collection : 0;
+                    }, range(1, 12)), // Use numeric months for matching
+                    'borderColor' => 'rgba(54, 162, 235, 1)', // Line color for Total Collection
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Total Invoices',
+                    'data' => array_map(function ($month) use ($totalInvoices) {
+                        $data = $totalInvoices->firstWhere('month', $month);
+                        return $data ? $data->total_invoices : 0;
+                    }, range(1, 12)), // Use numeric months for matching
+                    'borderColor' => 'rgba(75, 192, 192, 1)', // Line color for Total Invoices
+                    'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Completed Orders',
+                    'data' => array_map(function ($month) use ($totalCompleteOrder) {
+                        $data = $totalCompleteOrder->firstWhere('month', $month);
+                        return $data ? $data->complete_orders : 0;
+                    }, range(1, 12)), // Use numeric months for matching
+                    'borderColor' => 'rgba(153, 102, 255, 1)', // Line color for Completed Orders
+                    'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Rejected Orders',
+                    'data' => array_map(function ($month) use ($totalRejectOrder) {
+                        $data = $totalRejectOrder->firstWhere('month', $month);
+                        return $data ? $data->reject_orders : 0;
+                    }, range(1, 12)), // Use numeric months for matching
+                    'borderColor' => 'rgba(255, 99, 132, 1)', // Line color for Rejected Orders
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
             ],
-            [
-                'label' => 'Total Invoices',
-                'data' => array_map(function ($month) use ($totalInvoices) {
-                    $data = $totalInvoices->firstWhere('month', $month);
-                    return $data ? $data->total_invoices : 0;
-                }, range(1, 12)), // Use numeric months for matching
-                'borderColor' => 'rgba(75, 192, 192, 1)', // Line color for Total Invoices
-                'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
-                'fill' => false, // No fill for the line chart
-            ],
-            [
-                'label' => 'Completed Orders',
-                'data' => array_map(function ($month) use ($totalCompleteOrder) {
-                    $data = $totalCompleteOrder->firstWhere('month', $month);
-                    return $data ? $data->complete_orders : 0;
-                }, range(1, 12)), // Use numeric months for matching
-                'borderColor' => 'rgba(153, 102, 255, 1)', // Line color for Completed Orders
-                'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
-                'fill' => false, // No fill for the line chart
-            ],
-            [
-                'label' => 'Rejected Orders',
-                'data' => array_map(function ($month) use ($totalRejectOrder) {
-                    $data = $totalRejectOrder->firstWhere('month', $month);
-                    return $data ? $data->reject_orders : 0;
-                }, range(1, 12)), // Use numeric months for matching
-                'borderColor' => 'rgba(255, 99, 132, 1)', // Line color for Rejected Orders
-                'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                'fill' => false, // No fill for the line chart
-            ],
-        ],
-    ];
+        ];
 
-    // Return the chart data as JSON
-    return response()->json($chartData);
-}
+        // Return the chart data as JSON
+        return response()->json($chartData);
+    }
 
 
 
@@ -376,102 +376,102 @@ class ReportController extends Controller
      * )
      */
 
-     public function getWeeklyChartData(Request $request)
-     {
-         // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
-         $validated = $request->validate([
-             'year' => 'required|integer', // Year must be provided
-             'restaurantId' => 'required|string' // Restaurant ID must be provided
-         ]);
+    public function getWeeklyChartData(Request $request)
+    {
+        // Validate the incoming request to ensure 'year' and 'restaurantId' are provided
+        $validated = $request->validate([
+            'year' => 'required|integer', // Year must be provided
+            'restaurantId' => 'required|string' // Restaurant ID must be provided
+        ]);
 
-         $year = $validated['year'];
-         $restaurantId = $validated['restaurantId'];
+        $year = $validated['year'];
+        $restaurantId = $validated['restaurantId'];
 
-         // Fetch total collection (sales) for the entire year, grouped by week
-         $totalCollection = Transaction::where('restaurantId', $restaurantId)
-             ->whereYear('created_at', $year)
-             ->groupBy(DB::raw('WEEK(created_at)'))
-             ->selectRaw('WEEK(created_at) as week, sum(total) as total_collection')
-             ->get();
+        // Fetch total collection (sales) for the entire year, grouped by week
+        $totalCollection = Transaction::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('WEEK(created_at)'))
+            ->selectRaw('WEEK(created_at) as week, sum(total) as total_collection')
+            ->get();
 
-         // Fetch total number of invoices for the entire year, grouped by week
-         $totalInvoices = Transaction::where('restaurantId', $restaurantId)
-             ->whereYear('created_at', $year)
-             ->groupBy(DB::raw('WEEK(created_at)'))
-             ->selectRaw('WEEK(created_at) as week, count(id) as total_invoices')
-             ->get();
+        // Fetch total number of invoices for the entire year, grouped by week
+        $totalInvoices = Transaction::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('WEEK(created_at)'))
+            ->selectRaw('WEEK(created_at) as week, count(id) as total_invoices')
+            ->get();
 
-         // Fetch total completed orders for the entire year, grouped by week
-         $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
-             ->whereYear('created_at', $year)
-             ->where('status', 'complete')
-             ->groupBy(DB::raw('WEEK(created_at)'))
-             ->selectRaw('WEEK(created_at) as week, count(id) as complete_orders')
-             ->get();
+        // Fetch total completed orders for the entire year, grouped by week
+        $totalCompleteOrder = Order::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->where('status', 'complete')
+            ->groupBy(DB::raw('WEEK(created_at)'))
+            ->selectRaw('WEEK(created_at) as week, count(id) as complete_orders')
+            ->get();
 
-         // Fetch total rejected orders for the entire year, grouped by week
-         $totalRejectOrder = Order::where('restaurantId', $restaurantId)
-             ->whereYear('created_at', $year)
-             ->where('status', 'reject')
-             ->groupBy(DB::raw('WEEK(created_at)'))
-             ->selectRaw('WEEK(created_at) as week, count(id) as reject_orders')
-             ->get();
+        // Fetch total rejected orders for the entire year, grouped by week
+        $totalRejectOrder = Order::where('restaurantId', $restaurantId)
+            ->whereYear('created_at', $year)
+            ->where('status', 'reject')
+            ->groupBy(DB::raw('WEEK(created_at)'))
+            ->selectRaw('WEEK(created_at) as week, count(id) as reject_orders')
+            ->get();
 
-         // Determine the number of weeks in the given year
-         $weeks = range(1, 52); // Assume a standard 52 weeks for simplicity
+        // Determine the number of weeks in the given year
+        $weeks = range(1, 52); // Assume a standard 52 weeks for simplicity
 
-         // Prepare the data for the chart
-         $chartData = [
-             'labels' => array_map(function ($week) {
-                 return "Week $week"; // Format week labels as "Week 1", "Week 2", etc.
-             }, $weeks),
-             'datasets' => [
-                 [
-                     'label' => 'Total Collection',
-                     'data' => array_map(function ($week) use ($totalCollection) {
-                         $data = $totalCollection->firstWhere('week', $week);
-                         return $data ? $data->total_collection : 0;
-                     }, $weeks),
-                     'borderColor' => 'rgb(0, 153, 255)', // Line color for Total Collection
-                     'backgroundColor' => 'rgba(0, 153, 255, 0.2)',
-                     'fill' => false, // No fill for the line chart
-                 ],
-                 [
-                     'label' => 'Total Invoices',
-                     'data' => array_map(function ($week) use ($totalInvoices) {
-                         $data = $totalInvoices->firstWhere('week', $week);
-                         return $data ? $data->total_invoices : 0;
-                     }, $weeks),
-                     'borderColor' => 'rgb(0, 255, 255)', // Line color for Total Invoices
-                     'backgroundColor' => 'rgba(0, 255, 255, 0.2)',
-                     'fill' => false, // No fill for the line chart
-                 ],
-                 [
-                     'label' => 'Completed Orders',
-                     'data' => array_map(function ($week) use ($totalCompleteOrder) {
-                         $data = $totalCompleteOrder->firstWhere('week', $week);
-                         return $data ? $data->complete_orders : 0;
-                     }, $weeks),
-                     'borderColor' => 'rgb(85, 0, 255)', // Line color for Completed Orders
-                     'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
-                     'fill' => false, // No fill for the line chart
-                 ],
-                 [
-                     'label' => 'Rejected Orders',
-                     'data' => array_map(function ($week) use ($totalRejectOrder) {
-                         $data = $totalRejectOrder->firstWhere('week', $week);
-                         return $data ? $data->reject_orders : 0;
-                     }, $weeks),
-                     'borderColor' => 'rgb(255, 0, 55)', // Line color for Rejected Orders
-                     'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                     'fill' => false, // No fill for the line chart
-                 ],
-             ],
-         ];
+        // Prepare the data for the chart
+        $chartData = [
+            'labels' => array_map(function ($week) {
+                return "Week $week"; // Format week labels as "Week 1", "Week 2", etc.
+            }, $weeks),
+            'datasets' => [
+                [
+                    'label' => 'Total Collection',
+                    'data' => array_map(function ($week) use ($totalCollection) {
+                        $data = $totalCollection->firstWhere('week', $week);
+                        return $data ? $data->total_collection : 0;
+                    }, $weeks),
+                    'borderColor' => 'rgb(0, 153, 255)', // Line color for Total Collection
+                    'backgroundColor' => 'rgba(0, 153, 255, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Total Invoices',
+                    'data' => array_map(function ($week) use ($totalInvoices) {
+                        $data = $totalInvoices->firstWhere('week', $week);
+                        return $data ? $data->total_invoices : 0;
+                    }, $weeks),
+                    'borderColor' => 'rgb(0, 255, 255)', // Line color for Total Invoices
+                    'backgroundColor' => 'rgba(0, 255, 255, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Completed Orders',
+                    'data' => array_map(function ($week) use ($totalCompleteOrder) {
+                        $data = $totalCompleteOrder->firstWhere('week', $week);
+                        return $data ? $data->complete_orders : 0;
+                    }, $weeks),
+                    'borderColor' => 'rgb(85, 0, 255)', // Line color for Completed Orders
+                    'backgroundColor' => 'rgba(153, 102, 255, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+                [
+                    'label' => 'Rejected Orders',
+                    'data' => array_map(function ($week) use ($totalRejectOrder) {
+                        $data = $totalRejectOrder->firstWhere('week', $week);
+                        return $data ? $data->reject_orders : 0;
+                    }, $weeks),
+                    'borderColor' => 'rgb(255, 0, 55)', // Line color for Rejected Orders
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+                    'fill' => false, // No fill for the line chart
+                ],
+            ],
+        ];
 
-         // Return the chart data as JSON
-         return response()->json($chartData);
-     }
+        // Return the chart data as JSON
+        return response()->json($chartData);
+    }
 
 
     /**
@@ -597,5 +597,106 @@ class ReportController extends Controller
             ->get();
 
         return response()->json($response);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/getReportPaymentType",
+     *     summary="Fetch report by payment type",
+     *     description="Retrieve payment type statistics for a restaurant within a specific date range.",
+     *     tags={"Reports"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="startDate",
+     *                 type="string",
+     *                 format="date",
+     *                 description="Start date for the report (YYYY-MM-DD)",
+     *                 example="2024-12-01"
+     *             ),
+     *             @OA\Property(
+     *                 property="endDate",
+     *                 type="string",
+     *                 format="date",
+     *                 description="End date for the report (YYYY-MM-DD)",
+     *                 example="2024-12-10"
+     *             ),
+     *             @OA\Property(
+     *                 property="restaurantId",
+     *                 type="integer",
+     *                 description="ID of the restaurant",
+     *                 example=123
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="payment_type", type="string", example="Cash"),
+     *                     @OA\Property(property="total_count", type="integer", example=45),
+     *                     @OA\Property(property="total_amount", type="number", format="float", example=15000)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="The given data was invalid."
+     *             ),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 additionalProperties={
+     *                     @OA\Property(type="array", @OA\Items(type="string"))
+     *                 }
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getReportPaymentType(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'startDate' => 'required|date',
+            'endDate' => 'required|date',
+            'restaurantId' => 'required|integer',
+        ]);
+
+        // Parse dates using Carbon
+        $startDate = Carbon::parse($request->startDate)->startOfDay();
+        $endDate = Carbon::parse($request->endDate)->endOfDay();
+        $restaurantId = $request->restaurantId;
+
+        // Query to fetch data
+        $response = Transaction::where('restaurantId', $restaurantId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select('payment_type', DB::raw('COUNT(*) as total_count'), DB::raw('SUM(amount) as total_amount'))
+            ->groupBy('payment_type')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $response
+        ]);
     }
 }
