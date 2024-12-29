@@ -41,6 +41,7 @@ Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']
 
 
 Route::post('/admin/feedback/add',[FeedbackController::class,'addFeedback']);
+Route::get('/feedbacks/{id}',[FeedbackController::class,'getAllFeedbacks']);
 
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {

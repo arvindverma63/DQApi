@@ -611,6 +611,87 @@
                 }
             }
         },
+        "/feedbacks/{id}": {
+            "get": {
+                "tags": [
+                    "Feedbacks"
+                ],
+                "summary": "Get all feedbacks",
+                "description": "Retrieve all feedbacks for a specific restaurant using its restaurantId.",
+                "operationId": "31e64133c5131b8a15069d7e3fc43bbe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The restaurant ID as a string",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "R1732246184"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "restaurantId": {
+                                                "type": "string",
+                                                "example": "R1732246184"
+                                            },
+                                            "feedback": {
+                                                "type": "string",
+                                                "example": "Great food and service!"
+                                            },
+                                            "rating": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-12-01T10:15:30Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-12-01T12:45:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Restaurant not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Restaurant not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/inventories": {
             "get": {
                 "tags": [
@@ -5083,6 +5164,10 @@
         {
             "name": "Feedback",
             "description": "Feedback"
+        },
+        {
+            "name": "Feedbacks",
+            "description": "Feedbacks"
         },
         {
             "name": "Inventory",
