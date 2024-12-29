@@ -2585,14 +2585,14 @@
                 }
             }
         },
-        "/api/getReportPaymentType": {
+        "/getReportPaymentType": {
             "post": {
                 "tags": [
                     "Reports"
                 ],
                 "summary": "Fetch report by payment type",
                 "description": "Retrieve payment type statistics for a restaurant within a specific date range.",
-                "operationId": "c5776e22b8da2b01d41850e43a752480",
+                "operationId": "74c7009bd88fb432a6f6d9b2ff1e383e",
                 "requestBody": {
                     "required": true,
                     "content": {
