@@ -78,7 +78,7 @@ class MenuController extends Controller
             // Map stock items for the specific menu and include itemName from Inventory
             $menu->stockItems = $stockItems->where('menuId', $menu->id)->map(function ($stockItem) use ($inventoryItems) {
                 return [
-                    'id'=>$stockItem->id,
+                    'id' => $stockItem->id,
                     'stockId' => $stockItem->stockId,
                     'quantity' => $stockItem->quantity,
                     'name' => $inventoryItems[$stockItem->stockId]->itemName ?? '', // Include itemName from Inventory if available
@@ -89,7 +89,7 @@ class MenuController extends Controller
         });
 
         // Fetch all inventory items for the dropdown options
-        $inventoryOptions = Inventory::where('restaurantId',$request->restaurantId)->get();
+        $inventoryOptions = Inventory::where('restaurantId', $request->restaurantId)->get();
 
         // Return JSON response with both menu items and inventory options
         return response()->json([
@@ -263,163 +263,163 @@ class MenuController extends Controller
 
 
     /**
- * @OA\Put(
- *     path="/menu/update/{id}",
- *     summary="Update a menu item",
- *     tags={"Menu"},
- *     security={{"bearerAuth":{}}},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         description="Menu item ID",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 required={"itemName", "price", "categoryId"},
- *                 @OA\Property(
- *                     property="itemName",
- *                     type="string",
- *                     example="Burger",
- *                     description="Name of the menu item"
- *                 ),
- *                 @OA\Property(
- *                     property="itemImage",
- *                     type="file",
- *                     description="Image of the menu item (optional)"
- *                 ),
- *                 @OA\Property(
- *                     property="price",
- *                     type="number",
- *                     format="float",
- *                     example=5.99,
- *                     description="Price of the menu item"
- *                 ),
- *                 @OA\Property(
- *                     property="categoryId",
- *                     type="integer",
- *                     example=1,
- *                     description="Category ID of the menu item"
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Menu item updated successfully",
- *         @OA\JsonContent(
- *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
- *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
- *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
- *         )
- *     ),
- *     @OA\Response(
- *         response=400,
- *         description="Validation error",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Validation error")
- *         )
- *     ),
- *     @OA\Response(
- *         response=401,
- *         description="Unauthorized",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Authorization token not found")
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Menu item not found",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Menu item not found")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Failed to update menu item",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Failed to update menu item")
- *         )
- *     )
- * )
- */
+     * @OA\Put(
+     *     path="/menu/update/{id}",
+     *     summary="Update a menu item",
+     *     tags={"Menu"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Menu item ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"itemName", "price", "categoryId"},
+     *                 @OA\Property(
+     *                     property="itemName",
+     *                     type="string",
+     *                     example="Burger",
+     *                     description="Name of the menu item"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="itemImage",
+     *                     type="file",
+     *                     description="Image of the menu item (optional)"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="price",
+     *                     type="number",
+     *                     format="float",
+     *                     example=5.99,
+     *                     description="Price of the menu item"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="categoryId",
+     *                     type="integer",
+     *                     example=1,
+     *                     description="Category ID of the menu item"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Menu item updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/Menu"),
+     *             @OA\Property(property="itemImage", type="string", description="URL of the updated menu item image"),
+     *             @OA\Property(property="message", type="string", example="Menu item updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation error")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Authorization token not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Menu item not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Menu item not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to update menu item",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to update menu item")
+     *         )
+     *     )
+     * )
+     */
 
 
- public function update(Request $request, $id)
- {
-     Log::info('Request received for updating menu:', $request->except('itemImage'));
+    public function update(Request $request, $id)
+    {
+        Log::info('Request received for updating menu:', $request->except('itemImage'));
 
-     // Validate the incoming request
-     $request->validate([
-         'itemName' => 'required|string|max:255',
-         'price' => 'required|numeric|min:0',
-         'categoryId' => 'required|integer|exists:categories,id',
-         'itemImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-     ]);
+        // Validate the incoming request
+        $request->validate([
+            'itemName' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'categoryId' => 'required|integer|exists:categories,id',
+            'itemImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-     // Find the menu item by ID
-     $menu = Menu::find($id);
+        // Find the menu item by ID
+        $menu = Menu::find($id);
 
-     if (!$menu) {
-         return response()->json(['message' => 'Menu item not found'], 404);
-     }
+        if (!$menu) {
+            return response()->json(['message' => 'Menu item not found'], 404);
+        }
 
-     try {
-         DB::transaction(function () use ($request, $menu) {
-             // Handle item image update
-             if ($request->hasFile('itemImage')) {
+        try {
+            DB::transaction(function () use ($request, $menu) {
+                // Handle item image update
+                if ($request->hasFile('itemImage')) {
+                    $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                    $imagePath = public_path('menus'); // Path to the directory
 
-
-                 $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
-                 $imagePath = public_path('menus');
-
-                 if (!file_exists($menu->itemImage)) {
-                     mkdir($menu->itemImage, 0777, true);
-                 }
-                 if($menu->itemImage && !str_starts_with($menu->itemImage, 'http') && !is_dir($menu->itemImage)){
-                     unlink($menu->itemImage);
-                 }elseif($menu->itemImage){
-                    $imageFromUrl = implode('/', array_slice(explode('/', trim(parse_url($menu->itemImage, PHP_URL_PATH), '/')), -2));
-                    if(strpos($imageFromUrl, '.') !== false && !is_dir($imageFromUrl)){
-                        unlink($imageFromUrl);
+                    // Ensure the directory exists
+                    if (!file_exists($imagePath)) {
+                        mkdir($imagePath, 0777, true);
                     }
-                 }
 
-                 $request->file('itemImage')->move($imagePath, $imageName);
-                 $publicImageUrl = 'menus/' . $imageName;
+                    // Handle old image deletion
+                    if ($menu->itemImage && !str_starts_with($menu->itemImage, 'http')) {
+                        $oldImagePath = public_path($menu->itemImage);
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
 
-                 $request['itemImage'] = $publicImageUrl;
-                 $request->itemImage = $publicImageUrl;
+                    // Move the new image to the directory
+                    $request->file('itemImage')->move($imagePath, $imageName);
+                    $publicImageUrl = 'menus/' . $imageName;
 
-             }
+                    // Update the request data
+                    $request['itemImage'] = $publicImageUrl;
+                    $request->itemImage = $publicImageUrl;
+                }
 
-             // Update menu details
-            //  $menu->update($request->only(['itemName', 'price', 'categoryId', 'itemImage']));
-             $menu->update([
-                'itemImage' => $request->itemImage,
-                'price' => $request->price,
-                'categoryId' => $request->categoryId,
-                'itemImage' => $request->itemImage
-             ]);
-         });
+                // Update menu details
+                $menu->update([
+                    'itemName' => $request->itemName,
+                    'price' => $request->price,
+                    'categoryId' => $request->categoryId,
+                    'itemImage' => $request->itemImage ?? $menu->itemImage,
+                ]);
+            });
 
-         return response()->json([
-             'data' => $menu,
-             'message' => 'Menu item updated successfully',
-         ], 200);
-     } catch (\Exception $e) {
-         Log::error('Error updating menu item:', [
-             'error' => $e->getMessage(),
-             'request_data' => $request->except('itemImage'),
-         ]);
+            return response()->json([
+                'data' => $menu,
+                'message' => 'Menu item updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error updating menu item:', [
+                'error' => $e->getMessage(),
+                'request_data' => $request->except('itemImage'),
+            ]);
 
-         return response()->json(['message' => 'Failed to update menu item : '. $e->getMessage()], 500);
-     }
- }
+            return response()->json(['message' => 'Failed to update menu item: ' . $e->getMessage()], 500);
+        }
+    }
+
 
 
 
@@ -458,14 +458,13 @@ class MenuController extends Controller
         try {
             DB::transaction(function () use ($menu, $id) {
                 // Delete the associated image if it exists
-                if($menu->itemImage && !str_starts_with($menu->itemImage, 'http') && !is_dir($menu->itemImage)){
+                if ($menu->itemImage && !str_starts_with($menu->itemImage, 'http') && !is_dir($menu->itemImage)) {
                     unlink($menu->itemImage);
+                } elseif ($menu->itemImage) {
+                    $imageFromUrl = implode('/', array_slice(explode('/', trim(parse_url($menu->itemImage, PHP_URL_PATH), '/')), -2));
 
-                }elseif($menu->itemImage){
-                   $imageFromUrl = implode('/', array_slice(explode('/', trim(parse_url($menu->itemImage, PHP_URL_PATH), '/')), -2));
-
-                   if(strpos($imageFromUrl, '.') !== false && !is_dir($imageFromUrl)){
-                       unlink($imageFromUrl);
+                    if (strpos($imageFromUrl, '.') !== false && !is_dir($imageFromUrl)) {
+                        unlink($imageFromUrl);
                     }
                 }
 
@@ -473,7 +472,7 @@ class MenuController extends Controller
                 $menu->delete();
 
                 // Remove entries from MenuInventory
-               MenuInventory::where('menuId', $id)->delete();
+                MenuInventory::where('menuId', $id)->delete();
             });
 
             return response()->json(null, 204);
