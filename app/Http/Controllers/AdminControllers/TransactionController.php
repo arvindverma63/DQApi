@@ -268,9 +268,12 @@ class TransactionController extends Controller
 
             // Transform the data to match the desired structure
             $responseData = $transactions->map(function ($transaction) {
+                $userName = Customer::find($transaction->user_id);
+
                 return [
                     'id' => $transaction->id,
-                    'user_id' => $transaction->user_id,
+                    'user_id'=>$transaction->user_id,
+                    'userName' => $userName->name,
                     'items' => $transaction->items, // Decode JSON to array
                     'tax' => $transaction->tax,
                     'discount' => $transaction->discount,
