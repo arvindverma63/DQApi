@@ -2777,8 +2777,19 @@
                 "tags": [
                     "Reservations"
                 ],
-                "summary": "Get all reservations",
+                "summary": "Get a reservation by restaurantID",
                 "operationId": "c42c87bac7932298926bc41b9371f6e9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of reservations",
