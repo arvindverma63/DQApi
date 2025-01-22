@@ -108,8 +108,6 @@ class ReservationController extends Controller
             'payment' => 'required|numeric',
             'advance' => 'required|numeric',
             'notes' => 'nullable|string',
-            'created_at' => 'required|string|max:50',
-            'updated_at' => 'required|string|max:50',
         ]);
 
         $reservation = Reservation::create($validated);
@@ -200,8 +198,6 @@ class ReservationController extends Controller
             'payment' => 'required|numeric',
             'advance' => 'required|numeric',
             'notes' => 'nullable|string',
-            'created_at' => 'required|string|max:50',
-            'updated_at' => 'required|string|max:50',
         ]);
 
         $reservation->update($validated);
