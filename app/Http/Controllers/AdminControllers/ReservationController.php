@@ -46,7 +46,7 @@ class ReservationController extends Controller
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,

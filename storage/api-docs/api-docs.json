@@ -2786,7 +2786,7 @@
                         "description": "Reservation ID",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
