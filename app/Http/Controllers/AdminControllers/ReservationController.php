@@ -40,7 +40,14 @@ class ReservationController extends Controller
      * @OA\Get(
      *     path="/reservations/AllByRestaurantId/{restaurantId}",
      *     tags={"Reservations"},
-     *     summary="Get all reservations",
+     * *     summary="Get a reservation by restaurantID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Reservation ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of reservations",
