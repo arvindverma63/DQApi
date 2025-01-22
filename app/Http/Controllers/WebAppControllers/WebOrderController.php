@@ -75,7 +75,8 @@ class WebOrderController extends Controller
         ]);
 
         // Fetch all menu items for the given restaurant
-        $menuItems = Menu::where('restaurantId', $request['restaurantId'])->get();
+        $menuItems = Menu::where('restaurantId', $request['restaurantId'])
+                                    ->where('status',0)->get();
 
         if ($menuItems->isEmpty()) {
             return response()->json(['message' => 'No menu found for the given restaurant ID'], 404);
