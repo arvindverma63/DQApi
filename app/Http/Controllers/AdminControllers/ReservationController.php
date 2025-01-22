@@ -21,7 +21,6 @@ use Illuminate\Http\Request;
  *     type="object",
  *     title="Reservation",
  *     required={"restaurantId", "startTime", "endTime", "customerId", "payment", "advance", "created_at", "updated_at"},
- *     @OA\Property(property="id", type="integer", description="Reservation ID"),
  *     @OA\Property(property="restaurantId", type="string", description="Restaurant ID"),
  *     @OA\Property(property="startTime", type="string", description="Start time of the reservation"),
  *     @OA\Property(property="endTime", type="string", description="End time of the reservation"),
@@ -29,8 +28,6 @@ use Illuminate\Http\Request;
  *     @OA\Property(property="payment", type="number", format="float", description="Payment amount"),
  *     @OA\Property(property="advance", type="number", format="float", description="Advance amount"),
  *     @OA\Property(property="notes", type="string", description="Additional notes"),
- *     @OA\Property(property="created_at", type="string", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", description="Last update timestamp"),
  * )
  */
 

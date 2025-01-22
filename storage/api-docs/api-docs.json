@@ -5095,10 +5095,6 @@
                     "updated_at"
                 ],
                 "properties": {
-                    "id": {
-                        "description": "Reservation ID",
-                        "type": "integer"
-                    },
                     "restaurantId": {
                         "description": "Restaurant ID",
                         "type": "string"
@@ -5127,14 +5123,6 @@
                     },
                     "notes": {
                         "description": "Additional notes",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Creation timestamp",
-                        "type": "string"
-                    },
-                    "updated_at": {
-                        "description": "Last update timestamp",
                         "type": "string"
                     }
                 },
