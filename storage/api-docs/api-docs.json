@@ -2772,6 +2772,166 @@
                 }
             }
         },
+        "/api/reservations": {
+            "get": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Get all reservations",
+                "operationId": "4017ff4c0c5784f3005812e216d3b2ff",
+                "responses": {
+                    "200": {
+                        "description": "List of reservations",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Reservation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Create a new reservation",
+                "operationId": "ff3371c84ce51be58acbd86f857e210d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Reservation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reservation created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Reservation"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reservations/{id}": {
+            "get": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Get a reservation by ID",
+                "operationId": "6c899fb6ac4eeeb4e6f17bcff44dc0b1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reservation details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Reservation"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Update a reservation",
+                "operationId": "e28c2879ecb05a181304eba5d20b3cee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Reservation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reservation updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Reservation"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Delete a reservation",
+                "operationId": "af6bd2178a88cd84ab104a055f9cbbb4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reservation deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [
@@ -4909,6 +5069,64 @@
                 },
                 "type": "object"
             },
+            "Reservation": {
+                "title": "Reservation",
+                "required": [
+                    "restaurantId",
+                    "startTime",
+                    "endTime",
+                    "customerId",
+                    "payment",
+                    "advance",
+                    "created_at",
+                    "updated_at"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Reservation ID",
+                        "type": "integer"
+                    },
+                    "restaurantId": {
+                        "description": "Restaurant ID",
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "description": "Start time of the reservation",
+                        "type": "string"
+                    },
+                    "endTime": {
+                        "description": "End time of the reservation",
+                        "type": "string"
+                    },
+                    "customerId": {
+                        "description": "Customer ID",
+                        "type": "integer"
+                    },
+                    "payment": {
+                        "description": "Payment amount",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "advance": {
+                        "description": "Advance amount",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "notes": {
+                        "description": "Additional notes",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "Last update timestamp",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "Supplier": {
                 "title": "Supplier",
                 "description": "Supplier schema",
@@ -5196,6 +5414,10 @@
         {
             "name": "Reports",
             "description": "Reports"
+        },
+        {
+            "name": "Reservations",
+            "description": "Reservations"
         },
         {
             "name": "Suppliers",

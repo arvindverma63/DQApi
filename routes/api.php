@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminControllers\InventoryController;
 use App\Http\Controllers\AdminControllers\InvoiceController;
 use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
+use App\Http\Controllers\AdminControllers\ReservationController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
@@ -151,6 +152,14 @@ Route::middleware(['auth:api'])->group(function () {
         });
     });
 
+    Route::prefix('reservations')->group(function () {
+        Route::get('/', [ReservationController::class, 'index']); // List all reservations
+        Route::post('/', [ReservationController::class, 'store']); // Create a new reservation
+        Route::get('/{id}', [ReservationController::class, 'show']); // Get a single reservation by ID
+        Route::put('/{id}', [ReservationController::class, 'update']); // Update a reservation by ID
+        Route::delete('/{id}', [ReservationController::class, 'destroy']); // Delete a reservation by ID
+    });
+
     Route::prefix('menu_inventory')->group(function () {
         // Route to get all menu inventory items
         Route::get('/', [MenuInventoryController::class, 'getAllMenuInventory'])
@@ -190,6 +199,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/transactionById/{id}', [TransactionController::class, 'getTransactionById']);
 
     Route::get('/reports', [ReportController::class, 'getDashboardStats']);
+
+
 
 
 
