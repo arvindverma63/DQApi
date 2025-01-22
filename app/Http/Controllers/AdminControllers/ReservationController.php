@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 
@@ -37,7 +38,7 @@ class ReservationController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/reservations",
+     *     path="/reservations/AllByRestaurantId/{restaurantId}",
      *     tags={"Reservations"},
      *     summary="Get all reservations",
      *     @OA\Response(
@@ -47,11 +48,35 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index($id)
     {
-        $reservations = Reservation::all();
-        return response()->json($reservations);
+        $reservations = Reservation::where('restaurantId', $id)->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $customerDetails = Customer::find($reservation->customerId);
+
+            // Ensure $customerDetails exists before accessing its properties
+            if ($customerDetails) {
+                $data[] = [
+                    'customerName' => $customerDetails->name,
+                    'customerPhoneNumber' => $customerDetails->phoneNumber,
+                    'customerAddress' => $customerDetails->address,
+                    'reservationDetails' => $reservation
+                ];
+            } else {
+                $data[] = [
+                    'customerName' => null,
+                    'customerPhoneNumber' => null,
+                    'customerAddress' => null,
+                    'reservationDetails' => $reservation
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
+
 
     /**
      * @OA\Post(
@@ -109,8 +134,31 @@ class ReservationController extends Controller
      */
     public function show($id)
     {
-        $reservation = Reservation::findOrFail($id);
-        return response()->json($reservation);
+        $reservations = Reservation::find($id);
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $customerDetails = Customer::find($reservation->customerId);
+
+            // Ensure $customerDetails exists before accessing its properties
+            if ($customerDetails) {
+                $data[] = [
+                    'customerName' => $customerDetails->name,
+                    'customerPhoneNumber' => $customerDetails->phoneNumber,
+                    'customerAddress' => $customerDetails->address,
+                    'reservationDetails' => $reservation
+                ];
+            } else {
+                $data[] = [
+                    'customerName' => null,
+                    'customerPhoneNumber' => null,
+                    'customerAddress' => null,
+                    'reservationDetails' => $reservation
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
 
     /**

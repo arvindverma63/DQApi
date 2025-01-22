@@ -2772,13 +2772,13 @@
                 }
             }
         },
-        "/api/reservations": {
+        "/reservations/AllByRestaurantId/{restaurantId}": {
             "get": {
                 "tags": [
                     "Reservations"
                 ],
                 "summary": "Get all reservations",
-                "operationId": "4017ff4c0c5784f3005812e216d3b2ff",
+                "operationId": "c42c87bac7932298926bc41b9371f6e9",
                 "responses": {
                     "200": {
                         "description": "List of reservations",
@@ -2794,13 +2794,15 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/reservations": {
             "post": {
                 "tags": [
                     "Reservations"
                 ],
                 "summary": "Create a new reservation",
-                "operationId": "ff3371c84ce51be58acbd86f857e210d",
+                "operationId": "3893f5a2aa57def7454e724c0bdb8158",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2825,13 +2827,13 @@
                 }
             }
         },
-        "/api/reservations/{id}": {
+        "/reservations/{id}": {
             "get": {
                 "tags": [
                     "Reservations"
                 ],
                 "summary": "Get a reservation by ID",
-                "operationId": "6c899fb6ac4eeeb4e6f17bcff44dc0b1",
+                "operationId": "bdad0100c7171e073ad1e3a1da4f0d9a",
                 "parameters": [
                     {
                         "name": "id",
@@ -2861,7 +2863,7 @@
                     "Reservations"
                 ],
                 "summary": "Update a reservation",
-                "operationId": "e28c2879ecb05a181304eba5d20b3cee",
+                "operationId": "97c4389a78437f7cedd5b34c01d50bcb",
                 "parameters": [
                     {
                         "name": "id",
@@ -2901,7 +2903,7 @@
                     "Reservations"
                 ],
                 "summary": "Delete a reservation",
-                "operationId": "af6bd2178a88cd84ab104a055f9cbbb4",
+                "operationId": "a1acce9b3707da4db7e9e171e2e8d3d3",
                 "parameters": [
                     {
                         "name": "id",
