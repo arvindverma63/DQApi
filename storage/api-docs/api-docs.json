@@ -1155,6 +1155,100 @@
                 ]
             }
         },
+        "/menus/status": {
+            "put": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update the status of a menu item",
+                "description": "This endpoint updates the status of a menu item. The status can be either 0 (inactive) or 1 (active).",
+                "operationId": "b589a2ba42233905b929501861e5c1cf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status",
+                                    "id"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "description": "Status of the menu (0 for inactive, 1 for active)",
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "id": {
+                                        "description": "ID of the menu item",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Menu status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu status updated successfully"
+                                        },
+                                        "menu": {
+                                            "$ref": "#/components/schemas/Menu"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menu not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/menu/update/{id}": {
             "put": {
                 "tags": [

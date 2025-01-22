@@ -97,6 +97,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.show');
         Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
         Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
+        Route::put('/menu/status',[MenuController::class,'updateStatus']);
 
         // Menu management
 

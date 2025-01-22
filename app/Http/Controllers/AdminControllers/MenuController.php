@@ -101,6 +101,64 @@ class MenuController extends Controller
         ], 200);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/menus/status",
+     *     tags={"Menu"},
+     *     summary="Update the status of a menu item",
+     *     description="This endpoint updates the status of a menu item. The status can be either 0 (inactive) or 1 (active).",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"status", "id"},
+     *             @OA\Property(property="status", type="integer", enum={0, 1}, description="Status of the menu (0 for inactive, 1 for active)"),
+     *             @OA\Property(property="id", type="integer", description="ID of the menu item")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Menu status updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Menu status updated successfully"),
+     *             @OA\Property(property="menu", type="object", ref="#/components/schemas/Menu")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Menu not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Menu not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1',
+            'id' => 'required|integer'
+        ]);
+
+        $menu = Menu::find($request->id);
+
+        if (!$menu) {
+            return response()->json(['message' => 'Menu not found'], 404);
+        }
+
+        $menu->status = $request->status;
+        $menu->save();
+
+        return response()->json(['message' => 'Menu status updated successfully', 'menu' => $menu], 200);
+    }
+
 
 
     /**
