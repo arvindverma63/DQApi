@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
-
+use Log;
 
 /**
  * @OA\Info(
@@ -56,6 +56,7 @@ class ReservationController extends Controller
     public function index($id)
     {
         $reservations = Reservation::where('restaurantId', $id)->get();
+        Log::info("restuarantId for reservation",$id);
         $data = [];
 
         foreach ($reservations as $reservation) {
