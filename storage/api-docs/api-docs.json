@@ -2866,13 +2866,13 @@
                 }
             }
         },
-        "/reservations/AllByRestaurantId/{restaurantId}": {
+        "/reservations/AllByRestaurantId/{id}": {
             "get": {
                 "tags": [
                     "Reservations"
                 ],
                 "summary": "Get a reservation by restaurantID",
-                "operationId": "c42c87bac7932298926bc41b9371f6e9",
+                "operationId": "71ce7e1202c2b4c1c14287dcee8e0768",
                 "parameters": [
                     {
                         "name": "id",
