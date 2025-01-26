@@ -135,28 +135,27 @@ class ReservationController extends Controller
      */
     public function show($id)
     {
-        // Fetch all reservations for the given restaurant
-        $reservations = Reservation::find($id);
+        // Fetch the reservation by ID
+        $reservation = Reservation::find($id);
 
-        // Get all unique customer IDs from the reservations
-        $customerIds = $reservations->pluck('customerId')->unique();
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation not found'], 404);
+        }
 
-        // Fetch customer details in one query
-        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+        // Fetch the customer details
+        $customer = Customer::find($reservation->customerId);
 
-        $data = $reservations->map(function ($reservation) use ($customers) {
-            $customer = $customers->get($reservation->customerId);
-
-            return [
-                'customerName' => $customer->name ?? null,
-                'customerPhoneNumber' => $customer->phoneNumber ?? null,
-                'customerAddress' => $customer->address ?? null,
-                'reservationDetails' => $reservation
-            ];
-        });
+        // Prepare the response data
+        $data = [
+            'customerName' => $customer->name ?? null,
+            'customerPhoneNumber' => $customer->phoneNumber ?? null,
+            'customerAddress' => $customer->address ?? null,
+            'reservationDetails' => $reservation
+        ];
 
         return response()->json($data);
     }
+
 
     /**
      * @OA\Put(
