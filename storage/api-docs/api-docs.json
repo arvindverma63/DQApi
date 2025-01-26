@@ -5218,6 +5218,10 @@
                     "notes": {
                         "description": "Additional notes",
                         "type": "string"
+                    },
+                    "tableNumber": {
+                        "description": "add tables",
+                        "type": "string"
                     }
                 },
                 "type": "object"

@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
  *     @OA\Property(property="payment", type="number", format="float", description="Payment amount"),
  *     @OA\Property(property="advance", type="number", format="float", description="Advance amount"),
  *     @OA\Property(property="notes", type="string", description="Additional notes"),
+ * @OA\Property(property="tableNumber", type="string", description="add tables"),
  * )
  */
 
@@ -108,6 +109,7 @@ class ReservationController extends Controller
             'payment' => 'required|numeric',
             'advance' => 'required|numeric',
             'notes' => 'nullable|string',
+            'tableNumber' => 'nullable'
         ]);
 
         $reservation = Reservation::create($validated);
@@ -198,6 +200,7 @@ class ReservationController extends Controller
             'payment' => 'required|numeric',
             'advance' => 'required|numeric',
             'notes' => 'nullable|string',
+            'tableNumber'=>'nullable',
         ]);
 
         $reservation->update($validated);

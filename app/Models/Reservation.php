@@ -23,5 +23,6 @@ class Reservation extends Model
         'notes',
         'created_at',
         'updated_at',
+        'tableNumber',
     ];
 }
