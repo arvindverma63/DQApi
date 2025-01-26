@@ -154,7 +154,6 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::get('/reservations/AllByRestaurantId/{id}', [ReservationController::class, 'index']); // List all reservations
     Route::prefix('reservations')->group(function () {
-
         Route::post('/', [ReservationController::class, 'store']); // Create a new reservation
         Route::get('/{id}', [ReservationController::class, 'show']); // Get a single reservation by ID
         Route::put('/{id}', [ReservationController::class, 'update']); // Update a reservation by ID

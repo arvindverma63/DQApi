@@ -58,24 +58,24 @@ class ReservationController extends Controller
         // Fetch all reservations for the given restaurant
         $reservations = Reservation::where('restaurantId', $id)->get();
 
-        // Get all unique customer IDs from the reservations
-        $customerIds = $reservations->pluck('customerId')->unique();
+        // // Get all unique customer IDs from the reservations
+        // $customerIds = $reservations->pluck('customerId')->unique();
 
-        // Fetch customer details in one query
-        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+        // // Fetch customer details in one query
+        // $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
 
-        $data = $reservations->map(function ($reservation) use ($customers) {
-            $customer = $customers->get($reservation->customerId);
+        // $data = $reservations->map(function ($reservation) use ($customers) {
+        //     $customer = $customers->get($reservation->customerId);
 
-            return [
-                'customerName' => $customer->name ?? null,
-                'customerPhoneNumber' => $customer->phoneNumber ?? null,
-                'customerAddress' => $customer->address ?? null,
-                'reservationDetails' => $reservation
-            ];
-        });
+        //     return [
+        //         'customerName' => $customer->name ?? null,
+        //         'customerPhoneNumber' => $customer->phoneNumber ?? null,
+        //         'customerAddress' => $customer->address ?? null,
+        //         'reservationDetails' => $reservation
+        //     ];
+        // });
 
-        return response()->json($data);
+        return response()->json($reservations);
     }
 
 
