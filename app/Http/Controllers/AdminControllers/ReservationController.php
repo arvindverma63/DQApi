@@ -59,7 +59,7 @@ class ReservationController extends Controller
         $data = [];
 
         foreach ($reservations as $reservation) {
-            $customerDetails = Customer::first($reservation->customerId);
+            $customerDetails = Customer::where('id',$reservation['customerId']);
 
             // Ensure $customerDetails exists before accessing its properties
             if ($customerDetails) {
