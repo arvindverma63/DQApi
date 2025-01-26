@@ -56,11 +56,10 @@ class ReservationController extends Controller
     public function index($id)
     {
         $reservations = Reservation::where('restaurantId', $id)->get();
-        Log::info("restuarantId for reservation",$id);
         $data = [];
 
         foreach ($reservations as $reservation) {
-            $customerDetails = Customer::find($reservation->customerId);
+            $customerDetails = Customer::first($reservation->customerId);
 
             // Ensure $customerDetails exists before accessing its properties
             if ($customerDetails) {
