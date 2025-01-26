@@ -10,8 +10,6 @@ class Reservation extends Model
     use HasFactory;
     protected $table = 'reservation'; // Table name
 
-    protected $primaryKey = 'id'; // Primary key
-
 
     protected $fillable = [
         'restaurantId',

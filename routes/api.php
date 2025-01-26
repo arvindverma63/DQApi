@@ -36,13 +36,13 @@ Route::get('/dashboard/weekly-chart-data', [ReportController::class, 'getWeeklyC
 Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
-Route::post('/getReportPaymentType',[ReportController::class,'getReportPaymentType']);
+Route::post('/getReportPaymentType', [ReportController::class, 'getReportPaymentType']);
 
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
 
-Route::post('/admin/feedback/add',[FeedbackController::class,'addFeedback']);
-Route::get('/feedbacks/{id}',[FeedbackController::class,'getAllFeedbacks']);
+Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
+Route::get('/feedbacks/{id}', [FeedbackController::class, 'getAllFeedbacks']);
 
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {
@@ -75,7 +75,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
-        Route::post('/profile/{id}',[UserProfileController::class,'updateProfile']);
+        Route::post('/profile/{id}', [UserProfileController::class, 'updateProfile']);
 
 
 
@@ -97,7 +97,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.show');
         Route::post('/menu/update/{id}', [MenuController::class, 'update'])->name('menu.update');
         Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('menu.destroy');
-        Route::put('/menus/status',[MenuController::class,'updateStatus']);
+        Route::put('/menus/status', [MenuController::class, 'updateStatus']);
 
         // Menu management
 
@@ -176,7 +176,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         // Route to create or update menu inventory item
         Route::post('/save', [MenuInventoryController::class, 'saveInventoryItem'])
-        ->name('menu-inventory.save');
+            ->name('menu-inventory.save');
 
         // Route to create or update menu inventory items
         Route::post('/save-all', [MenuInventoryController::class, 'saveInventoryItems'])
@@ -192,7 +192,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::post('/customer', [CustomerController::class, 'createCustomer'])->name('create.customer');
-    Route::delete('/customer/{id}',[CustomerController::class,'deleteCustomer'])->name('delete.customer');
+    Route::delete('/customer/{id}', [CustomerController::class, 'deleteCustomer'])->name('delete.customer');
 
 
     Route::post('/transactions', [TransactionController::class, 'addTransaction']);
