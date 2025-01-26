@@ -55,32 +55,29 @@ class ReservationController extends Controller
      */
     public function index($id)
     {
+        // Fetch all reservations for the given restaurant
         $reservations = Reservation::where('restaurantId', $id)->get();
-        $data = [];
 
-        foreach ($reservations as $reservation) {
-            $customerDetails = Customer::where('id',$reservation['customerId']);
+        // Get all unique customer IDs from the reservations
+        $customerIds = $reservations->pluck('customerId')->unique();
 
-            // Ensure $customerDetails exists before accessing its properties
-            if ($customerDetails) {
-                $data[] = [
-                    'customerName' => $customerDetails->name,
-                    'customerPhoneNumber' => $customerDetails->phoneNumber,
-                    'customerAddress' => $customerDetails->address,
-                    'reservationDetails' => $reservation
-                ];
-            } else {
-                $data[] = [
-                    'customerName' => null,
-                    'customerPhoneNumber' => null,
-                    'customerAddress' => null,
-                    'reservationDetails' => $reservation
-                ];
-            }
-        }
+        // Fetch customer details in one query
+        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+
+        $data = $reservations->map(function ($reservation) use ($customers) {
+            $customer = $customers->get($reservation->customerId);
+
+            return [
+                'customerName' => $customer->name ?? null,
+                'customerPhoneNumber' => $customer->phoneNumber ?? null,
+                'customerAddress' => $customer->address ?? null,
+                'reservationDetails' => $reservation
+            ];
+        });
 
         return response()->json($data);
     }
+
 
 
     /**
@@ -200,7 +197,7 @@ class ReservationController extends Controller
             'payment' => 'required|numeric',
             'advance' => 'required|numeric',
             'notes' => 'nullable|string',
-            'tableNumber'=>'nullable',
+            'tableNumber' => 'nullable',
         ]);
 
         $reservation->update($validated);
