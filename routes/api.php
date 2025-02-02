@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminControllers\QrController;
 use App\Http\Controllers\AdminControllers\CategoryController;
 use App\Http\Controllers\AdminControllers\CustomerController;
+use App\Http\Controllers\AdminControllers\DueController;
 use App\Http\Controllers\AdminControllers\FeedbackController;
 use App\Http\Controllers\AdminControllers\MenuController;
 use App\Http\Controllers\AdminControllers\OrderController;
@@ -133,6 +134,14 @@ Route::middleware(['auth:api'])->group(function () {
 
             // Delete a specific supplier
             Route::delete('/{id}', [SupplierController::class, 'deleteSupplier']);
+        });
+
+        Route::prefix('dues')->group(function () {
+            Route::get('/', [DueController::class, 'index']); // Get all dues
+            Route::post('/', [DueController::class, 'store']); // Create a due record
+            Route::get('/{id}', [DueController::class, 'show']); // Get a specific due
+            Route::put('/{id}', [DueController::class, 'update']); // Update a due
+            Route::delete('/{id}', [DueController::class, 'destroy']); // Delete a due
         });
 
         Route::prefix('inventories')->group(function () {

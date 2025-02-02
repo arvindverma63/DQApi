@@ -524,6 +524,178 @@
                 }
             }
         },
+        "/dues": {
+            "get": {
+                "tags": [
+                    "Dues"
+                ],
+                "summary": "Get all dues",
+                "operationId": "a57190b429ce7d4e179e7652f7d09922",
+                "responses": {
+                    "200": {
+                        "description": "List of dues"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Dues"
+                ],
+                "summary": "Create a new due record",
+                "operationId": "978b1f19baebc598d0712d6f6b6e39a4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "transaction_id",
+                                    "total",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "transaction_id": {
+                                        "type": "integer",
+                                        "example": 123
+                                    },
+                                    "total": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1000.5
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "paid",
+                                            "unpaid"
+                                        ],
+                                        "example": "unpaid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Due record created"
+                    }
+                }
+            }
+        },
+        "/dues/{id}": {
+            "get": {
+                "tags": [
+                    "Dues"
+                ],
+                "summary": "Get a specific due record",
+                "operationId": "e89051ee0159ad0307c4b9b74214534a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the due record",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Due record found"
+                    },
+                    "404": {
+                        "description": "Due record not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Dues"
+                ],
+                "summary": "Update a specific due record",
+                "operationId": "bc1a40718cddb6b80534bca707dfad10",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the due record",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "transaction_id": {
+                                        "type": "integer",
+                                        "example": 123
+                                    },
+                                    "total": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1000.5
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "paid",
+                                            "unpaid"
+                                        ],
+                                        "example": "paid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Due record updated"
+                    },
+                    "404": {
+                        "description": "Due record not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dues"
+                ],
+                "summary": "Delete a specific due record",
+                "operationId": "759b404eeda28571cf4b4bd1dbc4c7b1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the due record",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Due record deleted"
+                    },
+                    "404": {
+                        "description": "Due record not found"
+                    }
+                }
+            }
+        },
         "/admin/feedback/add": {
             "post": {
                 "tags": [
@@ -5470,6 +5642,10 @@
         }
     ],
     "tags": [
+        {
+            "name": "Dues",
+            "description": "Operations related to due transactions"
+        },
         {
             "name": "Category",
             "description": "Category"
