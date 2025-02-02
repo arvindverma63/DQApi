@@ -6,6 +6,7 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DueTransactions;
+use App\Models\Transaction;
 
 /**
  * @OA\Tag(
@@ -23,9 +24,21 @@ class DueController extends Controller
      *     @OA\Response(response=200, description="List of dues")
      * )
      */
-    public function index()
+    public function index(TransactionController $transaction)
     {
-        return response()->json(DueTransactions::all());
+        $dueRecords = DueTransactions::all();
+        $data = [];
+
+        foreach ($dueRecords as $d) {
+            $transactionDetails = $transaction->getTransactionById($d->transaction_id);
+
+            $data[] = [
+                'transaction_details' => $transactionDetails,
+                'due_details' => $d
+            ];
+        }
+
+        return response()->json($data);
     }
 
     /**
@@ -74,14 +87,23 @@ class DueController extends Controller
      *     @OA\Response(response=404, description="Due record not found")
      * )
      */
-    public function show($id)
+    public function show($id, TransactionController $transaction)
     {
         $due = DueTransactions::find($id);
+
         if (!$due) {
             return response()->json(['error' => 'Due record not found'], 404);
         }
-        return response()->json($due);
+
+        // Fetch transaction details
+        $transactionDetails = $transaction->getTransactionById($due->transaction_id);
+
+        return response()->json([
+            'transaction_details' => $transactionDetails,
+            'due_details' => $due
+        ]);
     }
+
 
     /**
      * @OA\Put(
