@@ -20,6 +20,14 @@ class DueController extends Controller
      * @OA\Get(
      *     path="/dues/{restaurantId}",
      *     tags={"Dues"},
+     *     summary="Get a specific due record according to RestuarantId",
+     *         @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the due record",
+     *         @OA\Schema(type="string", example="R23423423")
+     *     ),
      *     summary="Get all dues",
      *     @OA\Response(response=200, description="List of dues")
      * )
