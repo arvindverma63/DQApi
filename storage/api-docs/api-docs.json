@@ -529,13 +529,13 @@
                 "tags": [
                     "Dues"
                 ],
-                "summary": "Get all dues",
+                "summary": "Get a specific due record according to RestaurantId",
                 "operationId": "c12a09b23fd916cf9298bce683441483",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "restaurantId",
                         "in": "path",
-                        "description": "ID of the due record",
+                        "description": "ID of the restaurant to get dues for",
                         "required": true,
                         "schema": {
                             "type": "string",

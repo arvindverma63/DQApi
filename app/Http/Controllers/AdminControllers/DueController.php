@@ -20,21 +20,21 @@ class DueController extends Controller
      * @OA\Get(
      *     path="/dues/byRestaurantId/{restaurantId}",
      *     tags={"Dues"},
-     *     summary="Get a specific due record according to RestuarantId",
-     *         @OA\Parameter(
-     *         name="id",
+     *     summary="Get a specific due record according to RestaurantId",
+     *     @OA\Parameter(
+     *         name="restaurantId",
      *         in="path",
      *         required=true,
-     *         description="ID of the due record",
+     *         description="ID of the restaurant to get dues for",
      *         @OA\Schema(type="string", example="R23423423")
      *     ),
-     *     summary="Get all dues",
      *     @OA\Response(response=200, description="List of dues")
      * )
      */
-    public function index($restaurantId,TransactionController $transaction)
+
+    public function index($restaurantId, TransactionController $transaction)
     {
-        $dueRecords = DueTransactions::where('restaurantId',$restaurantId)->get();
+        $dueRecords = DueTransactions::where('restaurantId', $restaurantId)->get();
         $data = [];
 
         foreach ($dueRecords as $d) {
