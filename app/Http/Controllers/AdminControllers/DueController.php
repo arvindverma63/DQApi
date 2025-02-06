@@ -32,9 +32,9 @@ class DueController extends Controller
      *     @OA\Response(response=200, description="List of dues")
      * )
      */
-    public function index($id,TransactionController $transaction)
+    public function index($restaurantId,TransactionController $transaction)
     {
-        $dueRecords = DueTransactions::where('restaurantId',$id)->get();
+        $dueRecords = DueTransactions::where('restaurantId',$restaurantId)->get();
         $data = [];
 
         foreach ($dueRecords as $d) {
