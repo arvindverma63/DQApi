@@ -524,19 +524,21 @@
                 }
             }
         },
-        "/dues": {
+        "/dues/{restaurantId}": {
             "get": {
                 "tags": [
                     "Dues"
                 ],
                 "summary": "Get all dues",
-                "operationId": "a57190b429ce7d4e179e7652f7d09922",
+                "operationId": "302bc3b9881b54fea4fa357013c40004",
                 "responses": {
                     "200": {
                         "description": "List of dues"
                     }
                 }
-            },
+            }
+        },
+        "/dues": {
             "post": {
                 "tags": [
                     "Dues"

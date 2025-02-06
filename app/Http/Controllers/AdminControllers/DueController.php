@@ -18,15 +18,15 @@ class DueController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/dues",
+     *     path="/dues/{restaurantId}",
      *     tags={"Dues"},
      *     summary="Get all dues",
      *     @OA\Response(response=200, description="List of dues")
      * )
      */
-    public function index(TransactionController $transaction)
+    public function index($id,TransactionController $transaction)
     {
-        $dueRecords = DueTransactions::all();
+        $dueRecords = DueTransactions::where('restaurantId',$id)->get();
         $data = [];
 
         foreach ($dueRecords as $d) {

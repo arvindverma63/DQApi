@@ -14,6 +14,7 @@ class DueTransactions extends Model
     public $fillable = [
         'transaction_id',
         'total',
-        'status'
+        'status',
+        'restaurantId'
     ];
 }
