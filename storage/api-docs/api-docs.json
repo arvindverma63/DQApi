@@ -577,6 +577,11 @@
                                         "format": "float",
                                         "example": 1000.5
                                     },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "R2342342"
+                                    },
                                     "status": {
                                         "type": "string",
                                         "enum": [

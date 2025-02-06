@@ -60,6 +60,7 @@ class DueController extends Controller
      *             required={"transaction_id", "total", "status"},
      *             @OA\Property(property="transaction_id", type="integer", example=123),
      *             @OA\Property(property="total", type="number", format="float", example=1000.500),
+     *             @OA\Property(property="restaurantId", type="string", format="string", example="R2342342"),
      *             @OA\Property(property="status", type="string", enum={"paid", "unpaid"}, example="unpaid")
      *         )
      *     ),
@@ -71,6 +72,7 @@ class DueController extends Controller
         $request->validate([
             'transaction_id' => 'required|integer',
             'total' => 'required|numeric',
+            'restaurantId' => 'required',
             'status' => 'required|in:paid,unpaid',
         ]);
 
