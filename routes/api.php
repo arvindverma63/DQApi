@@ -137,7 +137,7 @@ Route::middleware(['auth:api'])->group(function () {
         });
 
         Route::prefix('dues')->group(function () {
-            Route::get('/{id}', [DueController::class, 'index']); // Get all dues
+            Route::get('/byRestaurantId/{restaurantId}', [DueController::class, 'index']); // Get all dues
             Route::post('/', [DueController::class, 'store']); // Create a due record
             Route::get('/{id}', [DueController::class, 'show']); // Get a specific due
             Route::put('/{id}', [DueController::class, 'update']); // Update a due

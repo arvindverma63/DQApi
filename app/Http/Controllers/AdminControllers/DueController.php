@@ -18,7 +18,7 @@ class DueController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/dues/{restaurantId}",
+     *     path="/dues/byRestaurantId/{restaurantId}",
      *     tags={"Dues"},
      *     summary="Get a specific due record according to RestuarantId",
      *         @OA\Parameter(
