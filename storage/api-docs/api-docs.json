@@ -883,6 +883,56 @@
                 }
             }
         },
+        "/api/send-notification": {
+            "post": {
+                "tags": [
+                    "Firebase Notifications"
+                ],
+                "summary": "Send a push notification",
+                "operationId": "a9abbcb7bb41e0ebe44568e98932646a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "device_token",
+                                    "title",
+                                    "body"
+                                ],
+                                "properties": {
+                                    "device_token": {
+                                        "description": "Device token of the recipient",
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "description": "Notification title",
+                                        "type": "string"
+                                    },
+                                    "body": {
+                                        "description": "Notification body",
+                                        "type": "string"
+                                    },
+                                    "data": {
+                                        "description": "Additional data payload",
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Notification sent successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid input data"
+                    }
+                }
+            }
+        },
         "/inventories": {
             "get": {
                 "tags": [
@@ -5862,6 +5912,10 @@
         {
             "name": "Feedbacks",
             "description": "Feedbacks"
+        },
+        {
+            "name": "Firebase Notifications",
+            "description": "Firebase Notifications"
         },
         {
             "name": "Inventory",

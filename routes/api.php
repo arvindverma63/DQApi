@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminControllers\CategoryController;
 use App\Http\Controllers\AdminControllers\CustomerController;
 use App\Http\Controllers\AdminControllers\DueController;
 use App\Http\Controllers\AdminControllers\FeedbackController;
+use App\Http\Controllers\AdminControllers\FirebaseNotificationController;
 use App\Http\Controllers\AdminControllers\MenuController;
 use App\Http\Controllers\AdminControllers\OrderController;
 use App\Http\Controllers\AdminControllers\SupplierController;
@@ -145,6 +146,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/{id}', [DueController::class, 'destroy']); // Delete a due
         });
         Route::apiResource('social-media', SocialMediaController::class);
+        Route::post('/send-notification', [FirebaseNotificationController::class, 'sendNotification']);
 
         Route::prefix('inventories')->group(function () {
             // Get all inventory items
