@@ -16,6 +16,7 @@ use App\Http\Controllers\AdminControllers\InvoiceController;
 use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\ReservationController;
+use App\Http\Controllers\AdminControllers\SocialMediaController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
@@ -143,6 +144,7 @@ Route::middleware(['auth:api'])->group(function () {
             Route::put('/{id}', [DueController::class, 'update']); // Update a due
             Route::delete('/{id}', [DueController::class, 'destroy']); // Delete a due
         });
+        Route::apiResource('social-media', SocialMediaController::class);
 
         Route::prefix('inventories')->group(function () {
             // Get all inventory items

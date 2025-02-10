@@ -3230,6 +3230,173 @@
                 }
             }
         },
+        "/api/social-media": {
+            "get": {
+                "summary": "Get all social media records",
+                "operationId": "3f08815b5ce6e91eacbabb6fd69b63f2",
+                "responses": {
+                    "200": {
+                        "description": "List of social media records"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new social media record",
+                "operationId": "d7a7fa98c685af0279eabba3f11bdfb3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "influencer"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string"
+                                    },
+                                    "influencer": {
+                                        "type": "string"
+                                    },
+                                    "details": {
+                                        "type": "string"
+                                    },
+                                    "insta": {
+                                        "type": "string"
+                                    },
+                                    "facebook": {
+                                        "type": "string"
+                                    },
+                                    "youtube": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "offers": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "available": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Record created successfully"
+                    }
+                }
+            }
+        },
+        "/api/social-media/{id}": {
+            "get": {
+                "summary": "Get a single social media record",
+                "operationId": "1264ff376803289ad26eb0d61dba702f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Single social media record"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a social media record",
+                "operationId": "cea8ebaecc07bd07c3d3539a63e66d20",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string"
+                                    },
+                                    "influencer": {
+                                        "type": "string"
+                                    },
+                                    "details": {
+                                        "type": "string"
+                                    },
+                                    "insta": {
+                                        "type": "string"
+                                    },
+                                    "facebook": {
+                                        "type": "string"
+                                    },
+                                    "youtube": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "offers": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "available": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Record updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a social media record",
+                "operationId": "f7ea1b2122e18d7309ec1211250009dd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Record deleted successfully"
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [
