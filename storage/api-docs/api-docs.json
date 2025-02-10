@@ -3230,10 +3230,13 @@
                 }
             }
         },
-        "/api/social-media": {
+        "/social-media": {
             "get": {
+                "tags": [
+                    "SocialMedia"
+                ],
                 "summary": "Get all social media records",
-                "operationId": "3f08815b5ce6e91eacbabb6fd69b63f2",
+                "operationId": "af8110fee60a65b945dfad4c9399e440",
                 "responses": {
                     "200": {
                         "description": "List of social media records"
@@ -3241,8 +3244,11 @@
                 }
             },
             "post": {
+                "tags": [
+                    "SocialMedia"
+                ],
                 "summary": "Create a new social media record",
-                "operationId": "d7a7fa98c685af0279eabba3f11bdfb3",
+                "operationId": "360fbbb8bbe6e134759b4645ddfebfc2",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3296,10 +3302,13 @@
                 }
             }
         },
-        "/api/social-media/{id}": {
+        "/social-media/{id}": {
             "get": {
+                "tags": [
+                    "SocialMedia"
+                ],
                 "summary": "Get a single social media record",
-                "operationId": "1264ff376803289ad26eb0d61dba702f",
+                "operationId": "a0fbf441092013a9252afc389b68c1a6",
                 "parameters": [
                     {
                         "name": "id",
@@ -3317,8 +3326,11 @@
                 }
             },
             "put": {
+                "tags": [
+                    "SocialMedia"
+                ],
                 "summary": "Update a social media record",
-                "operationId": "cea8ebaecc07bd07c3d3539a63e66d20",
+                "operationId": "76fa19e5068c2da661606b163826de3d",
                 "parameters": [
                     {
                         "name": "id",
@@ -3378,8 +3390,11 @@
                 }
             },
             "delete": {
+                "tags": [
+                    "SocialMedia"
+                ],
                 "summary": "Delete a social media record",
-                "operationId": "f7ea1b2122e18d7309ec1211250009dd",
+                "operationId": "32188b1b71df463d0a31bde228921272",
                 "parameters": [
                     {
                         "name": "id",
@@ -5879,6 +5894,10 @@
         {
             "name": "Reservations",
             "description": "Reservations"
+        },
+        {
+            "name": "SocialMedia",
+            "description": "SocialMedia"
         },
         {
             "name": "Suppliers",
