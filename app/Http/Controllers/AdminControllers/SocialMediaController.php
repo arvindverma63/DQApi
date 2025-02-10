@@ -12,6 +12,7 @@ class SocialMediaController extends Controller
     /**
      * @OA\Get(
      *     path="/social-media",
+     * tags={"SocialMedia"},
      *     summary="Get all social media records",
      *     @OA\Response(response=200, description="List of social media records")
      * )
@@ -25,6 +26,7 @@ class SocialMediaController extends Controller
     /**
      * @OA\Post(
      *     path="/social-media",
+     * tags={"SocialMedia"},
      *     summary="Create a new social media record",
      *     @OA\RequestBody(
      *         required=true,
@@ -67,6 +69,7 @@ class SocialMediaController extends Controller
     /**
      * @OA\Get(
      *     path="/social-media/{id}",
+     * tags={"SocialMedia"},
      *     summary="Get a single social media record",
      *     @OA\Parameter(
      *         name="id",
@@ -86,6 +89,7 @@ class SocialMediaController extends Controller
     /**
      * @OA\Put(
      *     path="/social-media/{id}",
+     * tags={"SocialMedia"},
      *     summary="Update a social media record",
      *     @OA\Parameter(
      *         name="id",
@@ -135,6 +139,7 @@ class SocialMediaController extends Controller
     /**
      * @OA\Delete(
      *     path="/social-media/{id}",
+     * tags={"SocialMedia"},
      *     summary="Delete a social media record",
      *     @OA\Parameter(
      *         name="id",
