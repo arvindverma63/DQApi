@@ -76,7 +76,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     // Admin routes (requires 'admin' role)
-    Route::middleware(['role:admin'])->middleware(['role:super'])->group(function () {
+    Route::middleware(['role:admin'])->group(function () {
 
         // User-specific routes
         Route::get('user/profile', [UserController::class, 'profile']);

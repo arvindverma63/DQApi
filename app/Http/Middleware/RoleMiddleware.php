@@ -13,8 +13,8 @@ class RoleMiddleware
         // Get authenticated user
         $user = JWTAuth::parseToken()->authenticate();
 
-        // Check if user has the required role
-        if (!$user || !$user->hasRole($role)) {
+        // Check if the user exists and has the required role OR is a super admin
+        if (!$user || (!$user->hasRole($role) && !$user->hasRole('super'))) {
             return response()->json(['message' => 'Unauthorized.'], Response::HTTP_FORBIDDEN);
         }
 
