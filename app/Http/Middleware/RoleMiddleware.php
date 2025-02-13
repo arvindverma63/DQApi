@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -9,20 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, $role)
     {
-        try {
-            // Get authenticated user
-            $user = JWTAuth::parseToken()->authenticate();
+        // Get authenticated user
+        $user = JWTAuth::parseToken()->authenticate();
 
-            // Check if the user exists and has at least one of the required roles
-            if (!$user || !array_intersect($user->roles, $roles)) {
-                return response()->json(['message' => 'Unauthorized.'], Response::HTTP_FORBIDDEN);
-            }
-
-            return $next($request);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Unauthorized. Invalid token.'], Response::HTTP_UNAUTHORIZED);
+        // Check if user has the required role
+        if (!$user || !$user->hasRole($role)) {
+            return response()->json(['message' => 'Unauthorized.'], Response::HTTP_FORBIDDEN);
         }
+
+        return $next($request);
     }
 }
