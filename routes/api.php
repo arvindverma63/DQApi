@@ -59,7 +59,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::middleware(['role:super'])->group(function () {
         Route::prefix('super-admin')->group(function () {
 
-        Route::apiResource('social-media', SocialMediaController::class);
             // Create a new restaurant
             Route::post('/add-restaurant', [UserController::class, 'addRestaurant'])->name('add.restaurant');
 
@@ -73,7 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     // Admin routes (requires 'admin' role)
-    Route::middleware(['role:admin'])->group(function () {
+    Route::middleware(['role:admin|super'])->group(function () {
 
         // User-specific routes
         Route::get('user/profile', [UserController::class, 'profile']);
