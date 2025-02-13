@@ -22,10 +22,6 @@ use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
-use App\Models\SocialMedia;
-use App\Models\Transaction;
-use App\Models\UserProfile;
-use Tymon\JWTAuth\Claims\Custom;
 
 // Public routes
 Route::post('register', [AuthController::class, 'register']);
@@ -68,6 +64,12 @@ Route::middleware(['auth:api'])->group(function () {
             Route::put('/users/{id}', [UserController::class, 'updateUser'])->name('update.user');
             Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('delete.user');
             Route::delete('/users/{id}/force', [UserController::class, 'forceDeleteUser'])->name('force.delete.user');
+
+            Route::get('/social-media',[SocialMediaController::class,'index']);
+            Route::post('/social-media',[SocialMediaController::class,'store']);
+            Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
+            Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
+            Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
         });
     });
 
@@ -81,11 +83,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}', [UserProfileController::class, 'updateProfile']);
 
-        Route::get('/social-media',[SocialMediaController::class,'index']);
-        Route::post('/social-media',[SocialMediaController::class,'store']);
-        Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
-        Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
-        Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+
 
 
 
