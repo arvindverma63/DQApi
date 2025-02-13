@@ -81,6 +81,13 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}', [UserProfileController::class, 'updateProfile']);
 
+        Route::get('/social-media',[SocialMediaController::class,'index']);
+        Route::post('/social-media',[SocialMediaController::class,'store']);
+        Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
+        Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
+        Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+
+
 
 
 
@@ -147,11 +154,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/{id}', [DueController::class, 'destroy']); // Delete a due
         });
 
-        Route::get('/social-media',[SocialMediaController::class,'index']);
-        Route::post('/social-media',[SocialMediaController::class,'store']);
-        Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
-        Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
-        Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+
+
         Route::post('/send-notification', [FirebaseNotificationController::class, 'sendNotification']);
 
         Route::prefix('inventories')->group(function () {
