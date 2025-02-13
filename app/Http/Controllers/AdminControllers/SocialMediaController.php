@@ -50,7 +50,7 @@ class SocialMediaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'restaurantId' => 'required|string',
+            'restaurantId' => 'string',
             'influencer' => 'required|string',
             'details' => 'nullable|string',
             'insta' => 'nullable|string',
