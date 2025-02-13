@@ -65,12 +65,14 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('delete.user');
             Route::delete('/users/{id}/force', [UserController::class, 'forceDeleteUser'])->name('force.delete.user');
 
-            Route::get('/social-media',[SocialMediaController::class,'index']);
+
+        });
+
+        Route::get('/social-media',[SocialMediaController::class,'index']);
             Route::post('/social-media',[SocialMediaController::class,'store']);
             Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
             Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
             Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
-        });
     });
 
     // Admin routes (requires 'admin' role)
