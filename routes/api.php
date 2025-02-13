@@ -87,6 +87,11 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
+        Route::get('/social-media',[SocialMediaController::class,'index']);
+            Route::post('/social-media',[SocialMediaController::class,'store']);
+            Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
+            Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
+            Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
 
 
 
