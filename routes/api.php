@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
+use App\Models\SocialMedia;
 use App\Models\Transaction;
 use App\Models\UserProfile;
 use Tymon\JWTAuth\Claims\Custom;
@@ -145,7 +146,12 @@ Route::middleware(['auth:api'])->group(function () {
             Route::put('/{id}', [DueController::class, 'update']); // Update a due
             Route::delete('/{id}', [DueController::class, 'destroy']); // Delete a due
         });
-        Route::apiResource('social-media', SocialMediaController::class);
+
+        Route::get('/social-media',[SocialMediaController::class,'index']);
+        Route::post('/social-media',[SocialMediaController::class,'store']);
+        Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
+        Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
+        Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
         Route::post('/send-notification', [FirebaseNotificationController::class, 'sendNotification']);
 
         Route::prefix('inventories')->group(function () {
