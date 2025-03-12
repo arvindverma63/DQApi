@@ -4265,6 +4265,52 @@
                 }
             }
         },
+        "/restaurant/{id}/logo": {
+            "get": {
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Get restaurant logo",
+                "description": "Fetches the logo of a restaurant using its restaurant ID.",
+                "operationId": "35e7c8d31615504a62b999f8723ad842",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID (String)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "restaurant_123"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "logo": {
+                                            "type": "string",
+                                            "example": "https://example.com/storage/logos/logo.png"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Restaurant profile not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "tags": [
@@ -6023,6 +6069,10 @@
         {
             "name": "Restaurant Profile",
             "description": "Restaurant Profile"
+        },
+        {
+            "name": "Restaurant",
+            "description": "Restaurant"
         },
         {
             "name": "Authentication",

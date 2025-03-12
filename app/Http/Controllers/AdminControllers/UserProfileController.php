@@ -282,7 +282,7 @@ class UserProfileController extends Controller
             if (!file_exists($imagePath)) {
                 mkdir($imagePath, 0777, true);
             }
-            if($profile->image){
+            if ($profile->image) {
                 unlink($profile->image);
             }
 
@@ -290,7 +290,6 @@ class UserProfileController extends Controller
             $publicImageUrl = 'profile_images/' . $imageName;
 
             $profile->image = $publicImageUrl;
-
         }
 
         // Save the updated profile
@@ -315,5 +314,45 @@ class UserProfileController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/restaurant/{id}/logo",
+     *     summary="Get restaurant logo",
+     *     description="Fetches the logo of a restaurant using its restaurant ID.",
+     *     tags={"Restaurant"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Restaurant ID (String)",
+     *         @OA\Schema(type="string", example="restaurant_123")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="logo", type="string", example="https://example.com/storage/logos/logo.png")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurant profile not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error"
+     *     )
+     * )
+     */
+    public function getLogo($id)
+    {
+        $profile = UserProfile::where('restaurantId', $id)->first();
 
+        if (!$profile || !$profile->image) {
+            return response()->json(['error' => 'Restaurant profile not found'], 404);
+        }
+
+        return response()->json(['logo' => env('APP_URL') . '/' . ltrim($profile->image, '/')]);
+    }
 }
