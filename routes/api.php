@@ -37,6 +37,7 @@ Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
 Route::post('/getReportPaymentType', [ReportController::class, 'getReportPaymentType']);
+Route::get('/customer-report/{id}',[ReportController::class,'getCustomerReport']);
 
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 

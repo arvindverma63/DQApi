@@ -3107,6 +3107,61 @@
                 }
             }
         },
+        "/customer-report/{id}": {
+            "get": {
+                "tags": [
+                    "Customer Reports"
+                ],
+                "summary": "Get total spending per customer",
+                "description": "Returns a list of customers along with their total spending for a specific restaurant.",
+                "operationId": "dbe4d8405d23b2b8e15d59dc79956f80",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID (String)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "restaurant_123"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "customer_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "customer_name": {
+                                                "type": "string",
+                                                "example": "John Doe"
+                                            },
+                                            "total_spent": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 250.75
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Restaurant not found"
+                    }
+                }
+            }
+        },
         "/reservations/AllByRestaurantId/{id}": {
             "get": {
                 "tags": [
@@ -5944,6 +5999,10 @@
         {
             "name": "Reports",
             "description": "Reports"
+        },
+        {
+            "name": "Customer Reports",
+            "description": "Customer Reports"
         },
         {
             "name": "Reservations",

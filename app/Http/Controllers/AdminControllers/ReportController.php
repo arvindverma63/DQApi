@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -699,5 +700,55 @@ class ReportController extends Controller
             'status' => 'success',
             'data' => $response
         ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/customer-report/{id}",
+     *     summary="Get total spending per customer",
+     *     description="Returns a list of customers along with their total spending for a specific restaurant.",
+     *     tags={"Customer Reports"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Restaurant ID (String)",
+     *         @OA\Schema(type="string", example="restaurant_123")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="customer_id", type="integer", example=1),
+     *                 @OA\Property(property="customer_name", type="string", example="John Doe"),
+     *                 @OA\Property(property="total_spent", type="number", format="float", example=250.75)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurant not found"
+     *     )
+     * )
+     */
+    public function getCustomerReport($id)
+    {
+        $customers = Customer::where('restaurantId', $id)->get();
+        $data = [];
+
+        foreach ($customers as $c) {
+            $totalAmount = Transaction::where('user_id', $c->id)->sum('total');
+
+            $data[] = [
+                'customer_id' => $c->id,
+                'customer_name' => $c->name, // Assuming 'name' exists in Customer model
+                'total_spent' => $totalAmount
+            ];
+        }
+
+        return response()->json($data);
     }
 }
