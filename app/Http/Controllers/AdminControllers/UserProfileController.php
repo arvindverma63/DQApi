@@ -319,7 +319,7 @@ class UserProfileController extends Controller
      *     path="/restaurant/{id}/logo",
      *     summary="Get restaurant logo",
      *     description="Fetches the logo of a restaurant using its restaurant ID.",
-     *     tags={"Restaurant"},
+     *     tags={"Restaurant Profile"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
