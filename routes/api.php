@@ -40,6 +40,7 @@ Route::post('/getReportPaymentType', [ReportController::class, 'getReportPayment
 Route::get('/customer-report/{id}',[ReportController::class,'getCustomerReport']);
 Route::get('//restaurant/{id}/logo',[UserProfileController::class,'getLogo']);
 
+Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 
 
@@ -84,7 +85,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
         Route::post('/profile/{id}', [UserProfileController::class, 'updateProfile']);
 
 
