@@ -4080,39 +4080,17 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "User profile fetched successfully",
+                        "description": "Profile retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "restaurantId": {
-                                            "type": "string",
-                                            "example": "R1728231298"
-                                        },
-                                        "userName": {
-                                            "type": "string",
-                                            "example": "John Doe"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "johndoe@example.com"
-                                        },
-                                        "phone": {
-                                            "type": "string",
-                                            "example": "1234567890"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/Profile"
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "User profile not found",
+                        "description": "Profile not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4120,6 +4098,22 @@
                                         "error": {
                                             "type": "string",
                                             "example": "Profile not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred"
                                         }
                                     },
                                     "type": "object"
@@ -4136,24 +4130,23 @@
                     "Restaurant Profile"
                 ],
                 "summary": "Update User Profile",
-                "description": "Update the details of a user profile by ID.",
                 "operationId": "dec75c98df53e810bb7dc3d89977a1e9",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "User profile ID",
+                        "description": "Profile ID",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 4
+                            "example": 1
                         }
                     }
                 ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "restaurantId",
@@ -4170,11 +4163,21 @@
                                     },
                                     "gender": {
                                         "type": "string",
-                                        "example": "Male"
+                                        "enum": [
+                                            "male",
+                                            "female",
+                                            "other"
+                                        ],
+                                        "example": "male"
                                     },
                                     "restName": {
                                         "type": "string",
                                         "example": "Doe's Restaurant"
+                                    },
+                                    "image": {
+                                        "description": "Profile image file",
+                                        "type": "string",
+                                        "format": "binary"
                                     },
                                     "phoneNumber": {
                                         "type": "string",
@@ -4186,7 +4189,7 @@
                                     },
                                     "pinCode": {
                                         "type": "string",
-                                        "example": "123456"
+                                        "example": "12345"
                                     },
                                     "restaurantId": {
                                         "type": "string",
@@ -4202,7 +4205,7 @@
                                     },
                                     "email": {
                                         "type": "string",
-                                        "example": "johndoe@example.com"
+                                        "example": "john.doe@example.com"
                                     }
                                 },
                                 "type": "object"
@@ -4246,6 +4249,33 @@
                             }
                         }
                     },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "fieldName": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "content": {
@@ -4255,6 +4285,10 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Failed to update profile"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error details"
                                         }
                                     },
                                     "type": "object"
@@ -4270,31 +4304,30 @@
                 "tags": [
                     "Restaurant Profile"
                 ],
-                "summary": "Get restaurant logo",
-                "description": "Fetches the logo of a restaurant using its restaurant ID.",
+                "summary": "Get Restaurant Logo",
                 "operationId": "35e7c8d31615504a62b999f8723ad842",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Restaurant ID (String)",
+                        "description": "Restaurant ID",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "restaurant_123"
+                            "example": "R1728231298"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "Logo retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "logo": {
                                             "type": "string",
-                                            "example": "https://example.com/storage/logos/logo.png"
+                                            "example": "https://example.com/storage/profile_images/logo.jpg"
                                         }
                                     },
                                     "type": "object"
@@ -4303,10 +4336,36 @@
                         }
                     },
                     "404": {
-                        "description": "Restaurant profile not found"
+                        "description": "Logo or profile not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Logo not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -5905,9 +5964,9 @@
                 ],
                 "properties": {
                     "id": {
-                        "description": "User profile ID",
+                        "description": "Profile ID",
                         "type": "integer",
-                        "example": 4
+                        "example": 1
                     },
                     "firstName": {
                         "description": "User's first name",
@@ -5922,15 +5981,26 @@
                         "nullable": true
                     },
                     "gender": {
-                        "description": "Gender of the user",
+                        "description": "User's gender",
                         "type": "string",
-                        "example": "Male",
+                        "enum": [
+                            "male",
+                            "female",
+                            "other"
+                        ],
+                        "example": "male",
                         "nullable": true
                     },
                     "restName": {
                         "description": "Restaurant name",
                         "type": "string",
                         "example": "Doe's Restaurant",
+                        "nullable": true
+                    },
+                    "image": {
+                        "description": "Profile image URL",
+                        "type": "string",
+                        "example": "https://example.com/storage/profile_images/image.jpg",
                         "nullable": true
                     },
                     "phoneNumber": {
@@ -5946,9 +6016,9 @@
                         "nullable": true
                     },
                     "pinCode": {
-                        "description": "User's pin code",
+                        "description": "User's postal code",
                         "type": "string",
-                        "example": "123456",
+                        "example": "12345",
                         "nullable": true
                     },
                     "restaurantId": {
@@ -5971,7 +6041,7 @@
                     "email": {
                         "description": "User's email address",
                         "type": "string",
-                        "example": "johndoe@example.com"
+                        "example": "john.doe@example.com"
                     }
                 },
                 "type": "object"
