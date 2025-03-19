@@ -189,7 +189,25 @@ class UserProfileController extends Controller
             // Debug: Log the data we're trying to update
             \Log::info('Update Profile Data:', $validatedData);
 
-            $updated = $profile->update($validatedData);
+            // Map the validated data to the model's field names
+            $updateData = [
+                'firstName' => $validatedData['firstName'] ?? $profile->firstName,
+                'lastName' => $validatedData['lastName'] ?? $profile->lastName,
+                'gender' => $validatedData['gender'] ?? $profile->gender,
+                'restName' => $validatedData['restName'] ?? $profile->restName,
+                'phoneNumber' => $validatedData['phoneNumber'] ?? $profile->phoneNumber,
+                'address' => $validatedData['address'] ?? $profile->address,
+                'pinCode' => $validatedData['pinCode'] ?? $profile->pinCode,
+                'restaurantId' => $validatedData['restaurantId'],
+                'identity' => $validatedData['identity'] ?? $profile->identity,
+                'identityNumber' => $validatedData['identityNumber'] ?? $profile->identityNumber,
+                'email' => $validatedData['email'] ?? $profile->email,
+            ];
+
+            // Debug: Log the final data to be updated
+            \Log::info('Final Update Data:', $updateData);
+
+            $updated = $profile->update($updateData);
 
             // Debug: Check if update was successful
             \Log::info('Update Successful:', ['updated' => $updated]);
@@ -197,7 +215,7 @@ class UserProfileController extends Controller
             if (!$updated) {
                 return response()->json([
                     'message' => 'Failed to update profile in database',
-                    'data' => $validatedData
+                    'data' => $updateData
                 ], 500);
             }
 
