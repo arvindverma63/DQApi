@@ -36,7 +36,7 @@ use Exception;
  *     @OA\Property(property="lastName", type="string", description="User's last name", nullable=true, example="Doe"),
  *     @OA\Property(property="gender", type="string", description="User's gender", nullable=true, enum={"male", "female", "other"}, example="male"),
  *     @OA\Property(property="restName", type="string", description="Restaurant name", nullable=true, example="Doe's Restaurant"),
- *     @OA\Property(property="image", type="string", description="Profile image URL", nullable=true, example="https://example.com/profile_images/image.jpg"),
+ *     @OA\Property(property="image", type="string", description="Profile image URL", nullable=true, example="/profile_images/image.jpg"),
  *     @OA\Property(property="phoneNumber", type="string", description="User's phone number", nullable=true, example="1234567890"),
  *     @OA\Property(property="address", type="string", description="User's address", nullable=true, example="123 Main St"),
  *     @OA\Property(property="pinCode", type="string", description="User's postal code", nullable=true, example="12345"),
@@ -49,6 +49,14 @@ use Exception;
 
 class UserProfileController extends Controller
 {
+    /**
+     * Get the base URL for images
+     */
+    private function getImageBaseUrl(): string
+    {
+        return rtrim(config('app.url'), '/') . '/';
+    }
+
     /**
      * @OA\Get(
      *     path="/rest-profile/{id}",
@@ -86,7 +94,7 @@ class UserProfileController extends Controller
     {
         try {
             $profile = UserProfile::where('restaurantId', $id)->firstOrFail();
-            $profile->image = $profile->image ? url($profile->image) : null;
+            $profile->image = $profile->image ? $this->getImageBaseUrl() . ltrim($profile->image, '/') : null;
 
             return response()->json($profile, 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -182,12 +190,13 @@ class UserProfileController extends Controller
                 return !is_null($value);
             }));
 
-            $profile->image = $profile->image ? url($profile->image) : null;
+            $profile->image = $profile->image ? $this->getImageBaseUrl() . ltrim($profile->image, '/') : null;
 
             return response()->json([
                 'message' => 'Profile updated successfully',
                 'data' => $profile
             ], 200);
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Profile not found'], 404);
         } catch (Exception $e) {
@@ -229,7 +238,7 @@ class UserProfileController extends Controller
      *         description="Image uploaded successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Image uploaded successfully"),
-     *             @OA\Property(property="image_url", type="string", example="https://example.com/profile_images/image.jpg")
+     *             @OA\Property(property="image_url", type="string", example="/profile_images/image.jpg")
      *         )
      *     ),
      *     @OA\Response(
@@ -279,12 +288,10 @@ class UserProfileController extends Controller
 
             $imagePath = public_path('profile_images');
 
-            // Create directory if it doesn't exist
             if (!file_exists($imagePath)) {
                 mkdir($imagePath, 0755, true);
             }
 
-            // Delete old image if exists
             if ($profile->image && file_exists(public_path($profile->image))) {
                 unlink(public_path($profile->image));
             }
@@ -296,12 +303,13 @@ class UserProfileController extends Controller
             $profile->image = $relativePath;
             $profile->save();
 
-            $imageUrl = url($relativePath);
+            $imageUrl = $this->getImageBaseUrl() . $relativePath;
 
             return response()->json([
                 'message' => 'Image uploaded successfully',
                 'image_url' => $imageUrl
             ], 200);
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Profile not found'], 404);
         } catch (Exception $e) {
@@ -334,7 +342,7 @@ class UserProfileController extends Controller
      *             @OA\Property(
      *                 property="logo",
      *                 type="string",
-     *                 example="https://example.com/profile_images/logo.jpg"
+     *                 example="/profile_images/logo.jpg"
      *             )
      *         )
      *     ),
@@ -363,7 +371,7 @@ class UserProfileController extends Controller
                 return response()->json(['error' => 'Logo not found'], 404);
             }
 
-            $logoUrl = url($profile->image);
+            $logoUrl = $this->getImageBaseUrl() . ltrim($profile->image, '/');
 
             return response()->json(['logo' => $logoUrl], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
