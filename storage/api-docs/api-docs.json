@@ -4146,7 +4146,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
                                     "restaurantId",
@@ -4173,11 +4173,6 @@
                                     "restName": {
                                         "type": "string",
                                         "example": "Doe's Restaurant"
-                                    },
-                                    "image": {
-                                        "description": "Profile image file",
-                                        "type": "string",
-                                        "format": "binary"
                                     },
                                     "phoneNumber": {
                                         "type": "string",
@@ -4285,6 +4280,129 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Failed to update profile"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error details"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profile/{id}/image": {
+            "post": {
+                "tags": [
+                    "Restaurant Profile"
+                ],
+                "summary": "Upload Profile Image",
+                "operationId": "a0395a47bd5a9f5b11d9f8f3283cf422",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Profile ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "description": "Profile image file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Image uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Image uploaded successfully"
+                                        },
+                                        "image_url": {
+                                            "type": "string",
+                                            "example": "https://example.com/storage/profile_images/image.jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Profile not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Profile not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "image": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to upload image"
                                         },
                                         "error": {
                                             "type": "string",

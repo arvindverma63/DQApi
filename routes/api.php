@@ -38,7 +38,7 @@ Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
 Route::post('/getReportPaymentType', [ReportController::class, 'getReportPaymentType']);
 Route::get('/customer-report/{id}',[ReportController::class,'getCustomerReport']);
-Route::get('//restaurant/{id}/logo',[UserProfileController::class,'getLogo']);
+Route::get('/restaurant/{id}/logo',[UserProfileController::class,'getLogo']);
 
 Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
@@ -46,7 +46,7 @@ Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']
 
 Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
 Route::get('/feedbacks/{id}', [FeedbackController::class, 'getAllFeedbacks']);
-
+Route::post('/profile/{id}/image',[UserProfileController::class,'uploadImage']);
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {
 

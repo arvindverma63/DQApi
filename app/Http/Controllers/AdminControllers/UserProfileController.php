@@ -111,23 +111,19 @@ class UserProfileController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 required={"restaurantId", "email"},
-     *                 @OA\Property(property="firstName", type="string", example="John"),
-     *                 @OA\Property(property="lastName", type="string", example="Doe"),
-     *                 @OA\Property(property="gender", type="string", enum={"male", "female", "other"}, example="male"),
-     *                 @OA\Property(property="restName", type="string", example="Doe's Restaurant"),
-     *                 @OA\Property(property="image", type="string", format="binary", description="Profile image file"),
-     *                 @OA\Property(property="phoneNumber", type="string", example="1234567890"),
-     *                 @OA\Property(property="address", type="string", example="123 Main St"),
-     *                 @OA\Property(property="pinCode", type="string", example="12345"),
-     *                 @OA\Property(property="restaurantId", type="string", example="R1728231298"),
-     *                 @OA\Property(property="identity", type="string", example="Passport"),
-     *                 @OA\Property(property="identityNumber", type="string", example="P123456789"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com")
-     *             )
+     *         @OA\JsonContent(
+     *             required={"restaurantId", "email"},
+     *             @OA\Property(property="firstName", type="string", example="John"),
+     *             @OA\Property(property="lastName", type="string", example="Doe"),
+     *             @OA\Property(property="gender", type="string", enum={"male", "female", "other"}, example="male"),
+     *             @OA\Property(property="restName", type="string", example="Doe's Restaurant"),
+     *             @OA\Property(property="phoneNumber", type="string", example="1234567890"),
+     *             @OA\Property(property="address", type="string", example="123 Main St"),
+     *             @OA\Property(property="pinCode", type="string", example="12345"),
+     *             @OA\Property(property="restaurantId", type="string", example="R1728231298"),
+     *             @OA\Property(property="identity", type="string", example="Passport"),
+     *             @OA\Property(property="identityNumber", type="string", example="P123456789"),
+     *             @OA\Property(property="email", type="string", example="john.doe@example.com")
      *         )
      *     ),
      *     @OA\Response(
@@ -183,14 +179,6 @@ class UserProfileController extends Controller
 
             $validatedData = $validator->validated();
 
-            if ($request->hasFile('image')) {
-                if ($profile->image && Storage::disk('public')->exists($profile->image)) {
-                    Storage::disk('public')->delete($profile->image);
-                }
-                $imagePath = $request->file('image')->store('profile_images', 'public');
-                $validatedData['image'] = $imagePath;
-            }
-
             $profile->update(array_filter($validatedData, function ($value) {
                 return !is_null($value);
             }));
@@ -205,11 +193,115 @@ class UserProfileController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Profile not found'], 404);
         } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update profile',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/profile/{id}/image",
+     *     summary="Upload Profile Image",
+     *     tags={"Restaurant Profile"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Profile ID",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Profile image file"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Image uploaded successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Image uploaded successfully"),
+     *             @OA\Property(property="image_url", type="string", example="https://example.com/storage/profile_images/image.jpg")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Profile not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Profile not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+ *                 @OA\Property(property="image", type="array", @OA\Items(type="string"))
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to upload image"),
+     *             @OA\Property(property="error", type="string", example="Error details")
+     *         )
+     *     )
+     * )
+     */
+    public function uploadImage(Request $request, $id)
+    {
+        try {
+            $profile = UserProfile::findOrFail($id);
+
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            if ($profile->image && Storage::disk('public')->exists($profile->image)) {
+                Storage::disk('public')->delete($profile->image);
+            }
+
+            $imagePath = $request->file('image')->store('profile_images', 'public');
+            $profile->image = $imagePath;
+            $profile->save();
+
+            $imageUrl = url(Storage::url($imagePath));
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'image_url' => $imageUrl
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        } catch (Exception $e) {
             if (isset($imagePath) && Storage::disk('public')->exists($imagePath)) {
                 Storage::disk('public')->delete($imagePath);
             }
             return response()->json([
-                'message' => 'Failed to update profile',
+                'message' => 'Failed to upload image',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -282,14 +374,13 @@ class UserProfileController extends Controller
             'lastName' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,other|max:10',
             'restName' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'phoneNumber' => 'nullable|string|regex:/^[0-9]{10,15}$/',
             'address' => 'nullable|string|max:255',
             'pinCode' => 'nullable|string|regex:/^[0-9]{5,10}$/',
             'restaurantId' => 'required|string|max:20',
             'identity' => 'nullable|string|max:255',
             'identityNumber' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255',
         ];
     }
 }
