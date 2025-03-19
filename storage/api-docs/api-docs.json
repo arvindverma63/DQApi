@@ -4343,7 +4343,7 @@
                                         },
                                         "image_url": {
                                             "type": "string",
-                                            "example": "https://example.com/storage/profile_images/image.jpg"
+                                            "example": "https://example.com/profile_images/image.jpg"
                                         }
                                     },
                                     "type": "object"
@@ -4445,7 +4445,7 @@
                                     "properties": {
                                         "logo": {
                                             "type": "string",
-                                            "example": "https://example.com/storage/profile_images/logo.jpg"
+                                            "example": "https://example.com/profile_images/logo.jpg"
                                         }
                                     },
                                     "type": "object"
@@ -6118,7 +6118,7 @@
                     "image": {
                         "description": "Profile image URL",
                         "type": "string",
-                        "example": "https://example.com/storage/profile_images/image.jpg",
+                        "example": "https://example.com/profile_images/image.jpg",
                         "nullable": true
                     },
                     "phoneNumber": {
