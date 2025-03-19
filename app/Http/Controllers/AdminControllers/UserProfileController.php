@@ -289,7 +289,7 @@ class UserProfileController extends Controller
             'restaurantId' => 'required|string|max:20',
             'identity' => 'nullable|string|max:255',
             'identityNumber' => 'nullable|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'nullable|email|max:255',
         ];
     }
 }
