@@ -186,17 +186,29 @@ class UserProfileController extends Controller
 
             $validatedData = $validator->validated();
 
-            $profile->update(array_filter($validatedData, function ($value) {
-                return !is_null($value);
-            }));
+            // Debug: Log the data we're trying to update
+            \Log::info('Update Profile Data:', $validatedData);
 
+            $updated = $profile->update($validatedData);
+
+            // Debug: Check if update was successful
+            \Log::info('Update Successful:', ['updated' => $updated]);
+
+            if (!$updated) {
+                return response()->json([
+                    'message' => 'Failed to update profile in database',
+                    'data' => $validatedData
+                ], 500);
+            }
+
+            // Refresh the model to get the latest data
+            $profile->refresh();
             $profile->image = $profile->image ? $this->getImageBaseUrl() . ltrim($profile->image, '/') : null;
 
             return response()->json([
                 'message' => 'Profile updated successfully',
                 'data' => $profile
             ], 200);
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Profile not found'], 404);
         } catch (Exception $e) {
@@ -309,7 +321,6 @@ class UserProfileController extends Controller
                 'message' => 'Image uploaded successfully',
                 'image_url' => $imageUrl
             ], 200);
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Profile not found'], 404);
         } catch (Exception $e) {
