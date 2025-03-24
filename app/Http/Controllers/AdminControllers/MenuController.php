@@ -242,14 +242,28 @@ class MenuController extends Controller
                 'price' => $validatedData['price'],
                 'categoryId' => $validatedData['categoryId'],
                 'restaurantId' => $validatedData['restaurantId'],
-                'sub_category' => $validatedData['sub_category'] ?? null, // Use null coalescing operator
+                'sub_category' => $validatedData['sub_category'] ?? null,
                 'status' => 1 // Default to active
             ]);
 
-            if ($request->hasFile('itemImage')) {
-                $imagePath = $request->file('itemImage')->store('menus', 'public');
-                $menu->itemImage = $imagePath;
-                $menu->save();
+            if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                // Store the image directly in the public/menus folder
+                $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+                $publicPath = public_path('menus');
+
+                // Create the directory if it doesn't exist
+                if (!file_exists($publicPath)) {
+                    mkdir($publicPath, 0777, true);
+                }
+
+                // Move the file to the public/mens directory
+                $request->file('itemImage')->move($publicPath, $imageName);
+
+                // Generate the public URL manually
+                $imageUrl = url('menus/' . $imageName);
+                $menu->update(['itemImage' => $imageUrl]);
+
+                Log::info('Image uploaded and stored in public folder:', ['path' => $imageUrl]);
             }
 
             foreach ($validatedData['stockItems'] as $stockItem) {
@@ -261,7 +275,8 @@ class MenuController extends Controller
                 ]);
             }
 
-            $imageUrl = $menu->itemImage ? Storage::url($menu->itemImage) : null;
+            // Use the stored URL directly from the model or null if no image
+            $imageUrl = $menu->itemImage ?? null;
 
             return response()->json([
                 'data' => [
