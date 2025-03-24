@@ -3166,7 +3166,7 @@
         "/customer-report/{id}": {
             "get": {
                 "tags": [
-                    "Customer Reports"
+                    "Reports"
                 ],
                 "summary": "Get total spending per customer",
                 "description": "Returns a list of customers along with their total spending for a specific restaurant.",
@@ -3214,6 +3214,112 @@
                     },
                     "404": {
                         "description": "Restaurant not found"
+                    }
+                }
+            }
+        },
+        "/report-by-table": {
+            "get": {
+                "tags": [
+                    "Table Reports"
+                ],
+                "summary": "Get transaction report by table number",
+                "description": "Returns a report of transactions grouped by table number for a specific restaurant within a date range.",
+                "operationId": "bb0c795147880d448ba27617549dca73",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "Restaurant ID (String)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "R1732246184"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-11-24"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-11-24"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "transaction_count": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "tableNumber": {
+                                                "type": "string",
+                                                "example": "Table 1"
+                                            },
+                                            "total_amount": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 150.5
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid date format"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No transactions found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No transactions found for this restaurant and date range"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -6548,8 +6654,8 @@
             "description": "Reports"
         },
         {
-            "name": "Customer Reports",
-            "description": "Customer Reports"
+            "name": "Table Reports",
+            "description": "Table Reports"
         },
         {
             "name": "Reservations",
