@@ -242,7 +242,7 @@ class MenuController extends Controller
                 'price' => $validatedData['price'],
                 'categoryId' => $validatedData['categoryId'],
                 'restaurantId' => $validatedData['restaurantId'],
-                'sub_category' => $validatedData['sub_category'],
+                'sub_category' => $validatedData['sub_category'] ?? null, // Use null coalescing operator
                 'status' => 1 // Default to active
             ]);
 
