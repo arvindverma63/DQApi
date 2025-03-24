@@ -31,7 +31,7 @@ class SubCategoryController extends Controller
     public function addCategory(Request $request)
     {
         $validated = $request->validate([
-            'restaurantId' => 'required|integer',
+            'restaurantId' => 'required|string',
             'category_name' => 'required|string|max:255',
             'category_id' => 'required|integer'
         ]);
@@ -128,7 +128,7 @@ class SubCategoryController extends Controller
         $subCategory = SubCategory::findOrFail($id);
 
         $validated = $request->validate([
-            'restaurantId' => 'sometimes|integer',
+            'restaurantId' => 'sometimes|string',
             'category_name' => 'sometimes|string|max:255',
             'category_id' => 'sometimes|integer'
         ]);
