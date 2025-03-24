@@ -18,6 +18,7 @@ use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\ReservationController;
 use App\Http\Controllers\AdminControllers\SocialMediaController;
+use App\Http\Controllers\AdminControllers\SubCategoryController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
@@ -87,7 +88,22 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::put('/profile/{id}', [UserProfileController::class, 'updateProfile']);
 
+        Route::prefix('admin')->group(function () {
+            // Create a new subcategory
+            Route::post('/subcategories', [SubCategoryController::class, 'addCategory']);
 
+            // Get all subcategories
+            Route::get('/subcategories', [SubCategoryController::class, 'getAllCategories']);
+
+            // Get a specific subcategory
+            Route::get('/subcategories/{id}', [SubCategoryController::class, 'getCategory']);
+
+            // Update a subcategory
+            Route::put('/subcategories/{id}', [SubCategoryController::class, 'updateCategory']);
+
+            // Delete a subcategory
+            Route::delete('/subcategories/{id}', [SubCategoryController::class, 'deleteCategory']);
+        });
 
         Route::get('/social-media',[SocialMediaController::class,'index']);
             Route::post('/social-media',[SocialMediaController::class,'store']);

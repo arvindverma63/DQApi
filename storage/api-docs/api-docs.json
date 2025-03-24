@@ -32,12 +32,17 @@
                                         "example": "Beverages"
                                     },
                                     "categoryImage": {
-                                        "description": "Category Image",
+                                        "description": "Category Image (max 2MB)",
                                         "type": "file"
                                     },
                                     "restaurantId": {
                                         "type": "string",
                                         "example": "1"
+                                    },
+                                    "sub_category_id": {
+                                        "description": "Optional subcategory ID",
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -46,13 +51,37 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Category created successfully",
+                    "201": {
+                        "description": "Category created",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "categoryName": {
+                                                    "type": "string",
+                                                    "example": "Beverages"
+                                                },
+                                                "categoryImage": {
+                                                    "type": "string",
+                                                    "example": "/storage/categories/image.jpg",
+                                                    "nullable": true
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "sub_category_id": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                }
+                                            },
                                             "type": "object"
                                         },
                                         "message": {
@@ -64,6 +93,9 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -79,17 +111,15 @@
                     {
                         "name": "restaurantId",
                         "in": "query",
-                        "description": "Restaurant ID",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "example": "1"
+                            "type": "string"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Categories retrieved successfully",
+                        "description": "Categories retrieved",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -97,6 +127,40 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "categoryName": {
+                                                        "type": "string",
+                                                        "example": "Beverages"
+                                                    },
+                                                    "categoryImage": {
+                                                        "type": "string",
+                                                        "example": "/storage/categories/image.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "restaurantId": {
+                                                        "type": "string",
+                                                        "example": "1"
+                                                    },
+                                                    "sub_category_id": {
+                                                        "type": "integer",
+                                                        "example": 1,
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
                                                 "type": "object"
                                             }
                                         },
@@ -109,6 +173,9 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -124,7 +191,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the category",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -133,12 +199,46 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Category retrieved successfully",
+                        "description": "Category retrieved",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "categoryName": {
+                                                    "type": "string",
+                                                    "example": "Beverages"
+                                                },
+                                                "categoryImage": {
+                                                    "type": "string",
+                                                    "example": "/storage/categories/image.jpg",
+                                                    "nullable": true
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "sub_category_id": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "nullable": true
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "nullable": true
+                                                }
+                                            },
                                             "type": "object"
                                         },
                                         "message": {
@@ -152,20 +252,7 @@
                         }
                     },
                     "404": {
-                        "description": "Category not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Category not found"
                     }
                 }
             },
@@ -179,7 +266,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the category",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -187,26 +273,25 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "required": [
-                                    "categoryName",
-                                    "restaurantId"
-                                ],
                                 "properties": {
                                     "categoryName": {
                                         "type": "string",
                                         "example": "Updated Category"
                                     },
                                     "categoryImage": {
-                                        "description": "Category Image",
+                                        "description": "Category Image (max 2MB)",
                                         "type": "file"
                                     },
                                     "restaurantId": {
                                         "type": "string",
                                         "example": "2"
+                                    },
+                                    "sub_category_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -216,12 +301,36 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Category updated successfully",
+                        "description": "Category updated",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "categoryName": {
+                                                    "type": "string",
+                                                    "example": "Updated Category"
+                                                },
+                                                "categoryImage": {
+                                                    "type": "string",
+                                                    "example": "/storage/categories/image.jpg",
+                                                    "nullable": true
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "2"
+                                                },
+                                                "sub_category_id": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                }
+                                            },
                                             "type": "object"
                                         },
                                         "message": {
@@ -235,20 +344,10 @@
                         }
                     },
                     "404": {
-                        "description": "Category not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Category not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             },
@@ -262,7 +361,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the category",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -271,7 +369,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Category deleted successfully",
+                        "description": "Category deleted",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -286,21 +384,11 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Category has linked menus"
+                    },
                     "404": {
-                        "description": "Category not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Category not found"
                     }
                 }
             }
@@ -3517,6 +3605,257 @@
                 }
             }
         },
+        "/admin/subcategories": {
+            "get": {
+                "tags": [
+                    "SubCategories"
+                ],
+                "summary": "Get all subcategories",
+                "operationId": "284ce9f238409fe4558eebd05484e09a",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "restaurantId": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "sub_category_name": {
+                                                "type": "string",
+                                                "example": "Beverages"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "SubCategories"
+                ],
+                "summary": "Create a new subcategory",
+                "operationId": "feec9c9e91b40369f5b78360742fad1a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "category_name",
+                                    "category_id"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "category_name": {
+                                        "type": "string",
+                                        "example": "Beverages"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/admin/subcategories/{id}": {
+            "get": {
+                "tags": [
+                    "SubCategories"
+                ],
+                "summary": "Get a specific subcategory",
+                "operationId": "80b3f22b7fe566cd9e2672a792845b2c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "restaurantId": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "sub_category_name": {
+                                            "type": "string",
+                                            "example": "Beverages"
+                                        },
+                                        "category_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subcategory not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "SubCategories"
+                ],
+                "summary": "Update a subcategory",
+                "operationId": "1ee9a9051862e918228193832aa43c31",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "category_name": {
+                                        "type": "string",
+                                        "example": "Beverages"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subcategory not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "SubCategories"
+                ],
+                "summary": "Delete a subcategory",
+                "operationId": "122631e85becbc7582926fa94739c320",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Subcategory not found"
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "tags": [
@@ -6245,6 +6584,10 @@
         {
             "name": "SocialMedia",
             "description": "SocialMedia"
+        },
+        {
+            "name": "SubCategories",
+            "description": "SubCategories"
         },
         {
             "name": "Suppliers",
