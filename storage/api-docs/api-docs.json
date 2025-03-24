@@ -1325,7 +1325,6 @@
                     {
                         "name": "restaurantId",
                         "in": "query",
-                        "description": "The restaurant ID",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1334,17 +1333,73 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List all menu items",
+                        "description": "Menu items retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Menu"
-                                    }
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "menus": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "allOf": [
+                                                            {
+                                                                "$ref": "#/components/schemas/Menu"
+                                                            },
+                                                            {
+                                                                "properties": {
+                                                                    "stockItems": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "integer",
+                                                                                    "example": 1
+                                                                                },
+                                                                                "stockId": {
+                                                                                    "type": "integer",
+                                                                                    "example": 1
+                                                                                },
+                                                                                "quantity": {
+                                                                                    "type": "number",
+                                                                                    "example": 10.5
+                                                                                },
+                                                                                "name": {
+                                                                                    "type": "string",
+                                                                                    "example": "Cheese"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "inventoryOptions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Inventory"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menus and inventory options retrieved successfully"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             },
@@ -1364,53 +1419,44 @@
                                     "price",
                                     "categoryId",
                                     "restaurantId",
-                                    "stock",
                                     "stockItems"
                                 ],
                                 "properties": {
                                     "itemName": {
-                                        "description": "Name of the menu item",
                                         "type": "string",
                                         "example": "Pizza"
                                     },
                                     "itemImage": {
-                                        "description": "Menu item image",
-                                        "type": "string",
-                                        "format": "binary"
+                                        "description": "Image file (max 2MB)",
+                                        "type": "file"
                                     },
                                     "price": {
-                                        "description": "Price of the menu item",
                                         "type": "number",
                                         "format": "float",
                                         "example": 9.99
                                     },
                                     "categoryId": {
-                                        "description": "Category ID for the menu item",
-                                        "type": "string",
-                                        "example": "1"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "restaurantId": {
-                                        "description": "Restaurant ID for the menu item",
                                         "type": "string",
                                         "example": "1"
                                     },
-                                    "stock": {
-                                        "description": "Available stock for the menu item",
+                                    "sub_category": {
                                         "type": "integer",
-                                        "example": 100
+                                        "example": 1,
+                                        "nullable": true
                                     },
                                     "stockItems": {
-                                        "description": "Array of stock items with their quantities",
                                         "type": "array",
                                         "items": {
                                             "properties": {
                                                 "stockId": {
-                                                    "description": "Stock ID",
                                                     "type": "integer",
                                                     "example": 1
                                                 },
                                                 "quantity": {
-                                                    "description": "Quantity for this stock item",
                                                     "type": "number",
                                                     "example": 10.5
                                                 }
@@ -1432,11 +1478,37 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/Menu"
+                                            "properties": {
+                                                "menu": {
+                                                    "$ref": "#/components/schemas/Menu"
+                                                },
+                                                "itemImage": {
+                                                    "type": "string",
+                                                    "example": "/menus/pizza.jpg",
+                                                    "nullable": true
+                                                },
+                                                "stockItems": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "stockId": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "quantity": {
+                                                                "type": "number",
+                                                                "example": 10.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Menu item created successfully with associated stock."
+                                            "example": "Menu item created successfully"
                                         }
                                     },
                                     "type": "object"
@@ -1445,36 +1517,10 @@
                         }
                     },
                     "400": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The total stock must be equal to or greater than the sum of stock item quantities."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Validation error"
                     },
                     "500": {
-                        "description": "Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Failed to create menu item and stock: [Error message here]"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server error"
                     }
                 },
                 "security": [
@@ -1489,8 +1535,7 @@
                 "tags": [
                     "Menu"
                 ],
-                "summary": "Update the status of a menu item",
-                "description": "This endpoint updates the status of a menu item. The status can be either 0 (inactive) or 1 (active).",
+                "summary": "Update menu item status",
                 "operationId": "b589a2ba42233905b929501861e5c1cf",
                 "requestBody": {
                     "required": true,
@@ -1503,16 +1548,16 @@
                                 ],
                                 "properties": {
                                     "status": {
-                                        "description": "Status of the menu (0 for inactive, 1 for active)",
                                         "type": "integer",
                                         "enum": [
                                             0,
                                             1
-                                        ]
+                                        ],
+                                        "example": 1
                                     },
                                     "id": {
-                                        "description": "ID of the menu item",
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1522,7 +1567,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Menu status updated successfully",
+                        "description": "Status updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1541,39 +1586,10 @@
                         }
                     },
                     "404": {
-                        "description": "Menu not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Menu not found"
                     },
                     "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Validation error"
                     }
                 }
             }
@@ -1589,7 +1605,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Menu item ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1608,22 +1623,19 @@
                                 ],
                                 "properties": {
                                     "itemName": {
-                                        "description": "Name of the menu item",
                                         "type": "string",
                                         "example": "Burger"
                                     },
                                     "itemImage": {
-                                        "description": "Image of the menu item (optional)",
+                                        "description": "Image file (max 2MB)",
                                         "type": "file"
                                     },
                                     "price": {
-                                        "description": "Price of the menu item",
                                         "type": "number",
                                         "format": "float",
                                         "example": 5.99
                                     },
                                     "categoryId": {
-                                        "description": "Category ID of the menu item",
                                         "type": "integer",
                                         "example": 1
                                     }
@@ -1635,17 +1647,13 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Menu item updated successfully",
+                        "description": "Menu item updated",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
                                             "$ref": "#/components/schemas/Menu"
-                                        },
-                                        "itemImage": {
-                                            "description": "URL of the updated menu item image",
-                                            "type": "string"
                                         },
                                         "message": {
                                             "type": "string",
@@ -1657,69 +1665,14 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation error"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Authorization token not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
                     "404": {
-                        "description": "Menu item not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu item not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Menu item not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     },
                     "500": {
-                        "description": "Failed to update menu item",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Failed to update menu item"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server error"
                     }
                 },
                 "security": [
@@ -1740,7 +1693,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Menu item ID",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1748,11 +1700,27 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "Menu item deleted successfully"
+                    "200": {
+                        "description": "Menu item deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu item deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Menu item not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 },
                 "security": [
@@ -3664,8 +3632,8 @@
                                 ],
                                 "properties": {
                                     "restaurantId": {
-                                        "type": "integer",
-                                        "example": 1
+                                        "type": "string",
+                                        "example": "R23424234"
                                     },
                                     "category_name": {
                                         "type": "string",
@@ -3780,8 +3748,8 @@
                             "schema": {
                                 "properties": {
                                     "restaurantId": {
-                                        "type": "integer",
-                                        "example": 1
+                                        "type": "string",
+                                        "example": "R2342343"
                                     },
                                     "category_name": {
                                         "type": "string",
@@ -6125,48 +6093,54 @@
                 "description": "Menu Model",
                 "properties": {
                     "id": {
-                        "description": "ID of the menu item",
                         "type": "integer",
                         "example": 1
                     },
                     "itemName": {
-                        "description": "Name of the menu item",
                         "type": "string",
                         "example": "Pizza"
                     },
                     "itemImage": {
-                        "description": "Image path for the menu item",
                         "type": "string",
-                        "example": "menu_images/pizza.jpg"
+                        "example": "/menus/pizza.jpg",
+                        "nullable": true
                     },
                     "price": {
-                        "description": "Price of the menu item",
                         "type": "number",
                         "format": "float",
                         "example": 9.99
                     },
                     "categoryId": {
-                        "description": "Category ID of the menu item",
-                        "type": "string",
-                        "example": "1"
+                        "type": "integer",
+                        "example": 1
                     },
                     "restaurantId": {
-                        "description": "Restaurant ID associated with the menu item",
                         "type": "string",
                         "example": "1"
                     },
                     "stock": {
-                        "description": "Available stock for the menu item",
                         "type": "integer",
-                        "example": 100
+                        "example": 100,
+                        "nullable": true
+                    },
+                    "sub_category": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "integer",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "example": 1
                     },
                     "created_at": {
-                        "description": "Timestamp when the menu item was created",
                         "type": "string",
                         "format": "date-time"
                     },
                     "updated_at": {
-                        "description": "Timestamp when the menu item was last updated",
                         "type": "string",
                         "format": "date-time"
                     }

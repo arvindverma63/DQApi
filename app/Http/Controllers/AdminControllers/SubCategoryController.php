@@ -18,7 +18,7 @@ class SubCategoryController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"restaurantId", "category_name", "category_id"},
-     *             @OA\Property(property="restaurantId", type="integer", example=1),
+     *             @OA\Property(property="restaurantId", type="string", example="R23424234"),
      *             @OA\Property(property="category_name", type="string", example="Beverages"),
      *             @OA\Property(property="category_id", type="integer", example=1)
      *         )
@@ -114,7 +114,7 @@ class SubCategoryController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="restaurantId", type="integer", example=1),
+     *             @OA\Property(property="restaurantId", type="string", example="R2342343"),
      *             @OA\Property(property="category_name", type="string", example="Beverages"),
      *             @OA\Property(property="category_id", type="integer", example=1)
      *         )

@@ -41,6 +41,7 @@ class Menu extends Model
     'restaurantId',
     'status',
     'sub_category',
+    'sub_category',
     'stock'];
     use HasFactory;
 
