@@ -228,7 +228,7 @@ class MenuController extends Controller
             'price' => 'required|numeric|min:0',
             'categoryId' => 'required|integer|exists:categories,id',
             'restaurantId' => 'required|string|max:255',
-            'sub_category' => 'nullable|integer|exists:sub_categories,id',
+            'sub_category' => 'nullable|integer',
             'stockItems' => 'required|array|min:1',
             'stockItems.*.stockId' => 'required|integer|exists:inventory,id',
             'stockItems.*.quantity' => 'required|numeric|min:0.001',
@@ -324,7 +324,7 @@ class MenuController extends Controller
         $validatedData = $request->validate([
             'itemName' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'categoryId' => 'required|integer|exists:categories,id',
+            'categoryId' => 'required|integer',
             'itemImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
