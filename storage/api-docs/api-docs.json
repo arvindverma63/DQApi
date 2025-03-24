@@ -3594,8 +3594,8 @@
                                                 "example": 1
                                             },
                                             "restaurantId": {
-                                                "type": "integer",
-                                                "example": 1
+                                                "type": "string",
+                                                "example": "R23424234"
                                             },
                                             "sub_category_name": {
                                                 "type": "string",
@@ -3627,7 +3627,7 @@
                             "schema": {
                                 "required": [
                                     "restaurantId",
-                                    "category_name",
+                                    "sub_category_name",
                                     "category_id"
                                 ],
                                 "properties": {
@@ -3635,7 +3635,7 @@
                                         "type": "string",
                                         "example": "R23424234"
                                     },
-                                    "category_name": {
+                                    "sub_category_name": {
                                         "type": "string",
                                         "example": "Beverages"
                                     },
@@ -3703,8 +3703,8 @@
                                             "example": 1
                                         },
                                         "restaurantId": {
-                                            "type": "integer",
-                                            "example": 1
+                                            "type": "string",
+                                            "example": "R23424234"
                                         },
                                         "sub_category_name": {
                                             "type": "string",
@@ -3751,7 +3751,7 @@
                                         "type": "string",
                                         "example": "R2342343"
                                     },
-                                    "category_name": {
+                                    "sub_category_name": {
                                         "type": "string",
                                         "example": "Beverages"
                                     },

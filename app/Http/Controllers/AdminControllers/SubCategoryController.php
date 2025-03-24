@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
-
 class SubCategoryController extends Controller
 {
     /**
@@ -17,9 +16,9 @@ class SubCategoryController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"restaurantId", "category_name", "category_id"},
+     *             required={"restaurantId", "sub_category_name", "category_id"},
      *             @OA\Property(property="restaurantId", type="string", example="R23424234"),
-     *             @OA\Property(property="category_name", type="string", example="Beverages"),
+     *             @OA\Property(property="sub_category_name", type="string", example="Beverages"),
      *             @OA\Property(property="category_id", type="integer", example=1)
      *         )
      *     ),
@@ -32,7 +31,7 @@ class SubCategoryController extends Controller
     {
         $validated = $request->validate([
             'restaurantId' => 'required|string',
-            'category_name' => 'required|string|max:255',
+            'sub_category_name' => 'required|string|max:255',
             'category_id' => 'required|integer'
         ]);
 
@@ -56,7 +55,7 @@ class SubCategoryController extends Controller
      *             type="array",
      *             @OA\Items(
      *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="restaurantId", type="integer", example=1),
+     *                 @OA\Property(property="restaurantId", type="string", example="R23424234"),
      *                 @OA\Property(property="sub_category_name", type="string", example="Beverages"),
      *                 @OA\Property(property="category_id", type="integer", example=1)
      *             )
@@ -86,7 +85,7 @@ class SubCategoryController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="restaurantId", type="integer", example=1),
+     *             @OA\Property(property="restaurantId", type="string", example="R23424234"),
      *             @OA\Property(property="sub_category_name", type="string", example="Beverages"),
      *             @OA\Property(property="category_id", type="integer", example=1)
      *         )
@@ -115,7 +114,7 @@ class SubCategoryController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             @OA\Property(property="restaurantId", type="string", example="R2342343"),
-     *             @OA\Property(property="category_name", type="string", example="Beverages"),
+     *             @OA\Property(property="sub_category_name", type="string", example="Beverages"),
      *             @OA\Property(property="category_id", type="integer", example=1)
      *         )
      *     ),
@@ -129,7 +128,7 @@ class SubCategoryController extends Controller
 
         $validated = $request->validate([
             'restaurantId' => 'sometimes|string',
-            'category_name' => 'sometimes|string|max:255',
+            'sub_category_name' => 'sometimes|string|max:255',
             'category_id' => 'sometimes|integer'
         ]);
 
