@@ -3221,7 +3221,7 @@
         "/report-by-table": {
             "get": {
                 "tags": [
-                    "Table Reports"
+                    "Reports"
                 ],
                 "summary": "Get transaction report by table number",
                 "description": "Returns a report of transactions grouped by table number for a specific restaurant within a date range.",
@@ -6652,10 +6652,6 @@
         {
             "name": "Reports",
             "description": "Reports"
-        },
-        {
-            "name": "Table Reports",
-            "description": "Table Reports"
         },
         {
             "name": "Reservations",

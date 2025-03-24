@@ -757,7 +757,7 @@ class ReportController extends Controller
      *     path="/report-by-table",
      *     summary="Get transaction report by table number",
      *     description="Returns a report of transactions grouped by table number for a specific restaurant within a date range.",
-     *     tags={"Table Reports"},
+     *     tags={"Reports"},
      *     @OA\Parameter(
      *         name="restaurantId",
      *         in="query",
