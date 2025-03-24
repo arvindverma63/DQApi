@@ -147,7 +147,7 @@ class MenuController extends Controller
     {
         $request->validate([
             'status' => 'required|in:0,1',
-            'id' => 'required|integer|exists:menus,id'
+            'id' => 'required|integer'
         ]);
 
         $menu = Menu::findOrFail($request->id);
