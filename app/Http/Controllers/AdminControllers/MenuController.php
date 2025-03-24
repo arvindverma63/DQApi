@@ -226,11 +226,11 @@ class MenuController extends Controller
             'itemName' => 'required|string|max:255',
             'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
-            'categoryId' => 'required|integer|exists:categories,id',
+            'categoryId' => 'required|integer',
             'restaurantId' => 'required|string|max:255',
             'sub_category' => 'nullable|integer',
             'stockItems' => 'required|array|min:1',
-            'stockItems.*.stockId' => 'required|integer|exists:inventory,id',
+            'stockItems.*.stockId' => 'required|integer',
             'stockItems.*.quantity' => 'required|numeric|min:0.001',
         ]);
 
