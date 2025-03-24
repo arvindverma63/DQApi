@@ -707,7 +707,7 @@ class ReportController extends Controller
      *     path="/customer-report/{id}",
      *     summary="Get total spending per customer",
      *     description="Returns a list of customers along with their total spending for a specific restaurant.",
-     *     tags={"Customer Reports"},
+     *     tags={"Reports"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -750,5 +750,100 @@ class ReportController extends Controller
         }
 
         return response()->json($data);
+    }
+
+/**
+     * @OA\Get(
+     *     path="/report-by-table",
+     *     summary="Get transaction report by table number",
+     *     description="Returns a report of transactions grouped by table number for a specific restaurant within a date range.",
+     *     tags={"Table Reports"},
+     *     @OA\Parameter(
+     *         name="restaurantId",
+     *         in="query",
+     *         required=true,
+     *         description="Restaurant ID (String)",
+     *         @OA\Schema(type="string", example="R1732246184")
+     *     ),
+     *     @OA\Parameter(
+     *         name="startDate",
+     *         in="query",
+     *         required=true,
+     *         description="Start date (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2024-11-24")
+     *     ),
+     *     @OA\Parameter(
+     *         name="endDate",
+     *         in="query",
+     *         required=true,
+     *         description="End date (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2024-11-24")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="transaction_count", type="integer", example=5),
+     *                 @OA\Property(property="tableNumber", type="string", example="Table 1"),
+     *                 @OA\Property(property="total_amount", type="number", format="float", example=150.50)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invalid date format")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No transactions found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No transactions found for this restaurant and date range")
+     *         )
+     *     )
+     * )
+     */
+    public function getReportByTableNumber(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'restaurantId' => 'required|string',
+                'startDate' => 'required|date',
+                'endDate' => 'required|date|after_or_equal:startDate',
+            ]);
+
+            $startDate = Carbon::parse($validated['startDate'])->startOfDay();
+            $endDate = Carbon::parse($validated['endDate'])->endOfDay();
+            $restaurantId = $validated['restaurantId'];
+
+            $results = DB::table('transactions')
+                ->selectRaw('COUNT(id) as transaction_count, tableNumber, SUM(total) as total_amount')
+                ->where('restaurantId', $restaurantId)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy('tableNumber')
+                ->get();
+
+            if ($results->isEmpty()) {
+                return response()->json(['message' => 'No transactions found for this restaurant and date range'], 404);
+            }
+
+            // Cast total_amount to float for consistency
+            $data = $results->map(function ($item) {
+                return [
+                    'transaction_count' => (int) $item->transaction_count,
+                    'tableNumber' => $item->tableNumber,
+                    'total_amount' => (float) $item->total_amount
+                ];
+            })->all();
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 400);
+        }
     }
 }
