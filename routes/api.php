@@ -43,7 +43,7 @@ Route::get('/restaurant/{id}/logo',[UserProfileController::class,'getLogo']);
 
 Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
-Route::post('/report-by-table',[ReportController::class,'getReportByTableNumber']);
+Route::get('/report-by-table',[ReportController::class,'getReportByTableNumber']);
 
 
 Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
