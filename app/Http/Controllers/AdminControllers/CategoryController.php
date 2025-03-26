@@ -62,12 +62,17 @@ class CategoryController extends Controller
         ]);
 
         if ($request->hasFile('categoryImage')) {
-            $imagePath = $request->file('categoryImage')->store('categories', 'public');
-            $validatedData['categoryImage'] = $imagePath;
+            $imageName = time() . '_' . $request->categoryName . '.' . $request->categoryImage->extension();
+            // Store image in public folder
+            $request->categoryImage->move(public_path('images/categories'), $imageName);
+            $validatedData['categoryImage'] = 'images/categories/' . $imageName; // Store image path in database
         }
 
+        // Create the category in the database with the validated data
         $category = Category::create($validatedData);
-        $imageUrl = $category->categoryImage ? Storage::url($category->categoryImage) : null;
+
+        // Get the full URL for the image
+        $imageUrl = env('APP_URL') . '/' . $category['categoryImage'];
 
         $response = [
             'id' => $category->id,
@@ -120,28 +125,34 @@ class CategoryController extends Controller
      */
     public function getAllCategories(Request $request)
     {
+        // Validate restaurantId
         $validatedData = $request->validate([
-            'restaurantId' => 'required|string'
+            'restaurantId' => 'string|required'
         ]);
 
+        // Fetch categories based on restaurantId
         $categories = Category::where('restaurantId', $validatedData['restaurantId'])->get();
 
-        $data = $categories->map(function ($category) {
-            return [
+        // Initialize an empty array for the response data
+        $data = [];
+
+        // Construct image URL for each category and prepare the response
+        foreach ($categories as $category) {
+            $imageUrl = env('APP_URL') . '/' . $category->categoryImage; // Construct image URL
+
+            $data[] = [
                 'id' => $category->id,
                 'categoryName' => $category->categoryName,
-                'categoryImage' => $category->categoryImage ? Storage::url($category->categoryImage) : null,
-                'restaurantId' => $category->restaurantId,
-                'sub_category_id' => $category->sub_category_id,
+                'categoryImage' => $imageUrl, // Send full image URL
                 'created_at' => $category->created_at,
-                'updated_at' => $category->updated_at
+                'updated_at' => $category->updated_at,
+                'restaurantId' => $category->restaurantId,
+                'subcategory' => $category->sub_category ?? null,
             ];
-        });
+        }
 
-        return response()->json([
-            'data' => $data,
-            'message' => 'Categories retrieved successfully'
-        ], 200);
+        // Return the response in JSON format
+        return response()->json(['data' => $data, 'message' => 'Categories retrieved successfully']);
     }
 
     /**
@@ -240,37 +251,37 @@ class CategoryController extends Controller
      */
     public function updateCategory(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
-
+        // Validate request
         $validatedData = $request->validate([
-            'categoryName' => 'sometimes|required|string|max:255',
-            'categoryImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'restaurantId' => 'sometimes|required|string',
-            'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
+            'categoryName' => 'string|required',
+            'categoryImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image
+            'restaurantId'  => 'string|required',
+            'sub_category' => 'integer|nullable',
         ]);
 
-        if ($request->hasFile('categoryImage')) {
-            if ($category->categoryImage) {
-                Storage::disk('public')->delete($category->categoryImage);
-            }
-            $imagePath = $request->file('categoryImage')->store('categories', 'public');
-            $validatedData['categoryImage'] = $imagePath;
+        // Find the category
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
         }
 
+        // Handle image upload
+        if ($request->hasFile('categoryImage')) {
+            // Delete old image if exists
+            if ($category->categoryImage && file_exists(public_path($category->categoryImage))) {
+                unlink(public_path($category->categoryImage));
+            }
+
+            // Upload new image
+            $imageName = time() . '_' . $request->categoryName . '.' . $request->categoryImage->extension();
+            $request->categoryImage->move(public_path('images/categories'), $imageName);
+            $validatedData['categoryImage'] = 'images/categories/' . $imageName; // Store image path
+        }
+
+        // Update category
         $category->update($validatedData);
 
-        $response = [
-            'id' => $category->id,
-            'categoryName' => $category->categoryName,
-            'categoryImage' => $category->categoryImage ? Storage::url($category->categoryImage) : null,
-            'restaurantId' => $category->restaurantId,
-            'sub_category_id' => $category->sub_category_id,
-        ];
-
-        return response()->json([
-            'data' => $response,
-            'message' => 'Category updated successfully'
-        ], 200);
+        return response()->json(['data' => $category, 'message' => 'Category updated successfully']);
     }
 
     /**

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
+use App\Models\MenuInventory;
 
 /**
  * @OA\Schema(
@@ -27,51 +29,51 @@ use App\Http\Controllers\Controller;
 class InventoryController extends Controller
 {
     /**
- * @OA\Get(
- *     path="/inventories",
- *     summary="Get all inventory items",
- *     description="Retrieve a list of all inventory items, including the supplier name",
- *     tags={"Inventory"},
- *     @OA\Parameter(
- *         name="restaurantId",
- *         in="query",
- *         required=true,
- *         @OA\Schema(type="string"),
- *         description="Restaurant ID"
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="A list of inventory items",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(ref="#/components/schemas/Inventory")
- *         )
- *     ),
- *     @OA\Response(response=404, description="No inventory items found")
- * )
- */
-public function getAllInventory(Request $request)
-{
-    // Validate request to make sure restaurantId is provided
-    $validator = Validator::make($request->all(), [
-        'restaurantId' => 'required|string'
-    ]);
+     * @OA\Get(
+     *     path="/inventories",
+     *     summary="Get all inventory items",
+     *     description="Retrieve a list of all inventory items, including the supplier name",
+     *     tags={"Inventory"},
+     *     @OA\Parameter(
+     *         name="restaurantId",
+     *         in="query",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *         description="Restaurant ID"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of inventory items",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Inventory")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="No inventory items found")
+     * )
+     */
+    public function getAllInventory(Request $request)
+    {
+        // Validate request to make sure restaurantId is provided
+        $validator = Validator::make($request->all(), [
+            'restaurantId' => 'required|string'
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 400);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        // Fetch inventory items filtered by restaurantId and include the related supplier details
+        $restaurantId = $request->restaurantId;
+
+        $inventoryItems = Inventory::where('restaurantId', $restaurantId)
+            ->with('supplier:id,supplierName') // Eager load supplier and include only 'id' and 'supplierName' fields
+            ->get();
+
+
+
+        return response()->json(['data' => $inventoryItems, 'message' => 'Inventory items retrieved successfully'], 200);
     }
-
-    // Fetch inventory items filtered by restaurantId and include the related supplier details
-    $restaurantId = $request->restaurantId;
-
-    $inventoryItems = Inventory::where('restaurantId', $restaurantId)
-        ->with('supplier:id,supplierName') // Eager load supplier and include only 'id' and 'supplierName' fields
-        ->get();
-
-
-
-    return response()->json(['data' => $inventoryItems, 'message' => 'Inventory items retrieved successfully'], 200);
-}
 
 
     /**
@@ -224,6 +226,15 @@ public function getAllInventory(Request $request)
 
         if (!$inventory) {
             return response()->json(['message' => 'Inventory item not found'], 404);
+        }
+
+        // Check if inventory item is used in any menu items
+        $menuItems = MenuInventory::where('stockId', $inventory->id)->get();
+
+        if ($menuItems->isNotEmpty()) {
+            return response()->json([
+                'message' => 'Cannot delete inventory item because it is used in menu items'
+            ], 400);
         }
 
         $inventory->delete();
