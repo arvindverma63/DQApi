@@ -24,8 +24,6 @@ use App\Http\Controllers\Controller;
  *     @OA\Property(property="restaurantId", type="string", example="R123456789", description="Restaurant ID associated with the inventory"),
  *     @OA\Property(property="quantity", type="number", format="float", example=2.5, description="Quantity of the menu item"),
  *     @OA\Property(property="stockId", type="integer", example=3, description="ID of the associated stock item"),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-11T13:55:52.000000Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-12T13:55:52.000000Z"),
  * )
  */
 class MenuInventoryController extends Controller

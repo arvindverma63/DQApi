@@ -6282,16 +6282,6 @@
                         "description": "ID of the associated stock item",
                         "type": "integer",
                         "example": 3
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-10-11T13:55:52.000000Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-10-12T13:55:52.000000Z"
                     }
                 },
                 "type": "object"
