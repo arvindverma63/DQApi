@@ -5648,6 +5648,143 @@
                 ]
             }
         },
+        "/users/menu": {
+            "get": {
+                "tags": [
+                    "App Menu"
+                ],
+                "summary": "Get paginated menu items for a restaurant",
+                "description": "Retrieve a paginated list of menu items for a specific restaurant, including categories and ingredients.",
+                "operationId": "4b3e50a0bf5a4bc0b8308e11f5a2ba52",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "ID of the restaurant to fetch menu items for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "itemName": {
+                                                        "type": "string",
+                                                        "example": "Pizza"
+                                                    },
+                                                    "itemImage": {
+                                                        "type": "string",
+                                                        "example": "http://example.com/pizza.jpg"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 9.99
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "Main Course"
+                                                    },
+                                                    "ingredients": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "ingredientName": {
+                                                                    "type": "string",
+                                                                    "example": "Cheese"
+                                                                },
+                                                                "quantity": {
+                                                                    "type": "number",
+                                                                    "format": "float",
+                                                                    "example": 0.5
+                                                                },
+                                                                "unit": {
+                                                                    "type": "string",
+                                                                    "example": "kg"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 50
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Invalid restaurantId",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid restaurantId"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/webMenu": {
             "get": {
                 "tags": [
@@ -6682,6 +6819,10 @@
         {
             "name": "User",
             "description": "User"
+        },
+        {
+            "name": "App Menu",
+            "description": "App Menu"
         },
         {
             "name": "WebAppMenu",

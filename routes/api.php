@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminControllers\SubCategoryController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
+use App\Http\Controllers\UserControllers\UserMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
 
 // Public routes
@@ -255,6 +256,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::middleware(['role:user'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
+
+        Route::get('/user/menu',[UserMenuController::class,'getMenu']);
     });
 });
 
