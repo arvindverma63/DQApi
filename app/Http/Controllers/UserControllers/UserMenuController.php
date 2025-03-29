@@ -74,7 +74,7 @@ class UserMenuController extends Controller
     {
         // Validate restaurantId
         $request->validate([
-            'restaurantId' => 'required|integer',
+            'restaurantId' => 'required|string',
         ]);
 
         // Paginate menu items
