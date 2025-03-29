@@ -257,7 +257,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/user/menu',[UserMenuController::class,'getMenu']);
+        Route::get('/users/menu',[UserMenuController::class,'getMenu']);
     });
 });
 
