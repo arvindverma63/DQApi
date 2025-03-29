@@ -83,6 +83,7 @@ class UserMenuController extends Controller
             ->where('status', 0)
             ->paginate($perPage);
 
+        $sub_category = $menuItems->pluch('sub_category')->unique();
         $categoryIds = $menuItems->pluck('categoryId')->unique();
         $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
 
@@ -111,6 +112,7 @@ class UserMenuController extends Controller
                 'itemImage' => $menu->itemImage,
                 'price' => $menu->price,
                 'category' => $category ? $category->categoryName : null,
+                'subcategory' => $sub_category ? $sub_category : null,
                 'ingredients' => $ingredients,
             ];
         }
