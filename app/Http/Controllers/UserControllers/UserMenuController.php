@@ -113,7 +113,7 @@ class UserMenuController extends Controller
                 'itemName' => $menu->itemName,
                 'itemImage' => $menu->itemImage,
                 'price' => $menu->price,
-                'category' => $category ? $category->categoryName : null,
+                'category' => $category ? $category : null,
                 'subcategory' => $sub_category ? $sub_category : null,
                 'ingredients' => $ingredients,
             ];
