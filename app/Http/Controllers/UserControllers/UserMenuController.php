@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Menu;
 use App\Models\MenuInventory;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
 class UserMenuController extends Controller
@@ -85,7 +86,7 @@ class UserMenuController extends Controller
 
         $sub_categoryId = $menuItems->pluck('sub_category')->unique();
         $categoryIds = $menuItems->pluck('categoryId')->unique();
-        $sub_category = Category::whereIn('id',$sub_categoryId)->get()->keyBy('id');
+        $sub_category = SubCategory::whereIn('id',$sub_categoryId)->get()->keyBy('id');
         $categories = Category::whereIn('id', $categoryIds)->get()->keyBy('id');
 
         $menuIds = $menuItems->pluck('id')->unique();
