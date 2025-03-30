@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminControllers\QrController;
 use App\Http\Controllers\AdminControllers\CategoryController;
 use App\Http\Controllers\AdminControllers\CustomerController;
+use App\Http\Controllers\AdminControllers\DeliveryController;
 use App\Http\Controllers\AdminControllers\DueController;
 use App\Http\Controllers\AdminControllers\FeedbackController;
 use App\Http\Controllers\AdminControllers\FirebaseNotificationController;
@@ -250,7 +251,8 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
-
+    Route::apiResource('deliveries', DeliveryController::class);
+    Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
 
     // Regular user routes (requires 'user' role)
     Route::middleware(['role:user'])->group(function () {

@@ -612,6 +612,362 @@
                 }
             }
         },
+        "/deliveries": {
+            "get": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Get all deliveries",
+                "operationId": "de684ba9e95942a055fc2729bf202723",
+                "responses": {
+                    "200": {
+                        "description": "List of deliveries"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Create a new delivery",
+                "operationId": "48ac1d1fcf0a0ad653f7224836e624a2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id",
+                                    "customer_id",
+                                    "address_1",
+                                    "phone_number",
+                                    "restaurantId",
+                                    "pincode"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "integer",
+                                        "example": 101
+                                    },
+                                    "customer_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "address_1": {
+                                        "type": "string",
+                                        "example": "123 Street Name"
+                                    },
+                                    "address_2": {
+                                        "type": "string",
+                                        "example": "Near Park"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "res_12345"
+                                    },
+                                    "pincode": {
+                                        "type": "integer",
+                                        "example": 560001
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Delivery created successfully"
+                    },
+                    "400": {
+                        "description": "Validation Error"
+                    }
+                }
+            }
+        },
+        "/deliveries/restaurant/{restaurantId}": {
+            "get": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Get deliveries by restaurantId with pagination",
+                "operationId": "13bdff4af0944c3248fb5640c3e439fa",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "path",
+                        "description": "Unique ID of the restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of deliveries for the given restaurantId with pagination",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "order_id": {
+                                                        "type": "integer",
+                                                        "example": 101
+                                                    },
+                                                    "customer_id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "customer_name": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    },
+                                                    "customer_email": {
+                                                        "type": "string",
+                                                        "example": "john@example.com"
+                                                    },
+                                                    "address_1": {
+                                                        "type": "string",
+                                                        "example": "123 Street Name"
+                                                    },
+                                                    "address_2": {
+                                                        "type": "string",
+                                                        "example": "Near Park"
+                                                    },
+                                                    "phone_number": {
+                                                        "type": "string",
+                                                        "example": "9876543210"
+                                                    },
+                                                    "restaurantId": {
+                                                        "type": "string",
+                                                        "example": "res_12345"
+                                                    },
+                                                    "pincode": {
+                                                        "type": "integer",
+                                                        "example": 560001
+                                                    },
+                                                    "total_amount": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 150.5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=3"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No deliveries found"
+                    }
+                }
+            }
+        },
+        "/deliveries/{id}": {
+            "get": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Get delivery by ID",
+                "operationId": "aa1299f5a7ba94027f0b9f9c611ef6a6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delivery details"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Update delivery by ID",
+                "operationId": "4fa555ba12836f4e1bcfd4cea3c56f15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id",
+                                    "customer_id",
+                                    "address_1",
+                                    "phone_number",
+                                    "restaurantId",
+                                    "pincode"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "integer",
+                                        "example": 101
+                                    },
+                                    "customer_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "address_1": {
+                                        "type": "string",
+                                        "example": "123 Street Name"
+                                    },
+                                    "address_2": {
+                                        "type": "string",
+                                        "example": "Near Park"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "res_12345"
+                                    },
+                                    "pincode": {
+                                        "type": "integer",
+                                        "example": 560001
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delivery updated successfully"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Delivery Management"
+                ],
+                "summary": "Delete delivery by ID",
+                "operationId": "938d90b200d9d402120eb2b85152be1e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Delivery deleted successfully"
+                    },
+                    "404": {
+                        "description": "Delivery not found"
+                    }
+                }
+            }
+        },
         "/dues/byRestaurantId/{restaurantId}": {
             "get": {
                 "tags": [
@@ -6739,6 +7095,10 @@
         {
             "name": "Customer",
             "description": "Customer"
+        },
+        {
+            "name": "Delivery Management",
+            "description": "Delivery Management"
         },
         {
             "name": "Feedback",
