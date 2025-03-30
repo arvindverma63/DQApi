@@ -97,7 +97,7 @@ class DeliveryController extends Controller
                 'o.total as order_total',
                 'o.status as order_status'
             ])
-            ->where('d.restaurant_id', $restaurantId)
+            ->where('d.restaurantId', $restaurantId)
             ->paginate(10);
 
         if ($deliveries->isEmpty()) {
