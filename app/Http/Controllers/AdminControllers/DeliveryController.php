@@ -84,15 +84,24 @@ class DeliveryController extends Controller
 
     public function getDeliveryByRestaurantId($restaurantId)
     {
-        $deliveries = DB::table('delivery')
-            ->join('customers', 'delivery.customer_id', '=', 'customers.id')
-            ->join('orders', 'delivery.order_id', '=', 'orders.id')
-            ->select('*')
-            ->where('delivery.restaurantId', $restaurantId)
-            ->paginate(10); // Pagination added
+        $deliveries = DB::table('delivery as d')
+            ->join('customers as c', 'd.customer_id', '=', 'c.id')
+            ->join('orders as o', 'd.order_id', '=', 'o.id')
+            ->select([
+                'd.id as delivery_id',
+                'd.restaurant_id',
+                'd.order_id',
+                'd.customer_id',
+                'c.name as customer_name',
+                'c.email as customer_email',
+                'o.total as order_total',
+                'o.status as order_status'
+            ])
+            ->where('d.restaurant_id', $restaurantId)
+            ->paginate(10);
 
         if ($deliveries->isEmpty()) {
-            return response()->json(['message' => 'No deliveries found for this restaurantId'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'No deliveries found for this restaurant'], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json($deliveries, Response::HTTP_OK);
