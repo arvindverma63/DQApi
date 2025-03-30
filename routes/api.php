@@ -252,8 +252,6 @@ Route::middleware(['auth:api'])->group(function () {
 
 
     Route::apiResource('deliveries', DeliveryController::class);
-    Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
-
     // Regular user routes (requires 'user' role)
     Route::middleware(['role:user'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
@@ -274,3 +272,5 @@ Route::get('/menu/category/{id}', [WebOrderController::class, 'searchMenuByCateg
 Route::get('/app/menu', [MobileMenuController::class, 'getMenu']);
 Route::get('/app/menu/all', [MobileMenuController::class, 'getAllMenu']);
 Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
+
+Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
