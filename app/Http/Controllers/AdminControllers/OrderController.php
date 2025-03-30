@@ -527,17 +527,61 @@ class OrderController extends Controller
      * @OA\Get(
      *     path="/getOrderByDelivery",
      *     tags={"Orders"},
-     *     summary="Get all orders by restaurant ID",
+     *     summary="Get paginated orders by restaurant ID",
      *     @OA\Parameter(
      *         name="restaurantId",
      *         in="query",
-     *         description="The restaurant ID",
+     *         description="The ID of the restaurant",
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number for pagination",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successfully retrieved orders"
+     *         description="Successfully retrieved orders",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="order_id", type="integer"),
+     *                 @OA\Property(property="table_number", type="integer"),
+     *                 @OA\Property(property="restaurant_id", type="string"),
+     *                 @OA\Property(property="status", type="string"),
+     *                 @OA\Property(property="order_details", type="array", @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="item_id", type="integer"),
+     *                     @OA\Property(property="item_name", type="string"),
+     *                     @OA\Property(property="price", type="number", format="float"),
+     *                     @OA\Property(property="quantity", type="integer"),
+     *                     @OA\Property(property="item_total", type="number", format="float")
+     *                 )),
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="phoneNumber", type="string"),
+     *                     @OA\Property(property="email", type="string"),
+     *                     @OA\Property(property="address", type="string")
+     *                 ),
+     *                 @OA\Property(property="total", type="number", format="float"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             )),
+     *             @OA\Property(property="pagination", type="object",
+     *                 @OA\Property(property="current_page", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true),
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true)
+     *             ),
+     *             @OA\Property(property="message", type="string")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -545,6 +589,7 @@ class OrderController extends Controller
      *     )
      * )
      */
+
     public function getOrderByDelivery(Request $request)
     {
         // Validate restaurantId from the request
@@ -552,10 +597,10 @@ class OrderController extends Controller
             'restaurantId' => 'required|string',
         ]);
 
-        // Fetch orders by restaurantId
+        // Fetch paginated orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])
-                            ->where('deliver_id',1)->get();
-
+            ->where('deliver_id', 1)
+            ->paginate(10); // Adjust items per page as needed
 
         // Preload customers and menu items for optimization
         $customerIds = $orders->pluck('user_id')->unique();
@@ -604,8 +649,18 @@ class OrderController extends Controller
             ];
         });
 
-        // Return the enhanced orders with user and item details
-        return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
+        // Return paginated response with enhanced data
+        return response()->json([
+            'data' => $enhancedOrders,
+            'pagination' => [
+                'current_page' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+                'per_page' => $orders->perPage(),
+                'total' => $orders->total(),
+                'next_page_url' => $orders->nextPageUrl(),
+                'prev_page_url' => $orders->previousPageUrl(),
+            ],
+            'message' => 'Successfully retrieved orders'
+        ], 200);
     }
-
 }

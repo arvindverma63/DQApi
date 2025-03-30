@@ -2830,22 +2830,146 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Get all orders by restaurant ID",
+                "summary": "Get paginated orders by restaurant ID",
                 "operationId": "98ad31034c6cc55b8122a7bc7f29084f",
                 "parameters": [
                     {
                         "name": "restaurantId",
                         "in": "query",
-                        "description": "The restaurant ID",
+                        "description": "The ID of the restaurant",
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully retrieved orders"
+                        "description": "Successfully retrieved orders",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "order_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "table_number": {
+                                                        "type": "integer"
+                                                    },
+                                                    "restaurant_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "order_details": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "item_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "item_name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "price": {
+                                                                    "type": "number",
+                                                                    "format": "float"
+                                                                },
+                                                                "quantity": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "item_total": {
+                                                                    "type": "number",
+                                                                    "format": "float"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "phoneNumber": {
+                                                                "type": "string"
+                                                            },
+                                                            "email": {
+                                                                "type": "string"
+                                                            },
+                                                            "address": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "No orders found for this restaurant"
