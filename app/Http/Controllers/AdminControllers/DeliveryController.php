@@ -87,7 +87,7 @@ class DeliveryController extends Controller
         $deliveries = DB::table('delivery')
             ->join('customers', 'delivery.customer_id', '=', 'customers.id')
             ->join('orders', 'delivery.order_id', '=', 'orders.id')
-            ->select('delivery.*', 'customers.name as customer_name', 'customers.email as customer_email', 'orders.total_amount')
+            ->select('*')
             ->where('delivery.restaurantId', $restaurantId)
             ->paginate(10); // Pagination added
 
