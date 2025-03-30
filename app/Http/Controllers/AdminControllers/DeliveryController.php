@@ -89,7 +89,7 @@ class DeliveryController extends Controller
             ->join('orders as o', 'd.order_id', '=', 'o.id')
             ->select([
                 'd.id as delivery_id',
-                'd.restaurant_id',
+                'd.restaurantId',
                 'd.order_id',
                 'd.customer_id',
                 'c.name as customer_name',
