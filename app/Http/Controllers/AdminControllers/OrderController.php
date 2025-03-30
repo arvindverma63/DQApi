@@ -101,44 +101,45 @@ class OrderController extends Controller
 
 
     /**
- * @OA\Post(
- *     path="/orders",
- *     tags={"Orders"},
- *     summary="Create a new order",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"restaurantId", "orderDetails", "user_id"},
- *             @OA\Property(property="tableNumber", type="string", example="12"),
- *             @OA\Property(property="restaurantId", type="string", example="ABC123"),
- *             @OA\Property(property="user_id", type="integer", example=1),
- *             @OA\Property(
- *                 property="orderDetails",
- *                 type="array",
- *                 @OA\Items(
- *                     type="object",
- *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
- *                     @OA\Property(property="id", type="string", example="204"),
- *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
- *                     @OA\Property(property="category", type="string", example="MOMOS"),
- *                     @OA\Property(property="price", type="number", format="float", example=120.0),
- *                     @OA\Property(
- *                         property="ingredients",
- *                         type="array",
- *                         @OA\Items(type="string", example="MAIDA")
- *                     ),
- *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
- *                     @OA\Property(property="quantity", type="integer", example=1)
- *                 )
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=201,
- *         description="Order created successfully"
- *     )
- * )
- */
+     * @OA\Post(
+     *     path="/orders",
+     *     tags={"Orders"},
+     *     summary="Create a new order",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"restaurantId", "orderDetails", "user_id"},
+     *             @OA\Property(property="tableNumber", type="string", example="12"),
+     *             @OA\Property(property="restaurantId", type="string", example="ABC123"),
+     *             @OA\Property(property="user_id", type="integer", example=1),
+     *             @OA\Property(property="deliver_id", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="orderDetails",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
+     *                     @OA\Property(property="id", type="string", example="204"),
+     *                     @OA\Property(property="itemName", type="string", example="Tandoori Momos"),
+     *                     @OA\Property(property="category", type="string", example="MOMOS"),
+     *                     @OA\Property(property="price", type="number", format="float", example=120.0),
+     *                     @OA\Property(
+     *                         property="ingredients",
+     *                         type="array",
+     *                         @OA\Items(type="string", example="MAIDA")
+     *                     ),
+     *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
+     *                     @OA\Property(property="quantity", type="integer", example=1)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Order created successfully"
+     *     )
+     * )
+     */
 
     public function store(Request $request)
     {
@@ -147,6 +148,7 @@ class OrderController extends Controller
             'restaurantId' => 'required|string',
             'user_id' => 'required|integer',  // Added user_id as required
             'orderDetails' => 'required|array', // Order details must be a JSON object (array)
+            'deliver_id' => 'nullable|integer',
         ]);
 
         // Store the new order
@@ -156,6 +158,7 @@ class OrderController extends Controller
             'user_id' => $validatedData['user_id'],  // Saving user_id with order
             'orderDetails' => json_encode($validatedData['orderDetails']),
             'status' => 'processing', // Default status is 'processing'
+            'deliver_id' => $validatedData['deliver_id']
         ]);
 
         return response()->json($order, 201);

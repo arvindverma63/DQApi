@@ -2416,6 +2416,10 @@
                                         "type": "integer",
                                         "example": 1
                                     },
+                                    "deliver_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "orderDetails": {
                                         "type": "array",
                                         "items": {
@@ -2435,7 +2439,7 @@
                                                 },
                                                 "itemName": {
                                                     "type": "string",
-                                                    "example": "Tanddori Momos"
+                                                    "example": "Tandoori Momos"
                                                 },
                                                 "category": {
                                                     "type": "string",
