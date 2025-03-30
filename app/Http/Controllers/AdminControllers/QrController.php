@@ -22,7 +22,7 @@ class QrController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             @OA\Property(property="restaurantId", type="string", example="12345"),
-     *             @OA\Property(property="tableNo", type="integer", example="12"),
+     *             @OA\Property(property="tableNo", type="string", example="12"),
      *
      *         )
      *     ),
@@ -40,7 +40,7 @@ class QrController extends Controller
 {
     // Validate the input
     $validated = $request->validate([
-        'tableNo' => 'integer|required',
+        'tableNo' => 'string|required',
         'restaurantId' => 'string|required'
     ]);
 

@@ -2995,7 +2995,7 @@
                                         "example": "12345"
                                     },
                                     "tableNo": {
-                                        "type": "integer",
+                                        "type": "string",
                                         "example": "12"
                                     }
                                 },
