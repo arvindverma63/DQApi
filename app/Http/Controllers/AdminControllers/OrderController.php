@@ -522,4 +522,90 @@ class OrderController extends Controller
             ], 400); // HTTP Status Code 400: Bad Request
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/getOrderByDelivery",
+     *     tags={"Orders"},
+     *     summary="Get all orders by restaurant ID",
+     *     @OA\Parameter(
+     *         name="restaurantId",
+     *         in="query",
+     *         description="The restaurant ID",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully retrieved orders"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No orders found for this restaurant"
+     *     )
+     * )
+     */
+    public function getOrderByDelivery(Request $request)
+    {
+        // Validate restaurantId from the request
+        $validatedData = $request->validate([
+            'restaurantId' => 'required|string',
+        ]);
+
+        // Fetch orders by restaurantId
+        $orders = Order::where('restaurantId', $validatedData['restaurantId'])
+                            ->where('deliver_id',1)->get();
+
+
+        // Preload customers and menu items for optimization
+        $customerIds = $orders->pluck('user_id')->unique();
+        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+
+        $menuItemIds = $orders->flatMap(function ($order) {
+            return collect(json_decode($order->orderDetails, true))->pluck('id');
+        })->unique();
+        $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
+
+        // Map orders with user and item details
+        $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
+            $userDetails = $customers->get($order->user_id);
+            $orderDetails = collect(json_decode($order->orderDetails, true));
+
+            $total = 0;
+
+            // Map item details and calculate totals
+            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+                $menuItem = $menuItems->get($item['id']);
+                if ($menuItem) {
+                    $itemTotal = $menuItem->price * $item['quantity'];
+                    $total += $itemTotal;
+
+                    return [
+                        'item_id' => $menuItem->id,
+                        'item_name' => $menuItem->itemName,
+                        'price' => $menuItem->price,
+                        'quantity' => $item['quantity'],
+                        'item_total' => $itemTotal,
+                    ];
+                }
+                return null;
+            })->filter(); // Remove null values
+
+            return [
+                'order_id' => $order->id,
+                'table_number' => $order->tableNumber,
+                'restaurant_id' => $order->restaurantId,
+                'status' => $order->status,
+                'order_details' => $itemDetails->values()->toArray(),
+                'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
+                'total' => $total,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+            ];
+        });
+
+        // Return the enhanced orders with user and item details
+        return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
+    }
+
 }

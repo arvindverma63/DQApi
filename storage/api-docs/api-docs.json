@@ -2825,6 +2825,34 @@
                 }
             }
         },
+        "/getOrderByDelivery": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get all orders by restaurant ID",
+                "operationId": "98ad31034c6cc55b8122a7bc7f29084f",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "query",
+                        "description": "The restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved orders"
+                    },
+                    "404": {
+                        "description": "No orders found for this restaurant"
+                    }
+                }
+            }
+        },
         "/qr/create": {
             "post": {
                 "tags": [

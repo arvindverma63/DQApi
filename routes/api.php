@@ -274,3 +274,4 @@ Route::get('/app/menu/all', [MobileMenuController::class, 'getAllMenu']);
 Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
+Route::get('/getOrderByDelivery',[OrderController::class,'getOrderByDelivery']);
