@@ -50,7 +50,6 @@ class DeliveryController extends Controller
      *          @OA\JsonContent(
      *              @OA\Property(property="data", type="array", @OA\Items(
      *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="order_id", type="integer", example=101),
      *                  @OA\Property(property="customer_id", type="integer", example=5),
      *                  @OA\Property(property="customer_name", type="string", example="John Doe"),
      *                  @OA\Property(property="customer_email", type="string", example="john@example.com"),
@@ -86,16 +85,7 @@ class DeliveryController extends Controller
     {
         $deliveries = DB::table('delivery as d')
             ->join('customers as c', 'd.customer_id', '=', 'c.id')
-            ->join('orders as o', 'd.order_id', '=', 'o.id')
-            ->select([
-                'd.id as delivery_id',
-                'd.restaurantId',
-                'd.order_id',
-                'd.customer_id',
-                'c.name as customer_name',
-                'c.email as customer_email',
-                'o.total as order_total',
-                'o.status as order_status'
+            ->select(['*'
             ])
             ->where('d.restaurantId', $restaurantId)
             ->paginate(10);
@@ -116,8 +106,7 @@ class DeliveryController extends Controller
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"order_id", "customer_id", "address_1", "phone_number", "restaurantId", "pincode"},
-     *              @OA\Property(property="order_id", type="integer", example=101),
+     *              required={"customer_id", "address_1", "phone_number", "restaurantId", "pincode"},
      *              @OA\Property(property="customer_id", type="integer", example=5),
      *              @OA\Property(property="address_1", type="string", example="123 Street Name"),
      *              @OA\Property(property="address_2", type="string", example="Near Park"),
@@ -133,7 +122,6 @@ class DeliveryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'order_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'address_1' => 'required|string',
             'address_2' => 'nullable|string',
@@ -188,8 +176,7 @@ class DeliveryController extends Controller
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"order_id", "customer_id", "address_1", "phone_number", "restaurantId", "pincode"},
-     *              @OA\Property(property="order_id", type="integer", example=101),
+     *              required={"customer_id", "address_1", "phone_number", "restaurantId", "pincode"},
      *              @OA\Property(property="customer_id", type="integer", example=5),
      *              @OA\Property(property="address_1", type="string", example="123 Street Name"),
      *              @OA\Property(property="address_2", type="string", example="Near Park"),
