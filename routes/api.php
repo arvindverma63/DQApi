@@ -145,7 +145,16 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/qr/delete/{id}', [QrController::class, 'deleteQr']);
 
         // Order management
-
+        Route::prefix('orders')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+            Route::post('/', [OrderController::class, 'store'])->name('orders.store');
+            Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show');
+            Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update');
+            Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+            Route::put('/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+            Route::get('/notification/{id}', [OrderController::class, 'getNotification']);
+            Route::put('/status/notification/{id}', [OrderController::class, 'updateNotificationStatus']);
+        });
         Route::prefix('suppliers')->group(function () {
             // Get all suppliers
             Route::get('/', [SupplierController::class, 'getSuppliers']);
@@ -266,13 +275,3 @@ Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail'
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
 Route::get('/getOrderByDelivery',[OrderController::class,'getOrderByDelivery']);
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
-    Route::post('/', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show');
-    Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
-    Route::put('/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
-    Route::get('/notification/{id}', [OrderController::class, 'getNotification']);
-    Route::put('/status/notification/{id}', [OrderController::class, 'updateNotificationStatus']);
-});
