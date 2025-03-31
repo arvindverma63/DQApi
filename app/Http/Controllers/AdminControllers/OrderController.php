@@ -42,7 +42,8 @@ class OrderController extends Controller
         ]);
 
         // Fetch orders by restaurantId
-        $orders = Order::where('restaurantId', $validatedData['restaurantId'])->get();
+        $orders = Order::where('restaurantId', $validatedData['restaurantId'])->
+                        where('deliver_id',0)->get();
 
 
         // Preload customers and menu items for optimization
