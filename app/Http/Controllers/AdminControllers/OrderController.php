@@ -43,7 +43,7 @@ class OrderController extends Controller
 
         // Fetch orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])->
-                        whereNot('deliver_id',1)->get();
+                        whereNot('tableNumber','Delivery')->get();
 
 
         // Preload customers and menu items for optimization
@@ -600,7 +600,7 @@ class OrderController extends Controller
 
         // Fetch paginated orders by restaurantId
         $orders = Order::where('restaurantId', $validatedData['restaurantId'])
-            ->where('deliver_id', 1)
+            ->where('tableNumber', 'Delivery')
             ->paginate(10); // Adjust items per page as needed
 
         // Preload customers and menu items for optimization
