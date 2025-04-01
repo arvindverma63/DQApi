@@ -12,7 +12,7 @@ class DueTransactions extends Model
     public $table = "due_transactions";
 
     public $fillable = [
-        'transaction_id',
+        'customer_id',
         'total',
         'status',
         'restaurantId'

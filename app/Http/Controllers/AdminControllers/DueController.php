@@ -32,19 +32,15 @@ class DueController extends Controller
      * )
      */
 
-    public function index($restaurantId, TransactionController $transaction)
+    public function index($restaurantId)
     {
         $dueRecords = DueTransactions::where('restaurantId', $restaurantId)->get();
         $data = [];
 
-        foreach ($dueRecords as $d) {
-            $transactionDetails = $transaction->getTransactionById($d->transaction_id);
 
             $data[] = [
-                'transaction_details' => $transactionDetails,
-                'due_details' => $d
+                'due_details' => $dueRecords
             ];
-        }
 
         return response()->json($data);
     }
@@ -58,7 +54,7 @@ class DueController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"transaction_id", "total", "status"},
-     *             @OA\Property(property="transaction_id", type="integer", example=123),
+     *             @OA\Property(property="customer_id", type="integer", example=123),
      *             @OA\Property(property="total", type="number", format="float", example=1000.500),
      *             @OA\Property(property="restaurantId", type="string", format="string", example="R2342342"),
      *             @OA\Property(property="status", type="string", enum={"paid", "unpaid"}, example="unpaid")
@@ -70,7 +66,7 @@ class DueController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'transaction_id' => 'required|integer',
+            'customer_id' => 'required|integer',
             'total' => 'required|numeric',
             'restaurantId' => 'required',
             'status' => 'required|in:paid,unpaid',
@@ -97,7 +93,7 @@ class DueController extends Controller
      *     @OA\Response(response=404, description="Due record not found")
      * )
      */
-    public function show($id, TransactionController $transaction)
+    public function show($id)
     {
         $due = DueTransactions::find($id);
 
@@ -105,11 +101,7 @@ class DueController extends Controller
             return response()->json(['error' => 'Due record not found'], 404);
         }
 
-        // Fetch transaction details
-        $transactionDetails = $transaction->getTransactionById($due->transaction_id);
-
         return response()->json([
-            'transaction_details' => $transactionDetails,
             'due_details' => $due
         ]);
     }

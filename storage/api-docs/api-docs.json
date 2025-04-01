@@ -998,7 +998,7 @@
                                     "status"
                                 ],
                                 "properties": {
-                                    "transaction_id": {
+                                    "customer_id": {
                                         "type": "integer",
                                         "example": 123
                                     },
