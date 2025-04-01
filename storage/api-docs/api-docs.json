@@ -2683,7 +2683,7 @@
                 }
             }
         },
-        "/notification/{id}": {
+        "/orders/notification/{id}": {
             "get": {
                 "tags": [
                     "Orders"
