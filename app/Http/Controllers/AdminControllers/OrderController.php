@@ -403,7 +403,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/notification/{id}",
+     *     path="/orders/notification/{id}",
      *     summary="Retrieve orders with pending notifications for a specific restaurant",
      *     description="Fetches all orders where the notification status is 0 and matches the given restaurant ID.",
      *     operationId="getPendingNotificationsByRestaurant",
