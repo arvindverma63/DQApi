@@ -426,4 +426,77 @@ class UserProfileController extends Controller
             'email' => 'nullable|email|max:255',
         ];
     }
+
+    /**
+     * @OA\Put(
+     *     path="/restaurant/updateFcm/{id}",
+     *     summary="Update Restaurant FCM Token",
+     *     tags={"Restaurant Profile"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Restaurant ID",
+     *         required=true,
+     *         @OA\Schema(type="string", example="R1728231298")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="fcm", type="string", example="example_fcm_token")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="FCM token updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="FCM token updated"),
+     *             @OA\Property(property="fcm", type="string", example="example_fcm_token")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Restaurant profile not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Restaurant profile not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="An error occurred while updating the FCM token")
+     *         )
+     *     )
+     * )
+     */
+    public function updateFcm(Request $request, $id)
+    {
+        try {
+            // Validate the FCM token
+            $request->validate([
+                'fcm' => 'required|string|max:255',
+            ]);
+
+            // Find the profile by restaurant ID
+            $profile = UserProfile::where('restaurantId', $id)->first();
+
+            if ($profile) {
+                $profile->fcm = $request->fcm;
+                $profile->save();
+
+                return response()->json([
+                    'message' => 'FCM token updated',
+                    'fcm' => $profile->fcm,
+                ], 200);
+            } else {
+                return response()->json([
+                    'error' => 'Restaurant profile not found',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'An error occurred while updating the FCM token',
+            ], 500);
+        }
+    }
 }

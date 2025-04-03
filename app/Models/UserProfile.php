@@ -19,6 +19,7 @@ class UserProfile extends Model
     'restaurantId',
     'gender',
     'identity',
+    'fcm',
     'identityNumber'];
     use HasFactory;
 }

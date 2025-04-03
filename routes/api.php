@@ -90,6 +90,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
         Route::put('/profile/{id}', [UserProfileController::class, 'updateProfile']);
+        Route::put('/restaurant/updateFcm/{id}',[UserProfileController::class,'updateFcm']);
 
         Route::prefix('admin')->group(function () {
             // Create a new subcategory
