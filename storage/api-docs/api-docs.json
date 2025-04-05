@@ -10,6 +10,71 @@
         }
     ],
     "paths": {
+        "/admin/send-bulk-email": {
+            "post": {
+                "tags": [
+                    "Admin Email"
+                ],
+                "summary": "Send bulk email to customers of a specific restaurant",
+                "description": "Sends queued bulk emails to all customers associated with the given restaurant ID.",
+                "operationId": "e07ecaa16d42cd83f6fcfa3c71732ca2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "subject",
+                                    "title",
+                                    "body"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "Hello from Laravel!"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Bulk Email Notice"
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "example": "This is a bulk email sent without migrations using queues."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": "mail sent successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
         "/category": {
             "post": {
                 "tags": [
@@ -7320,6 +7385,10 @@
         {
             "name": "Dues",
             "description": "Operations related to due transactions"
+        },
+        {
+            "name": "Admin Email",
+            "description": "Admin Email"
         },
         {
             "name": "Category",

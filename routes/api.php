@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminControllers\AdminEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminControllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -47,7 +48,7 @@ Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 Route::get('/report-by-table',[ReportController::class,'getReportByTableNumber']);
 
-
+Route::post('/admin/send-bulk-email',[AdminEmailController::class,'buikMain']);
 Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
 Route::get('/feedbacks/{id}', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/profile/{id}/image',[UserProfileController::class,'uploadImage']);
