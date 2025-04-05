@@ -48,11 +48,16 @@ class AdminEmailController extends Controller
         ];
 
         $userEmails = Customer::where('restaurantId', $request->restaurantId)
-                        ->whereNot('email', '')->get();
+            ->whereNotNull('email')
+            ->pluck('email')
+            ->filter(function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            });
 
         foreach ($userEmails as $email) {
             Mail::to($email)->queue(new BulkEmail($details));
         }
+
 
         return response()->json(['success' => 'mail sent successfully']);
     }
