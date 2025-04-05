@@ -48,7 +48,6 @@ Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
 Route::get('/report-by-table',[ReportController::class,'getReportByTableNumber']);
 
-Route::post('/admin/send-bulk-email',[AdminEmailController::class,'buikMain']);
 Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
 Route::get('/feedbacks/{id}', [FeedbackController::class, 'getAllFeedbacks']);
 Route::post('/profile/{id}/image',[UserProfileController::class,'uploadImage']);
@@ -86,6 +85,7 @@ Route::middleware(['auth:api'])->group(function () {
     // Admin routes (requires 'admin' role)
     Route::middleware(['role:admin'])->group(function () {
 
+        Route::post('/admin/send-bulk-email',[AdminEmailController::class,'buikMain']);
         // User-specific routes
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
