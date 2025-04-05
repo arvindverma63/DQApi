@@ -20,7 +20,7 @@ class AdminEmailController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"restaurantId", "subject", "title", "body"},
-     *             @OA\Property(property="restaurantId", type="integer", example=1),
+     *             @OA\Property(property="restaurantId", type="string", example="R123233244"),
      *             @OA\Property(property="subject", type="string", example="Hello from Laravel!"),
      *             @OA\Property(property="title", type="string", example="Bulk Email Notice"),
      *             @OA\Property(property="body", type="string", example="This is a bulk email sent without migrations using queues.")
