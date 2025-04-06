@@ -10,6 +10,61 @@
         }
     ],
     "paths": {
+        "/admin/check-permission/{id}": {
+            "get": {
+                "tags": [
+                    "Restaurant Profile"
+                ],
+                "summary": "Check user permission by restaurant ID",
+                "description": "Returns the permission of a user profile by restaurant ID.",
+                "operationId": "checkUserPermission",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Restaurant ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permission found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "permission": {
+                                            "type": "string",
+                                            "example": "admin"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "user not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/admin/send-bulk-email": {
             "post": {
                 "tags": [
@@ -7387,6 +7442,10 @@
             "description": "Operations related to due transactions"
         },
         {
+            "name": "Restaurant Profile",
+            "description": "Restaurant Profile"
+        },
+        {
             "name": "Admin Email",
             "description": "Admin Email"
         },
@@ -7461,10 +7520,6 @@
         {
             "name": "Transaction",
             "description": "Transaction"
-        },
-        {
-            "name": "Restaurant Profile",
-            "description": "Restaurant Profile"
         },
         {
             "name": "Authentication",

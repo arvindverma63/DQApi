@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AdminEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminControllers\UserController;
@@ -90,6 +91,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
+        Route::get('/admin/check-permission/{id}',[AdminController::class,'checkPermission']);
         Route::put('/profile/{id}', [UserProfileController::class, 'updateProfile']);
         Route::put('/restaurant/updateFcm/{id}',[UserProfileController::class,'updateFcm']);
 

@@ -20,6 +20,7 @@ class UserProfile extends Model
     'gender',
     'identity',
     'fcm',
+    'permission',
     'identityNumber'];
     use HasFactory;
 }
