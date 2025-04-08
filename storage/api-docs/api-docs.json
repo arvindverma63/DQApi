@@ -65,6 +65,74 @@
                 }
             }
         },
+        "/admin/update-permission": {
+            "put": {
+                "tags": [
+                    "Restaurant Profile"
+                ],
+                "summary": "Update user permission by restaurant ID",
+                "description": "Updates the permission of a user profile using restaurant ID.",
+                "operationId": "updateUserPermission",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "permission"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "example": "resto123"
+                                    },
+                                    "permission": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permission updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "user not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/admin/send-bulk-email": {
             "post": {
                 "tags": [

@@ -81,6 +81,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
             Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
             Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+
+            Route::put('/admin/update-permission',[AdminController::class,'updatePermission']);
     });
 
     // Admin routes (requires 'admin' role)
