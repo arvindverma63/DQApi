@@ -63,7 +63,31 @@ class OrderController extends Controller
 
         // Process orders and menu items
         $enhancedOrders = $orders->map(function ($order) {
-            $orderDetails = collect(json_decode($order->order_details, true));
+            // Decode and validate order_details
+            $decodedDetails = json_decode($order->order_details, true);
+
+            // Check if decoding was successful and result is an array
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedDetails)) {
+                return [
+                    'order_id' => $order->order_id,
+                    'table_number' => $order->table_number,
+                    'restaurant_id' => $order->restaurant_id,
+                    'status' => $order->status,
+                    'order_details' => [],
+                    'user' => $order->customer_id ? [
+                        'id' => $order->customer_id,
+                        'name' => $order->name,
+                        'phoneNumber' => $order->phoneNumber,
+                        'email' => $order->email,
+                        'address' => $order->address
+                    ] : null,
+                    'total' => 0,
+                    'created_at' => $order->created_at,
+                    'updated_at' => $order->updated_at,
+                ];
+            }
+
+            $orderDetails = collect($decodedDetails);
             $menuItemIds = $orderDetails->pluck('id')->unique();
 
             // Fetch menu items for this order
@@ -75,6 +99,11 @@ class OrderController extends Controller
             // Calculate item details and total
             $total = 0;
             $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+                // Verify item has an id and is valid
+                if (!isset($item['id']) || !isset($item['quantity'])) {
+                    return null;
+                }
+
                 $menuItem = $menuItems->get($item['id']);
                 if ($menuItem) {
                     $itemTotal = $menuItem->price * $item['quantity'];
