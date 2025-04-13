@@ -36,33 +36,44 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        // Validate restaurantId from the request
+        // Validate restaurantId
         $validatedData = $request->validate([
             'restaurantId' => 'required|string',
         ]);
 
-        // Fetch orders by restaurantId
-        $orders = Order::where('restaurantId', $validatedData['restaurantId'])->
-                        whereNot('tableNumber','Delivery')->get();
+        // Fetch orders with joined customer data
+        $orders = Order::select([
+            'orders.id as order_id',
+            'orders.tableNumber as table_number',
+            'orders.restaurantId as restaurant_id',
+            'orders.status',
+            'orders.orderDetails as order_details',
+            'orders.created_at',
+            'orders.updated_at',
+            'customers.id as customer_id',
+            'customers.name',
+            'customers.phoneNumber',
+            'customers.email',
+            'customers.address'
+        ])
+            ->leftJoin('customers', 'orders.user_id', '=', 'customers.id')
+            ->where('orders.restaurantId', $validatedData['restaurantId'])
+            ->where('orders.tableNumber', '!=', 'Delivery')
+            ->get();
 
+        // Process orders and menu items
+        $enhancedOrders = $orders->map(function ($order) {
+            $orderDetails = collect(json_decode($order->order_details, true));
+            $menuItemIds = $orderDetails->pluck('id')->unique();
 
-        // Preload customers and menu items for optimization
-        $customerIds = $orders->pluck('user_id')->unique();
-        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
+            // Fetch menu items for this order
+            $menuItems = Menu::whereIn('id', $menuItemIds)
+                ->select(['id', 'itemName', 'price'])
+                ->get()
+                ->keyBy('id');
 
-        $menuItemIds = $orders->flatMap(function ($order) {
-            return collect(json_decode($order->orderDetails, true))->pluck('id');
-        })->unique();
-        $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
-
-        // Map orders with user and item details
-        $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
-            $userDetails = $customers->get($order->user_id);
-            $orderDetails = collect(json_decode($order->orderDetails, true));
-
+            // Calculate item details and total
             $total = 0;
-
-            // Map item details and calculate totals
             $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
                 $menuItem = $menuItems->get($item['id']);
                 if ($menuItem) {
@@ -78,23 +89,31 @@ class OrderController extends Controller
                     ];
                 }
                 return null;
-            })->filter(); // Remove null values
+            })->filter()->values()->toArray();
 
             return [
-                'order_id' => $order->id,
-                'table_number' => $order->tableNumber,
-                'restaurant_id' => $order->restaurantId,
+                'order_id' => $order->order_id,
+                'table_number' => $order->table_number,
+                'restaurant_id' => $order->restaurant_id,
                 'status' => $order->status,
-                'order_details' => $itemDetails->values()->toArray(),
-                'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
+                'order_details' => $itemDetails,
+                'user' => $order->customer_id ? [
+                    'id' => $order->customer_id,
+                    'name' => $order->name,
+                    'phoneNumber' => $order->phoneNumber,
+                    'email' => $order->email,
+                    'address' => $order->address
+                ] : null,
                 'total' => $total,
                 'created_at' => $order->created_at,
                 'updated_at' => $order->updated_at,
             ];
         });
 
-        // Return the enhanced orders with user and item details
-        return response()->json(['data' => $enhancedOrders, 'message' => 'Successfully retrieved orders'], 200);
+        return response()->json([
+            'data' => $enhancedOrders,
+            'message' => 'Successfully retrieved orders'
+        ], 200);
     }
 
 
