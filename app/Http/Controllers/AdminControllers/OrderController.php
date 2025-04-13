@@ -64,10 +64,40 @@ class OrderController extends Controller
         // Process orders and menu items
         $enhancedOrders = $orders->map(function ($order) {
             // Decode and validate order_details
-            $decodedDetails = json_decode($order->order_details, true);
+            $rawDetails = $order->order_details;
+            $decodedDetails = json_decode($rawDetails, true);
 
-            // Check if decoding was successful and result is an array
-            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedDetails)) {
+            // Debug JSON decoding issues
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                \Log::error('JSON decode error for order_id: ' . $order->order_id, [
+                    'raw_details' => $rawDetails,
+                    'error' => json_last_error_msg()
+                ]);
+                return [
+                    'order_id' => $order->order_id,
+                    'table_number' => $order->table_number,
+                    'restaurant_id' => $order->restaurant_id,
+                    'status' => $order->status,
+                    'order_details' => [],
+                    'user' => $order->customer_id ? [
+                        'id' => $order->customer_id,
+                        'name' => $order->name,
+                        'phoneNumber' => $order->phoneNumber,
+                        'email' => $order->email,
+                        'address' => $order->address
+                    ] : null,
+                    'total' => 0,
+                    'created_at' => $order->created_at,
+                    'updated_at' => $order->updated_at,
+                ];
+            }
+
+            // Ensure decoded details is an array
+            if (!is_array($decodedDetails)) {
+                \Log::error('Decoded order_details is not an array for order_id: ' . $order->order_id, [
+                    'raw_details' => $rawDetails,
+                    'decoded_details' => $decodedDetails
+                ]);
                 return [
                     'order_id' => $order->order_id,
                     'table_number' => $order->table_number,
@@ -88,7 +118,10 @@ class OrderController extends Controller
             }
 
             $orderDetails = collect($decodedDetails);
-            $menuItemIds = $orderDetails->pluck('id')->unique();
+            // Ensure IDs are treated as strings to match database
+            $menuItemIds = $orderDetails->pluck('id')->map(function ($id) {
+                return (string) $id;
+            })->unique();
 
             // Fetch menu items for this order
             $menuItems = Menu::whereIn('id', $menuItemIds)
@@ -99,12 +132,16 @@ class OrderController extends Controller
             // Calculate item details and total
             $total = 0;
             $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
-                // Verify item has an id and is valid
+                // Validate item structure
                 if (!isset($item['id']) || !isset($item['quantity'])) {
+                    \Log::warning('Invalid item structure in order_details for item: ', [
+                        'item' => $item
+                    ]);
                     return null;
                 }
 
-                $menuItem = $menuItems->get($item['id']);
+                // Ensure ID is treated as string
+                $menuItem = $menuItems->get((string) $item['id']);
                 if ($menuItem) {
                     $itemTotal = $menuItem->price * $item['quantity'];
                     $total += $itemTotal;
@@ -117,6 +154,8 @@ class OrderController extends Controller
                         'item_total' => $itemTotal,
                     ];
                 }
+
+                \Log::warning('Menu item not found for id: ' . $item['id']);
                 return null;
             })->filter()->values()->toArray();
 
