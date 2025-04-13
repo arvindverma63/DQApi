@@ -61,7 +61,7 @@ class OrderController extends Controller
             ->where('orders.tableNumber', '!=', 'Delivery')
             ->get();
 
-        // Process orders and menu items
+        // Process orders using orderDetails JSON
         $enhancedOrders = $orders->map(function ($order) {
             // Decode and validate order_details
             $rawDetails = $order->order_details;
@@ -133,55 +133,27 @@ class OrderController extends Controller
                 'order_details' => $decodedDetails
             ]);
 
-            // Ensure IDs are treated as strings
-            $menuItemIds = $orderDetails->pluck('id')->map(function ($id) {
-                return (string) $id;
-            })->unique();
-
-            // Log menu item IDs
-            \Log::debug('Menu item IDs for order_id: ' . $order->order_id, [
-                'menu_item_ids' => $menuItemIds->toArray()
-            ]);
-
-            // Fetch menu items for this order
-            $menuItems = Menu::whereIn('id', $menuItemIds)
-                ->select(['id', 'itemName', 'price'])
-                ->get()
-                ->keyBy('id');
-
-            // Log menu items retrieved
-            \Log::debug('Menu items retrieved for order_id: ' . $order->order_id, [
-                'menu_items' => $menuItems->toArray()
-            ]);
-
-            // Calculate item details and total
+            // Calculate item details and total using JSON data
             $total = 0;
-            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total, $order) {
+            $itemDetails = $orderDetails->map(function ($item) use (&$total, $order) {
                 // Validate item structure
-                if (!isset($item['id']) || !isset($item['quantity'])) {
+                if (!isset($item['id']) || !isset($item['itemName']) || !isset($item['price']) || !isset($item['quantity'])) {
                     \Log::warning('Invalid item structure in order_details for order_id: ' . $order->order_id, [
                         'item' => $item
                     ]);
                     return null;
                 }
 
-                // Ensure ID is treated as string
-                $menuItem = $menuItems->get((string) $item['id']);
-                if ($menuItem) {
-                    $itemTotal = $menuItem->price * $item['quantity'];
-                    $total += $itemTotal;
+                $itemTotal = $item['price'] * $item['quantity'];
+                $total += $itemTotal;
 
-                    return [
-                        'item_id' => $menuItem->id,
-                        'item_name' => $menuItem->itemName,
-                        'price' => $menuItem->price,
-                        'quantity' => $item['quantity'],
-                        'item_total' => $itemTotal,
-                    ];
-                }
-
-                \Log::warning('Menu item not found for id: ' . $item['id'] . ' in order_id: ' . $order->order_id);
-                return null;
+                return [
+                    'item_id' => (string) $item['id'],
+                    'item_name' => $item['itemName'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'item_total' => $itemTotal,
+                ];
             })->filter()->values()->toArray();
 
             return [
