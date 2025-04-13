@@ -67,6 +67,16 @@ class OrderController extends Controller
             $rawDetails = $order->order_details;
             $decodedDetails = json_decode($rawDetails, true);
 
+            // Handle double-encoded JSON
+            if (is_string($decodedDetails)) {
+                \Log::warning('Double-encoded order_details detected for order_id: ' . $order->order_id, [
+                    'raw_details' => $rawDetails,
+                    'decoded_details' => $decodedDetails
+                ]);
+                // Try decoding again
+                $decodedDetails = json_decode($decodedDetails, true);
+            }
+
             // Debug JSON decoding issues
             if (json_last_error() !== JSON_ERROR_NONE) {
                 \Log::error('JSON decode error for order_id: ' . $order->order_id, [
