@@ -118,10 +118,20 @@ class OrderController extends Controller
             }
 
             $orderDetails = collect($decodedDetails);
-            // Ensure IDs are treated as strings to match database
+            // Log orderDetails for debugging
+            \Log::debug('Processing order_details for order_id: ' . $order->order_id, [
+                'order_details' => $decodedDetails
+            ]);
+
+            // Ensure IDs are treated as strings
             $menuItemIds = $orderDetails->pluck('id')->map(function ($id) {
                 return (string) $id;
             })->unique();
+
+            // Log menu item IDs
+            \Log::debug('Menu item IDs for order_id: ' . $order->order_id, [
+                'menu_item_ids' => $menuItemIds->toArray()
+            ]);
 
             // Fetch menu items for this order
             $menuItems = Menu::whereIn('id', $menuItemIds)
@@ -129,12 +139,17 @@ class OrderController extends Controller
                 ->get()
                 ->keyBy('id');
 
+            // Log menu items retrieved
+            \Log::debug('Menu items retrieved for order_id: ' . $order->order_id, [
+                'menu_items' => $menuItems->toArray()
+            ]);
+
             // Calculate item details and total
             $total = 0;
-            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
+            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total, $order) {
                 // Validate item structure
                 if (!isset($item['id']) || !isset($item['quantity'])) {
-                    \Log::warning('Invalid item structure in order_details for item: ', [
+                    \Log::warning('Invalid item structure in order_details for order_id: ' . $order->order_id, [
                         'item' => $item
                     ]);
                     return null;
@@ -155,7 +170,7 @@ class OrderController extends Controller
                     ];
                 }
 
-                \Log::warning('Menu item not found for id: ' . $item['id']);
+                \Log::warning('Menu item not found for id: ' . $item['id'] . ' in order_id: ' . $order->order_id);
                 return null;
             })->filter()->values()->toArray();
 
