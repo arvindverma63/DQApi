@@ -9,6 +9,7 @@ use App\Models\Menu;
 use App\Models\Transaction;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
+use Log;
 
 class OrderController extends Controller
 {
@@ -677,64 +678,33 @@ class OrderController extends Controller
 
     public function getOrderByDelivery(Request $request)
     {
-        // Validate restaurantId from the request
         $validatedData = $request->validate([
             'restaurantId' => 'required|string',
         ]);
 
-        // Fetch paginated orders by restaurantId
-        $orders = Order::where('restaurantId', $validatedData['restaurantId'])
-            ->where('tableNumber', 'Delivery')
-            ->paginate(10); // Adjust items per page as needed
+        $orders = Order::select([
+            'orders.id as order_id',
+            'orders.tableNumber as table_number',
+            'orders.restaurantId as restaurant_id',
+            'orders.status',
+            'orders.orderDetails as order_details',
+            'orders.created_at',
+            'orders.updated_at',
+            'customers.id as customer_id',
+            'customers.name',
+            'customers.phoneNumber',
+            'customers.email',
+            'customers.address'
+        ])
+            ->leftJoin('customers', 'orders.user_id', '=', 'customers.id')
+            ->where('orders.restaurantId', $validatedData['restaurantId'])
+            ->where('orders.tableNumber', 'Delivery')
+            ->paginate();
 
-        // Preload customers and menu items for optimization
-        $customerIds = $orders->pluck('user_id')->unique();
-        $customers = Customer::whereIn('id', $customerIds)->get()->keyBy('id');
-
-        $menuItemIds = $orders->flatMap(function ($order) {
-            return collect(json_decode($order->orderDetails, true))->pluck('id');
-        })->unique();
-        $menuItems = Menu::whereIn('id', $menuItemIds)->get()->keyBy('id');
-
-        // Map orders with user and item details
-        $enhancedOrders = $orders->map(function ($order) use ($customers, $menuItems) {
-            $userDetails = $customers->get($order->user_id);
-            $orderDetails = collect(json_decode($order->orderDetails, true));
-
-            $total = 0;
-
-            // Map item details and calculate totals
-            $itemDetails = $orderDetails->map(function ($item) use ($menuItems, &$total) {
-                $menuItem = $menuItems->get($item['id']);
-                if ($menuItem) {
-                    $itemTotal = $menuItem->price * $item['quantity'];
-                    $total += $itemTotal;
-
-                    return [
-                        'item_id' => $menuItem->id,
-                        'item_name' => $menuItem->itemName,
-                        'price' => $menuItem->price,
-                        'quantity' => $item['quantity'],
-                        'item_total' => $itemTotal,
-                    ];
-                }
-                return null;
-            })->filter(); // Remove null values
-
-            return [
-                'order_id' => $order->id,
-                'table_number' => $order->tableNumber,
-                'restaurant_id' => $order->restaurantId,
-                'status' => $order->status,
-                'order_details' => $itemDetails->values()->toArray(),
-                'user' => $userDetails ? $userDetails->only(['id', 'name', 'phoneNumber', 'email', 'address']) : null,
-                'total' => $total,
-                'created_at' => $order->created_at,
-                'updated_at' => $order->updated_at,
-            ];
+        $enhancedOrders = $orders->map(function ($order) {
+            return $this->enhanceOrder($order);
         });
 
-        // Return paginated response with enhanced data
         return response()->json([
             'data' => $enhancedOrders,
             'pagination' => [
@@ -747,5 +717,100 @@ class OrderController extends Controller
             ],
             'message' => 'Successfully retrieved orders'
         ], 200);
+    }
+
+    private function enhanceOrder($order): array
+    {
+        $rawDetails = $order->order_details ?? '[]';
+        $decodedDetails = json_decode($rawDetails, true);
+
+        // Handle JSON decode errors
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::error('JSON decode error for order_id: ' . $order->order_id, [
+                'raw_details' => $rawDetails,
+                'error' => json_last_error_msg()
+            ]);
+            return $this->defaultOrderResponse($order);
+        }
+
+        // Ensure decoded details is an array
+        if (!is_array($decodedDetails)) {
+            Log::error('Decoded order_details is not an array for order_id: ' . $order->order_id, [
+                'raw_details' => $rawDetails,
+                'decoded_details' => $decodedDetails
+            ]);
+            return $this->defaultOrderResponse($order);
+        }
+
+        $orderDetails = collect($decodedDetails);
+        $total = 0;
+        $itemDetails = $orderDetails->map(function ($item) use (&$total, $order) {
+            // Validate item structure
+            if (
+                !isset($item['id']) ||
+                !isset($item['itemName']) ||
+                !isset($item['price']) ||
+                !isset($item['quantity']) ||
+                !is_numeric($item['price']) ||
+                !is_numeric($item['quantity']) ||
+                $item['price'] < 0 ||
+                $item['quantity'] <= 0
+            ) {
+                Log::warning('Invalid item structure in order_details for order_id: ' . $order->order_id, [
+                    'item' => $item
+                ]);
+                return null;
+            }
+
+            $itemTotal = $item['price'] * $item['quantity'];
+            $total += $itemTotal;
+
+            return [
+                'item_id' => $item['id'],
+                'item_name' => $item['itemName'],
+                'price' => (float) $item['price'],
+                'quantity' => (int) $item['quantity'],
+                'item_total' => $itemTotal,
+            ];
+        })->filter()->values()->toArray();
+
+        return [
+            'order_id' => $order->order_id,
+            'table_number' => $order->table_number,
+            'restaurant_id' => $order->restaurant_id,
+            'status' => $order->status,
+            'order_details' => $itemDetails,
+            'user' => $order->customer_id ? [
+                'id' => $order->customer_id,
+                'name' => $order->name,
+                'phoneNumber' => $order->phoneNumber,
+                'email' => $order->email,
+                'address' => $order->address
+            ] : [],
+            'total' => round($total, 2),
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
+        ];
+    }
+
+    private function defaultOrderResponse($order): array
+    {
+        return [
+            'order_id' => $order->order_id,
+            'table_number' => $order->table_number,
+            'restaurant_id' => $order->restaurant_id,
+            'status' => $order->status,
+            'order_details' => [],
+            'user' => $order->customer_id ? [
+                'id' => $order->customer_id,
+                'name' => $order->name,
+                'phoneNumber' => $order->phoneNumber,
+                'email' => $order->email,
+                'address' => $order->address
+            ] : [],
+            'total' => 0.00,
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
+        ];
     }
 }
