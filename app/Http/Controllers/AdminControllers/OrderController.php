@@ -688,7 +688,7 @@ class OrderController extends Controller
              'orders.tableNumber as table_number',
              'orders.restaurantId as restaurant_id',
              'orders.status',
-             'orders.order_details as order_details', // Ensure correct column name
+             'orders.orderDetails as order_details', // Ensure correct column name
              'orders.created_at',
              'orders.updated_at',
              'customers.id as customer_id',
