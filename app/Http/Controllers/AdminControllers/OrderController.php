@@ -682,13 +682,16 @@ class OrderController extends Controller
              'restaurantId' => 'required|string',
          ]);
 
+         // Log the input for verification
+         Log::info('Fetching delivery orders for restaurantId: ' . $validatedData['restaurantId']);
+
          // Fetch orders with joined customer data
          $orders = Order::select([
              'orders.id as order_id',
              'orders.tableNumber as table_number',
              'orders.restaurantId as restaurant_id',
              'orders.status',
-             'orders.orderDetails as order_details', // Ensure correct column name
+             'orders.orderDetails as order_details', // Match DB column name
              'orders.created_at',
              'orders.updated_at',
              'customers.id as customer_id',
@@ -702,22 +705,37 @@ class OrderController extends Controller
              ->where('orders.tableNumber', 'Delivery')
              ->paginate();
 
+         // Log raw query results
+         Log::info('Raw orders fetched: ', [
+             'count' => $orders->count(),
+             'orders' => $orders->toArray()
+         ]);
+
          // Process orders
          $enhancedOrders = $orders->map(function ($order) {
-             // Log raw data for debugging
-             Log::info('Raw order_details for order_id: ' . $order->order_id, [
-                 'order_details' => $order->order_details
+             // Log raw order_details value
+             Log::info('Processing order_id: ' . $order->order_id, [
+                 'raw_order_details' => $order->order_details,
+                 'is_null' => is_null($order->order_details),
+                 'type' => gettype($order->order_details)
              ]);
 
-             // Handle order_details (check if already decoded by model cast)
-             $decodedDetails = is_array($order->order_details)
-                 ? $order->order_details
-                 : json_decode($order->order_details ?? '[]', true);
+             // Handle order_details
+             $rawDetails = $order->order_details ?? '[]';
+             $decodedDetails = is_array($rawDetails)
+                 ? $rawDetails
+                 : json_decode($rawDetails, true);
+
+             // Log decoding result
+             Log::info('Decoded order_details for order_id: ' . $order->order_id, [
+                 'decoded' => $decodedDetails,
+                 'json_error' => json_last_error_msg()
+             ]);
 
              // Handle JSON decode errors
              if (json_last_error() !== JSON_ERROR_NONE) {
                  Log::error('JSON decode error for order_id: ' . $order->order_id, [
-                     'raw_details' => $order->order_details,
+                     'raw_details' => $rawDetails,
                      'error' => json_last_error_msg()
                  ]);
                  $decodedDetails = [];
@@ -726,7 +744,7 @@ class OrderController extends Controller
              // Ensure decoded details is an array
              if (!is_array($decodedDetails)) {
                  Log::error('Decoded order_details is not an array for order_id: ' . $order->order_id, [
-                     'raw_details' => $order->order_details,
+                     'raw_details' => $rawDetails,
                      'decoded_details' => $decodedDetails
                  ]);
                  $decodedDetails = [];
