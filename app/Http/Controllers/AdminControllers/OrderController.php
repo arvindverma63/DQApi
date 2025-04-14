@@ -682,16 +682,16 @@ class OrderController extends Controller
              'restaurantId' => 'required|string',
          ]);
 
-         // Log the input for verification
-         Log::info('Fetching delivery orders for restaurantId: ' . $validatedData['restaurantId']);
+         // Log input
+         Log::info('Fetching delivery orders', ['restaurantId' => $validatedData['restaurantId']]);
 
-         // Fetch orders with joined customer data
+         // Fetch orders without aliasing orderDetails
          $orders = Order::select([
              'orders.id as order_id',
              'orders.tableNumber as table_number',
              'orders.restaurantId as restaurant_id',
              'orders.status',
-             'orders.orderDetails as order_details', // Match DB column name
+             'orders.orderDetails', // No alias
              'orders.created_at',
              'orders.updated_at',
              'customers.id as customer_id',
@@ -705,47 +705,38 @@ class OrderController extends Controller
              ->where('orders.tableNumber', 'Delivery')
              ->paginate();
 
-         // Log raw query results
-         Log::info('Raw orders fetched: ', [
-             'count' => $orders->count(),
-             'orders' => $orders->toArray()
-         ]);
+         // Log raw orders
+         Log::info('Raw orders fetched', ['count' => $orders->count(), 'data' => $orders->toArray()]);
 
          // Process orders
          $enhancedOrders = $orders->map(function ($order) {
-             // Log raw order_details value
-             Log::info('Processing order_id: ' . $order->order_id, [
-                 'raw_order_details' => $order->order_details,
-                 'is_null' => is_null($order->order_details),
-                 'type' => gettype($order->order_details)
+             // Log raw orderDetails
+             Log::info('Processing order', [
+                 'order_id' => $order->order_id,
+                 'raw_orderDetails' => $order->orderDetails,
+                 'is_null' => is_null($order->orderDetails),
+                 'type' => gettype($order->orderDetails)
              ]);
 
-             // Handle order_details
-             $rawDetails = $order->order_details ?? '[]';
+             // Access orderDetails directly
+             $rawDetails = $order->orderDetails ?? '[]';
              $decodedDetails = is_array($rawDetails)
                  ? $rawDetails
                  : json_decode($rawDetails, true);
 
              // Log decoding result
-             Log::info('Decoded order_details for order_id: ' . $order->order_id, [
+             Log::info('Decoded orderDetails', [
+                 'order_id' => $order->order_id,
                  'decoded' => $decodedDetails,
                  'json_error' => json_last_error_msg()
              ]);
 
              // Handle JSON decode errors
-             if (json_last_error() !== JSON_ERROR_NONE) {
-                 Log::error('JSON decode error for order_id: ' . $order->order_id, [
-                     'raw_details' => $rawDetails,
+             if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedDetails)) {
+                 Log::error('Invalid orderDetails for order_id: ' . $order->order_id, [
+                     'raw' => $rawDetails,
+                     'decoded' => $decodedDetails,
                      'error' => json_last_error_msg()
-                 ]);
-                 $decodedDetails = [];
-             }
-
-             // Ensure decoded details is an array
-             if (!is_array($decodedDetails)) {
-                 Log::error('Decoded order_details is not an array for order_id: ' . $order->order_id, [
-                     'raw_details' => $rawDetails,
-                     'decoded_details' => $decodedDetails
                  ]);
                  $decodedDetails = [];
              }
@@ -753,16 +744,13 @@ class OrderController extends Controller
              $orderDetails = collect($decodedDetails);
              $total = 0;
              $itemDetails = $orderDetails->map(function ($item) use (&$total, $order) {
-                 // Validate item structure
                  if (
                      !isset($item['id']) ||
                      !isset($item['itemName']) ||
                      !isset($item['price']) ||
                      !isset($item['quantity'])
                  ) {
-                     Log::warning('Invalid item structure in order_details for order_id: ' . $order->order_id, [
-                         'item' => $item
-                     ]);
+                     Log::warning('Invalid item structure for order_id: ' . $order->order_id, ['item' => $item]);
                      return null;
                  }
 
