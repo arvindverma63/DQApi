@@ -676,126 +676,127 @@ class OrderController extends Controller
      * )
      */
 
-     public function getOrderByDelivery(Request $request)
-     {
-         $validatedData = $request->validate([
-             'restaurantId' => 'required|string',
-         ]);
+    public function getOrderByDelivery(Request $request)
+    {
+        $validatedData = $request->validate([
+            'restaurantId' => 'required|string',
+        ]);
 
-         // Log input
-         Log::info('Fetching delivery orders', ['restaurantId' => $validatedData['restaurantId']]);
+        // Log input
+        Log::info('Fetching delivery orders', ['restaurantId' => $validatedData['restaurantId']]);
 
-         // Fetch orders without aliasing orderDetails
-         $orders = Order::select([
-             'orders.id as order_id',
-             'orders.tableNumber as table_number',
-             'orders.restaurantId as restaurant_id',
-             'orders.status',
-             'orders.orderDetails', // No alias
-             'orders.created_at',
-             'orders.updated_at',
-             'customers.id as customer_id',
-             'customers.name',
-             'customers.phoneNumber',
-             'customers.email',
-             'customers.address'
-         ])
-             ->leftJoin('customers', 'orders.user_id', '=', 'customers.id')
-             ->where('orders.restaurantId', $validatedData['restaurantId'])
-             ->where('orders.tableNumber', 'Delivery')
-             ->paginate();
+        // Fetch orders without aliasing orderDetails
+        $orders = Order::select([
+            'orders.id as order_id',
+            'orders.tableNumber as table_number',
+            'orders.restaurantId as restaurant_id',
+            'orders.status',
+            'orders.orderDetails',
+            'orders.created_at',
+            'orders.updated_at',
+            'customers.id as customer_id',
+            'customers.name',
+            'customers.phoneNumber',
+            'customers.email',
+            'customers.address'
+        ])
+            ->leftJoin('customers', 'orders.user_id', '=', 'customers.id')
+            ->where('orders.restaurantId', $validatedData['restaurantId'])
+            ->where('orders.tableNumber', 'Delivery')
+            ->orderBy('orders.id', 'desc') // <--- This line adds the descending order
+            ->paginate();
 
-         // Log raw orders
-         Log::info('Raw orders fetched', ['count' => $orders->count(), 'data' => $orders->toArray()]);
+        // Log raw orders
+        Log::info('Raw orders fetched', ['count' => $orders->count(), 'data' => $orders->toArray()]);
 
-         // Process orders
-         $enhancedOrders = $orders->map(function ($order) {
-             // Log raw orderDetails
-             Log::info('Processing order', [
-                 'order_id' => $order->order_id,
-                 'raw_orderDetails' => $order->orderDetails,
-                 'is_null' => is_null($order->orderDetails),
-                 'type' => gettype($order->orderDetails)
-             ]);
+        // Process orders
+        $enhancedOrders = $orders->map(function ($order) {
+            // Log raw orderDetails
+            Log::info('Processing order', [
+                'order_id' => $order->order_id,
+                'raw_orderDetails' => $order->orderDetails,
+                'is_null' => is_null($order->orderDetails),
+                'type' => gettype($order->orderDetails)
+            ]);
 
-             // Access orderDetails directly
-             $rawDetails = $order->orderDetails ?? '[]';
-             $decodedDetails = is_array($rawDetails)
-                 ? $rawDetails
-                 : json_decode($rawDetails, true);
+            // Access orderDetails directly
+            $rawDetails = $order->orderDetails ?? '[]';
+            $decodedDetails = is_array($rawDetails)
+                ? $rawDetails
+                : json_decode($rawDetails, true);
 
-             // Log decoding result
-             Log::info('Decoded orderDetails', [
-                 'order_id' => $order->order_id,
-                 'decoded' => $decodedDetails,
-                 'json_error' => json_last_error_msg()
-             ]);
+            // Log decoding result
+            Log::info('Decoded orderDetails', [
+                'order_id' => $order->order_id,
+                'decoded' => $decodedDetails,
+                'json_error' => json_last_error_msg()
+            ]);
 
-             // Handle JSON decode errors
-             if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedDetails)) {
-                 Log::error('Invalid orderDetails for order_id: ' . $order->order_id, [
-                     'raw' => $rawDetails,
-                     'decoded' => $decodedDetails,
-                     'error' => json_last_error_msg()
-                 ]);
-                 $decodedDetails = [];
-             }
+            // Handle JSON decode errors
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decodedDetails)) {
+                Log::error('Invalid orderDetails for order_id: ' . $order->order_id, [
+                    'raw' => $rawDetails,
+                    'decoded' => $decodedDetails,
+                    'error' => json_last_error_msg()
+                ]);
+                $decodedDetails = [];
+            }
 
-             $orderDetails = collect($decodedDetails);
-             $total = 0;
-             $itemDetails = $orderDetails->map(function ($item) use (&$total, $order) {
-                 if (
-                     !isset($item['id']) ||
-                     !isset($item['itemName']) ||
-                     !isset($item['price']) ||
-                     !isset($item['quantity'])
-                 ) {
-                     Log::warning('Invalid item structure for order_id: ' . $order->order_id, ['item' => $item]);
-                     return null;
-                 }
+            $orderDetails = collect($decodedDetails);
+            $total = 0;
+            $itemDetails = $orderDetails->map(function ($item) use (&$total, $order) {
+                if (
+                    !isset($item['id']) ||
+                    !isset($item['itemName']) ||
+                    !isset($item['price']) ||
+                    !isset($item['quantity'])
+                ) {
+                    Log::warning('Invalid item structure for order_id: ' . $order->order_id, ['item' => $item]);
+                    return null;
+                }
 
-                 $itemTotal = $item['price'] * $item['quantity'];
-                 $total += $itemTotal;
+                $itemTotal = $item['price'] * $item['quantity'];
+                $total += $itemTotal;
 
-                 return [
-                     'item_id' => $item['id'],
-                     'item_name' => $item['itemName'],
-                     'price' => (float) $item['price'],
-                     'quantity' => (int) $item['quantity'],
-                     'item_total' => $itemTotal,
-                 ];
-             })->filter()->values()->toArray();
+                return [
+                    'item_id' => $item['id'],
+                    'item_name' => $item['itemName'],
+                    'price' => (float) $item['price'],
+                    'quantity' => (int) $item['quantity'],
+                    'item_total' => $itemTotal,
+                ];
+            })->filter()->values()->toArray();
 
-             return [
-                 'order_id' => $order->order_id,
-                 'table_number' => $order->table_number,
-                 'restaurant_id' => $order->restaurant_id,
-                 'status' => $order->status,
-                 'order_details' => $itemDetails,
-                 'user' => $order->customer_id ? [
-                     'id' => $order->customer_id,
-                     'name' => $order->name,
-                     'phoneNumber' => $order->phoneNumber,
-                     'email' => $order->email,
-                     'address' => $order->address
-                 ] : [],
-                 'total' => round($total, 2),
-                 'created_at' => $order->created_at,
-                 'updated_at' => $order->updated_at,
-             ];
-         });
+            return [
+                'order_id' => $order->order_id,
+                'table_number' => $order->table_number,
+                'restaurant_id' => $order->restaurant_id,
+                'status' => $order->status,
+                'order_details' => $itemDetails,
+                'user' => $order->customer_id ? [
+                    'id' => $order->customer_id,
+                    'name' => $order->name,
+                    'phoneNumber' => $order->phoneNumber,
+                    'email' => $order->email,
+                    'address' => $order->address
+                ] : [],
+                'total' => round($total, 2),
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+            ];
+        });
 
-         return response()->json([
-             'data' => $enhancedOrders,
-             'pagination' => [
-                 'current_page' => $orders->currentPage(),
-                 'last_page' => $orders->lastPage(),
-                 'per_page' => $orders->perPage(),
-                 'total' => $orders->total(),
-                 'next_page_url' => $orders->nextPageUrl(),
-                 'prev_page_url' => $orders->previousPageUrl(),
-             ],
-             'message' => 'Successfully retrieved orders'
-         ], 200);
-     }
+        return response()->json([
+            'data' => $enhancedOrders,
+            'pagination' => [
+                'current_page' => $orders->currentPage(),
+                'last_page' => $orders->lastPage(),
+                'per_page' => $orders->perPage(),
+                'total' => $orders->total(),
+                'next_page_url' => $orders->nextPageUrl(),
+                'prev_page_url' => $orders->previousPageUrl(),
+            ],
+            'message' => 'Successfully retrieved orders'
+        ], 200);
+    }
 }
