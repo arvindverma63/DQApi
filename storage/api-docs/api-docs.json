@@ -800,13 +800,13 @@
                 }
             }
         },
-        "/deliveries": {
+        "/restaurant/deliveries": {
             "get": {
                 "tags": [
                     "Delivery Management"
                 ],
                 "summary": "Get all deliveries",
-                "operationId": "de684ba9e95942a055fc2729bf202723",
+                "operationId": "53dad98b625913f93d213d0ae550436d",
                 "responses": {
                     "200": {
                         "description": "List of deliveries"
@@ -818,7 +818,7 @@
                     "Delivery Management"
                 ],
                 "summary": "Create a new delivery",
-                "operationId": "48ac1d1fcf0a0ad653f7224836e624a2",
+                "operationId": "0865d5664ef5c9c036750579860c6e74",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -872,13 +872,13 @@
                 }
             }
         },
-        "/deliveries/restaurant/{restaurantId}": {
+        "/restaurant/deliveries/restaurant/{restaurantId}": {
             "get": {
                 "tags": [
                     "Delivery Management"
                 ],
                 "summary": "Get deliveries by restaurantId with pagination",
-                "operationId": "13bdff4af0944c3248fb5640c3e439fa",
+                "operationId": "feadbc7630beabbe6098dcb34cd2c0d6",
                 "parameters": [
                     {
                         "name": "restaurantId",
@@ -960,11 +960,11 @@
                                             "properties": {
                                                 "first": {
                                                     "type": "string",
-                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=1"
+                                                    "example": "http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=1"
                                                 },
                                                 "last": {
                                                     "type": "string",
-                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=3"
+                                                    "example": "http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=3"
                                                 },
                                                 "prev": {
                                                     "type": "string",
@@ -972,7 +972,7 @@
                                                 },
                                                 "next": {
                                                     "type": "string",
-                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345?page=2"
+                                                    "example": "http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=2"
                                                 }
                                             },
                                             "type": "object"
@@ -993,7 +993,7 @@
                                                 },
                                                 "path": {
                                                     "type": "string",
-                                                    "example": "http://api.example.com/deliveries/restaurant/res_12345"
+                                                    "example": "http://api.example.com/restaurant/deliveries/restaurant/res_12345"
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
@@ -1022,13 +1022,13 @@
                 }
             }
         },
-        "/deliveries/{id}": {
+        "/restaurant/deliveries/{id}": {
             "get": {
                 "tags": [
                     "Delivery Management"
                 ],
                 "summary": "Get delivery by ID",
-                "operationId": "aa1299f5a7ba94027f0b9f9c611ef6a6",
+                "operationId": "9e8e113980f4d2eb2124552d30db5618",
                 "parameters": [
                     {
                         "name": "id",
@@ -1053,7 +1053,7 @@
                     "Delivery Management"
                 ],
                 "summary": "Update delivery by ID",
-                "operationId": "4fa555ba12836f4e1bcfd4cea3c56f15",
+                "operationId": "37f661c8d5eeec91dd0d28d2779d8615",
                 "parameters": [
                     {
                         "name": "id",
@@ -1121,7 +1121,7 @@
                     "Delivery Management"
                 ],
                 "summary": "Delete delivery by ID",
-                "operationId": "938d90b200d9d402120eb2b85152be1e",
+                "operationId": "b7d58ff634b8455e210a851cc512849b",
                 "parameters": [
                     {
                         "name": "id",
@@ -1138,6 +1138,570 @@
                     },
                     "404": {
                         "description": "Delivery not found"
+                    }
+                }
+            }
+        },
+        "/api/deliveries": {
+            "get": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Get all delivery schedules",
+                "operationId": "ef233201b032f8e21d0c8510914dd5eb",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "restaurantId": {
+                                                        "type": "string",
+                                                        "example": "REST123"
+                                                    },
+                                                    "start_time": {
+                                                        "type": "string",
+                                                        "example": "09:00:00"
+                                                    },
+                                                    "end_time": {
+                                                        "type": "string",
+                                                        "example": "17:00:00"
+                                                    },
+                                                    "delivery_status": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2025-04-18 10:00:00"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": "2025-04-18 10:00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Create a new delivery schedule",
+                "operationId": "f3294fc3f620547aa473f3e9299ea7d6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId",
+                                    "start_time",
+                                    "end_time",
+                                    "delivery_status"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "REST123"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "example": "09:00:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "example": "17:00:00"
+                                    },
+                                    "delivery_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "0",
+                                            "1"
+                                        ],
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Delivery created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "REST123"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "example": "09:00:00"
+                                                },
+                                                "end_time": {
+                                                    "type": "string",
+                                                    "example": "17:00:00"
+                                                },
+                                                "delivery_status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deliveries/{id}": {
+            "get": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Get a specific delivery schedule",
+                "operationId": "0930111e336ad47159dcf6a12f4ca596",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "REST123"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "example": "09:00:00"
+                                                },
+                                                "end_time": {
+                                                    "type": "string",
+                                                    "example": "17:00:00"
+                                                },
+                                                "delivery_status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Delivery not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Update a delivery schedule",
+                "operationId": "0c8a7c4ebe448db46e78974433c1c130",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "REST123"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "example": "09:00:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "example": "17:00:00"
+                                    },
+                                    "delivery_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "0",
+                                            "1"
+                                        ],
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delivery updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "REST123"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "example": "09:00:00"
+                                                },
+                                                "end_time": {
+                                                    "type": "string",
+                                                    "example": "17:00:00"
+                                                },
+                                                "delivery_status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Delivery not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Delete a delivery schedule",
+                "operationId": "00dcd4bfc5c4f56c7a6623f27fa734c3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delivery deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Delivery not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/deliveries/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Delivery Time Management"
+                ],
+                "summary": "Update delivery status only",
+                "operationId": "d2de9032afb9082b9c1cdd90f3c7890a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "delivery_status"
+                                ],
+                                "properties": {
+                                    "delivery_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "0",
+                                            "1"
+                                        ],
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delivery status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "restaurantId": {
+                                                    "type": "string",
+                                                    "example": "REST123"
+                                                },
+                                                "start_time": {
+                                                    "type": "string",
+                                                    "example": "09:00:00"
+                                                },
+                                                "end_time": {
+                                                    "type": "string",
+                                                    "example": "17:00:00"
+                                                },
+                                                "delivery_status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-18 10:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery status updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Delivery not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Delivery not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -7528,6 +8092,10 @@
         {
             "name": "Delivery Management",
             "description": "Delivery Management"
+        },
+        {
+            "name": "Delivery Time Management",
+            "description": "Delivery Time Management"
         },
         {
             "name": "Feedback",

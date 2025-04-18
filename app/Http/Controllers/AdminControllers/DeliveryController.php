@@ -13,7 +13,7 @@ class DeliveryController extends Controller
 {
     /**
      * @OA\Get(
-     *      path="/deliveries",
+     *      path="/restaurant/deliveries",
      *      summary="Get all deliveries",
      *      tags={"Delivery Management"},
      *      @OA\Response(response=200, description="List of deliveries")
@@ -27,7 +27,7 @@ class DeliveryController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/deliveries/restaurant/{restaurantId}",
+     *      path="/restaurant/deliveries/restaurant/{restaurantId}",
      *      summary="Get deliveries by restaurantId with pagination",
      *      tags={"Delivery Management"},
      *      @OA\Parameter(
@@ -61,16 +61,16 @@ class DeliveryController extends Controller
      *                  @OA\Property(property="total_amount", type="number", format="float", example=150.50)
      *              )),
      *              @OA\Property(property="links", type="object",
-     *                  @OA\Property(property="first", type="string", example="http://api.example.com/deliveries/restaurant/res_12345?page=1"),
-     *                  @OA\Property(property="last", type="string", example="http://api.example.com/deliveries/restaurant/res_12345?page=3"),
+     *                  @OA\Property(property="first", type="string", example="http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=1"),
+     *                  @OA\Property(property="last", type="string", example="http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=3"),
      *                  @OA\Property(property="prev", type="string", nullable=true),
-     *                  @OA\Property(property="next", type="string", example="http://api.example.com/deliveries/restaurant/res_12345?page=2")
+     *                  @OA\Property(property="next", type="string", example="http://api.example.com/restaurant/deliveries/restaurant/res_12345?page=2")
      *              ),
      *              @OA\Property(property="meta", type="object",
      *                  @OA\Property(property="current_page", type="integer", example=1),
      *                  @OA\Property(property="from", type="integer", example=1),
      *                  @OA\Property(property="last_page", type="integer", example=3),
-     *                  @OA\Property(property="path", type="string", example="http://api.example.com/deliveries/restaurant/res_12345"),
+     *                  @OA\Property(property="path", type="string", example="http://api.example.com/restaurant/deliveries/restaurant/res_12345"),
      *                  @OA\Property(property="per_page", type="integer", example=10),
      *                  @OA\Property(property="to", type="integer", example=10),
      *                  @OA\Property(property="total", type="integer", example=25)
@@ -100,7 +100,7 @@ class DeliveryController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/deliveries",
+     *      path="/restaurant/deliveries",
      *      summary="Create a new delivery",
      *      tags={"Delivery Management"},
      *      @OA\RequestBody(
@@ -140,7 +140,7 @@ class DeliveryController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/deliveries/{id}",
+     *      path="/restaurant/deliveries/{id}",
      *      summary="Get delivery by ID",
      *      tags={"Delivery Management"},
      *      @OA\Parameter(
@@ -164,7 +164,7 @@ class DeliveryController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/deliveries/{id}",
+     *      path="/restaurant/deliveries/{id}",
      *      summary="Update delivery by ID",
      *      tags={"Delivery Management"},
      *      @OA\Parameter(
@@ -202,7 +202,7 @@ class DeliveryController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/deliveries/{id}",
+     *      path="/restaurant/deliveries/{id}",
      *      summary="Delete delivery by ID",
      *      tags={"Delivery Management"},
      *      @OA\Parameter(

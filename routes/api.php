@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminControllers\QrController;
 use App\Http\Controllers\AdminControllers\CategoryController;
 use App\Http\Controllers\AdminControllers\CustomerController;
 use App\Http\Controllers\AdminControllers\DeliveryController;
+use App\Http\Controllers\AdminControllers\DeliveryManagementController;
 use App\Http\Controllers\AdminControllers\DueController;
 use App\Http\Controllers\AdminControllers\FeedbackController;
 use App\Http\Controllers\AdminControllers\FirebaseNotificationController;
@@ -42,16 +43,16 @@ Route::post('/qr/create', [QrController::class, 'createQr']);
 Route::get('/qr/{id}', [QrController::class, 'getQr']);
 Route::get('/reports/{id}/all-days', [ReportController::class, 'allDaysReport']);
 Route::post('/getReportPaymentType', [ReportController::class, 'getReportPaymentType']);
-Route::get('/customer-report/{id}',[ReportController::class,'getCustomerReport']);
-Route::get('/restaurant/{id}/logo',[UserProfileController::class,'getLogo']);
+Route::get('/customer-report/{id}', [ReportController::class, 'getCustomerReport']);
+Route::get('/restaurant/{id}/logo', [UserProfileController::class, 'getLogo']);
 
 Route::get('/rest-profile/{id}', [UserProfileController::class, 'getProfile']);
 Route::get('/getReportByType/{id}', [ReportController::class, 'getReportByType']);
-Route::get('/report-by-table',[ReportController::class,'getReportByTableNumber']);
+Route::get('/report-by-table', [ReportController::class, 'getReportByTableNumber']);
 
 Route::post('/admin/feedback/add', [FeedbackController::class, 'addFeedback']);
 Route::get('/feedbacks/{id}', [FeedbackController::class, 'getAllFeedbacks']);
-Route::post('/profile/{id}/image',[UserProfileController::class,'uploadImage']);
+Route::post('/profile/{id}/image', [UserProfileController::class, 'uploadImage']);
 // Protected routes
 Route::middleware(['auth:api'])->group(function () {
 
@@ -72,30 +73,35 @@ Route::middleware(['auth:api'])->group(function () {
             Route::put('/users/{id}', [UserController::class, 'updateUser'])->name('update.user');
             Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('delete.user');
             Route::delete('/users/{id}/force', [UserController::class, 'forceDeleteUser'])->name('force.delete.user');
-
-
         });
 
-        Route::get('/social-media',[SocialMediaController::class,'index']);
-            Route::post('/social-media',[SocialMediaController::class,'store']);
-            Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
-            Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
-            Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+        Route::get('/social-media', [SocialMediaController::class, 'index']);
+        Route::post('/social-media', [SocialMediaController::class, 'store']);
+        Route::get('/social-media/{id}', [SocialMediaController::class, 'show']);
+        Route::put('/social-media/{id}', [SocialMediaController::class, 'update']);
+        Route::delete('/social-media/{id}', [SocialMediaController::class, 'destroy']);
 
-            Route::put('/admin/update-permission',[AdminController::class,'updatePermission']);
+        Route::put('/admin/update-permission', [AdminController::class, 'updatePermission']);
     });
 
     // Admin routes (requires 'admin' role)
     Route::middleware(['role:admin'])->group(function () {
 
-        Route::post('/admin/send-bulk-email',[AdminEmailController::class,'buikMain']);
+        Route::get('/deliveries', [DeliveryManagementController::class, 'index'])->name('deliveries.index');
+        Route::post('/deliveries', [DeliveryManagementController::class, 'store'])->name('deliveries.store');
+        Route::get('/deliveries/{id}', [DeliveryManagementController::class, 'show'])->name('deliveries.show');
+        Route::put('/deliveries/{id}', [DeliveryManagementController::class, 'update'])->name('deliveries.update');
+        Route::patch('/deliveries/{id}/status', [DeliveryManagementController::class, 'updateStatus'])->name('deliveries.updateStatus');
+        Route::delete('/deliveries/{id}', [DeliveryManagementController::class, 'destroy'])->name('deliveries.destroy');
+
+        Route::post('/admin/send-bulk-email', [AdminEmailController::class, 'buikMain']);
         // User-specific routes
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/admin/check-permission/{id}',[AdminController::class,'checkPermission']);
+        Route::get('/admin/check-permission/{id}', [AdminController::class, 'checkPermission']);
         Route::put('/profile/{id}', [UserProfileController::class, 'updateProfile']);
-        Route::put('/restaurant/updateFcm/{id}',[UserProfileController::class,'updateFcm']);
+        Route::put('/restaurant/updateFcm/{id}', [UserProfileController::class, 'updateFcm']);
 
         Route::prefix('admin')->group(function () {
             // Create a new subcategory
@@ -114,11 +120,11 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/subcategories/{id}', [SubCategoryController::class, 'deleteCategory']);
         });
 
-        Route::get('/social-media',[SocialMediaController::class,'index']);
-            Route::post('/social-media',[SocialMediaController::class,'store']);
-            Route::get('/social-media/{id}',[SocialMediaController::class,'show']);
-            Route::put('/social-media/{id}',[SocialMediaController::class,'update']);
-            Route::delete('/social-media/{id}',[SocialMediaController::class,'destroy']);
+        Route::get('/social-media', [SocialMediaController::class, 'index']);
+        Route::post('/social-media', [SocialMediaController::class, 'store']);
+        Route::get('/social-media/{id}', [SocialMediaController::class, 'show']);
+        Route::put('/social-media/{id}', [SocialMediaController::class, 'update']);
+        Route::delete('/social-media/{id}', [SocialMediaController::class, 'destroy']);
 
 
 
@@ -257,13 +263,13 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
-    Route::apiResource('deliveries', DeliveryController::class);
+    Route::apiResource('restaurant/deliveries', DeliveryController::class);
     // Regular user routes (requires 'user' role)
     Route::middleware(['role:user'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
         Route::get('user/dashboard', [UserController::class, 'dashboard']);
 
-        Route::get('/users/menu',[UserMenuController::class,'getMenu']);
+        Route::get('/users/menu', [UserMenuController::class, 'getMenu']);
     });
 });
 
@@ -280,4 +286,4 @@ Route::get('/app/menu/all', [MobileMenuController::class, 'getAllMenu']);
 Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail']);
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
-Route::get('/getOrderByDelivery',[OrderController::class,'getOrderByDelivery']);
+Route::get('/getOrderByDelivery', [OrderController::class, 'getOrderByDelivery']);
