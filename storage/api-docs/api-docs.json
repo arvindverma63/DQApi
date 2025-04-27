@@ -1142,13 +1142,13 @@
                 }
             }
         },
-        "/api/deliveries": {
+        "/deliveries": {
             "get": {
                 "tags": [
                     "Delivery Time Management"
                 ],
                 "summary": "Get all delivery schedules",
-                "operationId": "ef233201b032f8e21d0c8510914dd5eb",
+                "operationId": "2d44b6ac3519d4aac8a9a55351efd9ef",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1205,7 +1205,7 @@
                     "Delivery Time Management"
                 ],
                 "summary": "Create a new delivery schedule",
-                "operationId": "f3294fc3f620547aa473f3e9299ea7d6",
+                "operationId": "050e286a5c086c9e969a9748aaab52ce",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1315,13 +1315,13 @@
                 }
             }
         },
-        "/api/deliveries/{id}": {
+        "/deliveries/{id}": {
             "get": {
                 "tags": [
                     "Delivery Time Management"
                 ],
                 "summary": "Get a specific delivery schedule",
-                "operationId": "0930111e336ad47159dcf6a12f4ca596",
+                "operationId": "ed19a34fafb5009418052751544f5a5c",
                 "parameters": [
                     {
                         "name": "id",
@@ -1401,7 +1401,7 @@
                     "Delivery Time Management"
                 ],
                 "summary": "Update a delivery schedule",
-                "operationId": "0c8a7c4ebe448db46e78974433c1c130",
+                "operationId": "d5de4fed5d12e43abce259449159452d",
                 "parameters": [
                     {
                         "name": "id",
@@ -1535,7 +1535,7 @@
                     "Delivery Time Management"
                 ],
                 "summary": "Delete a delivery schedule",
-                "operationId": "00dcd4bfc5c4f56c7a6623f27fa734c3",
+                "operationId": "6e8189047eac6d9b7a9b6294b0501e28",
                 "parameters": [
                     {
                         "name": "id",
@@ -1582,13 +1582,13 @@
                 }
             }
         },
-        "/api/deliveries/{id}/status": {
+        "/deliveries/{id}/status": {
             "patch": {
                 "tags": [
                     "Delivery Time Management"
                 ],
                 "summary": "Update delivery status only",
-                "operationId": "d2de9032afb9082b9c1cdd90f3c7890a",
+                "operationId": "110bec98d670273c7d8552199ba8bc8e",
                 "parameters": [
                     {
                         "name": "id",
