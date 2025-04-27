@@ -12,7 +12,7 @@ class DeliveryManagementController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/deliveries",
+     *     path="/deliveries",
      *     summary="Get all delivery schedules",
      *     tags={"Delivery Time Management"},
      *     @OA\Response(
@@ -45,7 +45,7 @@ class DeliveryManagementController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/deliveries",
+     *     path="/deliveries",
      *     summary="Create a new delivery schedule",
      *     tags={"Delivery Time Management"},
      *     @OA\RequestBody(
@@ -113,7 +113,7 @@ class DeliveryManagementController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/deliveries/{id}",
+     *     path="/deliveries/{id}",
      *     summary="Get a specific delivery schedule",
      *     tags={"Delivery Time Management"},
      *     @OA\Parameter(
@@ -162,7 +162,7 @@ class DeliveryManagementController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/deliveries/{id}",
+     *     path="/deliveries/{id}",
      *     summary="Update a delivery schedule",
      *     tags={"Delivery Time Management"},
      *     @OA\Parameter(
@@ -244,7 +244,7 @@ class DeliveryManagementController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/api/deliveries/{id}/status",
+     *     path="/deliveries/{id}/status",
      *     summary="Update delivery status only",
      *     tags={"Delivery Time Management"},
      *     @OA\Parameter(
@@ -321,7 +321,7 @@ class DeliveryManagementController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/deliveries/{id}",
+     *     path="/deliveries/{id}",
      *     summary="Delete a delivery schedule",
      *     tags={"Delivery Time Management"},
      *     @OA\Parameter(
