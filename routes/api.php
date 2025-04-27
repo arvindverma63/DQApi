@@ -21,7 +21,7 @@ use App\Http\Controllers\AdminControllers\InvoiceController;
 use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\ReservationController;
-use App\Http\Controllers\Admincontrollers\RestaurantBannerController;
+use App\Http\Controllers\AdminControllers\RestaurantBannerController;
 use App\Http\Controllers\AdminControllers\SocialMediaController;
 use App\Http\Controllers\AdminControllers\SubCategoryController;
 use App\Http\Controllers\AdminControllers\TransactionController;
@@ -288,4 +288,4 @@ Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail'
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
 Route::get('/getOrderByDelivery', [OrderController::class, 'getOrderByDelivery']);
-Route::post('/admin/banners/upload',[RestaurantBannerController::class,'uploadBanners']);
+Route::post('/admin/banners/upload', [RestaurantBannerController::class, 'uploadBanners']);

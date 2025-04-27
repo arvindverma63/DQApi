@@ -4754,7 +4754,7 @@
                 ],
                 "summary": "Upload restaurant banner images",
                 "description": "Uploads banner images to ImgBB and saves their URLs in the database. Banner 1 is required, while Banner 2 and Banner 3 are optional.",
-                "operationId": "dbb7bb986ef259a10f5dd316427f4a5b",
+                "operationId": "31d9aae73a7c7630dedd9fe92d2bb080",
                 "requestBody": {
                     "required": true,
                     "content": {
