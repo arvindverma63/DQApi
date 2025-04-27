@@ -4747,6 +4747,101 @@
                 }
             }
         },
+        "/admin/banners/upload": {
+            "post": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Upload restaurant banner images",
+                "description": "Uploads banner images to ImgBB and saves their URLs in the database. Banner 1 is required, while Banner 2 and Banner 3 are optional.",
+                "operationId": "dbb7bb986ef259a10f5dd316427f4a5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "banner_1": {
+                                        "description": "First banner image (required)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "banner_2": {
+                                        "description": "Second banner image (optional)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "banner_3": {
+                                        "description": "Third banner image (optional)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Banners uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banners uploaded successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "properties": {
+                                                "banner_1": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The banner_1 field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to upload banner_1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/social-media": {
             "get": {
                 "tags": [
@@ -8140,6 +8235,10 @@
         {
             "name": "Reservations",
             "description": "Reservations"
+        },
+        {
+            "name": "Banners",
+            "description": "Banners"
         },
         {
             "name": "SocialMedia",
