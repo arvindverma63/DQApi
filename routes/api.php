@@ -288,4 +288,11 @@ Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail'
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
 Route::get('/getOrderByDelivery', [OrderController::class, 'getOrderByDelivery']);
-Route::post('/admin/banners/upload', [RestaurantBannerController::class, 'uploadBanners']);
+Route::prefix('admin/banners')->group(function () {
+    Route::get('/', [RestaurantBannerController::class, 'index']);
+    Route::get('/{id}', [RestaurantBannerController::class, 'show']);
+    Route::get('/restaurant/{restaurantId}', [RestaurantBannerController::class, 'findByRestaurantId']);
+    Route::post('/upload', [RestaurantBannerController::class, 'uploadBanners']);
+    Route::post('/{id}', [RestaurantBannerController::class, 'update']);
+    Route::delete('/{id}', [RestaurantBannerController::class, 'destroy']);
+});

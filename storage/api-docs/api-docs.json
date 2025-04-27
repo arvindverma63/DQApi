@@ -4747,13 +4747,537 @@
                 }
             }
         },
+        "/admin/banners": {
+            "get": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "List all restaurant banners",
+                "description": "Returns a paginated list of restaurant banners.",
+                "operationId": "7d199333bfed227fcd2a45c7cd5fa60b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "restaurantId": {
+                                                        "type": "string",
+                                                        "example": "rest_123",
+                                                        "nullable": true
+                                                    },
+                                                    "banner_1": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner1.jpg"
+                                                    },
+                                                    "banner_2": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner2.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "banner_3": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner3.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-27T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-27T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to retrieve banners"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/banners/{id}": {
+            "get": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Get a specific restaurant banner",
+                "description": "Returns details of a restaurant banner by its ID.",
+                "operationId": "d8bad964b9e3e45fa43e57a41c137b01",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the banner",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "restaurantId": {
+                                            "type": "string",
+                                            "example": "rest_123",
+                                            "nullable": true
+                                        },
+                                        "banner_1": {
+                                            "type": "string",
+                                            "example": "https://i.ibb.co/xxx/banner1.jpg"
+                                        },
+                                        "banner_2": {
+                                            "type": "string",
+                                            "example": "https://i.ibb.co/xxx/banner2.jpg",
+                                            "nullable": true
+                                        },
+                                        "banner_3": {
+                                            "type": "string",
+                                            "example": "https://i.ibb.co/xxx/banner3.jpg",
+                                            "nullable": true
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-04-27T12:00:00Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-04-27T12:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Banner not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Banner not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to retrieve banner"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Update restaurant banner images",
+                "description": "Updates banner images and restaurant ID for a specific banner record. All fields are optional.",
+                "operationId": "809ca5fddfcbd20ff6339c5e0663ebcb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the banner to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "restaurantId": {
+                                        "description": "Restaurant ID (optional)",
+                                        "type": "string",
+                                        "example": "rest_123"
+                                    },
+                                    "banner_1": {
+                                        "description": "First banner image (optional)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "banner_2": {
+                                        "description": "Second banner image (optional)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "banner_3": {
+                                        "description": "Third banner image (optional)",
+                                        "type": "file",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Banners updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banners updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Banner not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Banner not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "properties": {
+                                                "banner_1": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The banner_1 must be an image."
+                                                    }
+                                                },
+                                                "restaurantId": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The restaurantId must be a string."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to update banners"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Delete a restaurant banner",
+                "description": "Deletes a restaurant banner by its ID.",
+                "operationId": "d5c77bc99c125fd73e1e0c643cc67ff3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the banner to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Banner deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Banner not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Banner not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to delete banner"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/banners/restaurant/{restaurantId}": {
+            "get": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Find banners by restaurant ID",
+                "description": "Returns a paginated list of banners associated with the given restaurant ID.",
+                "operationId": "b8d598bb01900f7257ef2597113f1f83",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "path",
+                        "description": "Restaurant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "restaurantId": {
+                                                        "type": "string",
+                                                        "example": "rest_123",
+                                                        "nullable": true
+                                                    },
+                                                    "banner_1": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner1.jpg"
+                                                    },
+                                                    "banner_2": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner2.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "banner_3": {
+                                                        "type": "string",
+                                                        "example": "https://i.ibb.co/xxx/banner3.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-27T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-04-27T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No banners found for this restaurant ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No banners found for this restaurant ID"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to retrieve banners"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/admin/banners/upload": {
             "post": {
                 "tags": [
                     "Banners"
                 ],
                 "summary": "Upload restaurant banner images",
-                "description": "Uploads banner images to ImgBB and saves their URLs in the database. Banner 1 is required, while Banner 2 and Banner 3 are optional.",
+                "description": "Uploads banner images to ImgBB and saves their URLs in the database. Banner 1 is required, while Banner 2, Banner 3, and restaurantId are optional.",
                 "operationId": "31d9aae73a7c7630dedd9fe92d2bb080",
                 "requestBody": {
                     "required": true,
@@ -4761,6 +5285,11 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
+                                    "restaurantId": {
+                                        "description": "Restaurant ID (optional)",
+                                        "type": "string",
+                                        "example": "rest_123"
+                                    },
                                     "banner_1": {
                                         "description": "First banner image (required)",
                                         "type": "file",
@@ -4812,6 +5341,13 @@
                                                     "items": {
                                                         "type": "string",
                                                         "example": "The banner_1 field is required."
+                                                    }
+                                                },
+                                                "restaurantId": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The restaurantId must be a string."
                                                     }
                                                 }
                                             },

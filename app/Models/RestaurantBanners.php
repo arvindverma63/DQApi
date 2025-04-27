@@ -12,6 +12,7 @@ class RestaurantBanners extends Model
     protected $fillable = [
         'banner_1',
         'banner_2',
-        'banner_3'
+        'banner_3',
+        'restaurantId'
     ];
 }
