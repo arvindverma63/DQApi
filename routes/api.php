@@ -88,6 +88,14 @@ Route::middleware(['auth:api'])->group(function () {
     // Admin routes (requires 'admin' role)
     Route::middleware(['role:admin'])->group(function () {
 
+        Route::prefix('admin/banners')->group(function () {
+            Route::get('/', [RestaurantBannerController::class, 'index']);
+            Route::post('/upload', [RestaurantBannerController::class, 'uploadBanners']);
+            Route::post('/{id}', [RestaurantBannerController::class, 'update']);
+            Route::delete('/{id}', [RestaurantBannerController::class, 'destroy']);
+        });
+
+
         Route::get('/deliveries', [DeliveryManagementController::class, 'index'])->name('deliveries.index');
         Route::post('/deliveries', [DeliveryManagementController::class, 'store'])->name('deliveries.store');
         Route::get('/deliveries/{id}', [DeliveryManagementController::class, 'show'])->name('deliveries.show');
@@ -288,11 +296,6 @@ Route::post('/send-invoice-email', [InvoiceController::class, 'sendInvoiceEmail'
 
 Route::get('/deliveries/restaurant/{restaurantId}', [DeliveryController::class, 'getDeliveryByRestaurantId']);
 Route::get('/getOrderByDelivery', [OrderController::class, 'getOrderByDelivery']);
-Route::prefix('admin/banners')->group(function () {
-    Route::get('/', [RestaurantBannerController::class, 'index']);
-    Route::get('/{id}', [RestaurantBannerController::class, 'show']);
-    Route::get('/restaurant/{restaurantId}', [RestaurantBannerController::class, 'findByRestaurantId']);
-    Route::post('/upload', [RestaurantBannerController::class, 'uploadBanners']);
-    Route::post('/{id}', [RestaurantBannerController::class, 'update']);
-    Route::delete('/{id}', [RestaurantBannerController::class, 'destroy']);
-});
+
+Route::get('/admin/banners/{id}', [RestaurantBannerController::class, 'show']);
+Route::get('/admin/banners/restaurant/{restaurantId}', [RestaurantBannerController::class, 'findByRestaurantId']);
