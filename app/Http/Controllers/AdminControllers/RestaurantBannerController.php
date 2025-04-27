@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admincontrollers;
+namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\RestaurantBanners;
