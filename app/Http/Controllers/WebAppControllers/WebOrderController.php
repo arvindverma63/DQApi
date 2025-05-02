@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\WebAppControllers;
 
+use App\Http\Controllers\AdminControllers\FirebaseNotificationController;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Customer;
@@ -196,7 +197,7 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request, FirebaseService $firebaseService)
+    public function addTransaction(Request $request, FirebaseNotificationController $firebaseService)
     {
         try {
             // Validate the incoming request
