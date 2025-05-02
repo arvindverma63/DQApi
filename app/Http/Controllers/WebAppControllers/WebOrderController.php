@@ -278,9 +278,9 @@ class WebOrderController extends Controller
     public function sendNotification($deviceToken, $title, $body, $data = [])
     {
         try {
-            $factory = (new Factory)
-                ->withServiceAccount(storage_path(config('services.firebase.credentials')));
+            $firebaseConfig = config('services.firebase.credentials_json');
 
+            $factory = (new Factory)->withServiceAccount($firebaseConfig);
             $messaging = $factory->createMessaging();
 
             $message = CloudMessage::withTarget('token', $deviceToken)
@@ -288,7 +288,7 @@ class WebOrderController extends Controller
                 ->withData($data);
 
             $messaging->send($message);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Firebase Notification Failed', ['error' => $e->getMessage()]);
         }
     }
