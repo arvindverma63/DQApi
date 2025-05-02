@@ -278,21 +278,36 @@ class WebOrderController extends Controller
     public function sendNotification($deviceToken, $title, $body, $data = [])
     {
         try {
+            // Retrieve the Firebase credentials JSON path from the config file
             $firebaseConfig = config('services.firebase.credentials_json');
 
-            $factory = (new Factory)->withServiceAccount(config('services.firebase.credentials_json'));
+            // Ensure that the credentials path is set
+            if (!$firebaseConfig || !file_exists($firebaseConfig)) {
+                throw new \Exception("Firebase credentials file not found.");
+            }
 
+            // Initialize the Firebase Factory with the correct credentials
+            $factory = (new Factory)->withServiceAccount($firebaseConfig);
+
+            // Create the messaging service
             $messaging = $factory->createMessaging();
 
+            // Create the Firebase message with the given target, notification, and data
             $message = CloudMessage::withTarget('token', $deviceToken)
                 ->withNotification(Notification::create($title, $body))
                 ->withData($data);
 
-            $messaging->send($message);
+            // Send the message to the Firebase Cloud Messaging service
+            $response = $messaging->send($message);
+
+            // Log the successful message sending (optional)
+            Log::info('Firebase Notification Sent Successfully', ['response' => $response]);
         } catch (\Exception $e) {
+            // Log the error if the notification fails
             Log::error('Firebase Notification Failed', ['error' => $e->getMessage()]);
         }
     }
+
 
 
 
