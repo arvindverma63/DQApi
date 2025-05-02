@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\WebAppControllers;
 
+use App\Http\Controllers\AdminControllers\FirebaseNotificationController;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Customer;
@@ -10,6 +11,8 @@ use App\Models\Menu;
 use App\Models\MenuInventory;
 use App\Models\Order;
 use App\Models\Transaction;
+use App\Models\UserProfile;
+use App\Services\FirebaseService;
 use DB;
 use Dotenv\Exception\ValidationException;
 use Exception;
@@ -195,7 +198,7 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request)
+    public function addTransaction(Request $request,FirebaseService $firebaseService)
     {
         try {
             // Validate the incoming request
@@ -230,6 +233,17 @@ class WebOrderController extends Controller
                     'orderDetails' => $validated['orderDetails'], // Correct key used
                     'status' => 'processing', // Default status
                 ]);
+
+                if ($order) {
+                    $user = UserProfile::where('restuarantId',$validated['restaurantId'])->first();
+                    $firebaseService->sendNotification(
+                        $user->fcm, // replace or fetch dynamically
+                        'New Order Received',
+                        'Order #' . $order->id . ' has been placed.',
+                        ['order_id' => $order->id]
+                    );
+                }
+
             }
 
 

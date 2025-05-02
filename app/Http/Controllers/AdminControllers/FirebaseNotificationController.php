@@ -37,11 +37,6 @@ class FirebaseNotificationController extends Controller
      */
     public function sendNotification(Request $request)
     {
-        $request->validate([
-            'device_token' => 'required|string',
-            'title' => 'required|string',
-            'body' => 'required|string',
-        ]);
 
         $deviceToken = $request->device_token;
         $title = $request->title;
