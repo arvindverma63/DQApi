@@ -200,14 +200,16 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request,WebOrderController $web)
+    public function addTransaction(Request $request)
     {
+        DB::beginTransaction();
+
         try {
             // Validate the incoming request
             $validated = $request->validate([
                 'tableNumber' => 'nullable|string',
                 'restaurantId' => 'required|string',
-                'orderDetails' => 'required', // Order details must be a JSON object (array)
+                'orderDetails' => 'required',
                 'phoneNumber' => 'nullable|string',
                 'userName' => 'required|string',
                 'email' => 'nullable|string',
@@ -215,7 +217,6 @@ class WebOrderController extends Controller
             ]);
 
             Log::info('Transaction validation passed.', ['validated_data' => $validated]);
-
 
             // Create a customer
             $customer = Customer::create([
@@ -226,21 +227,27 @@ class WebOrderController extends Controller
                 'restaurantId' => $validated['restaurantId'],
             ]);
 
-            if ($customer) {
-                // Create the order
-                $order = Order::create([
-                    'tableNumber' => $validated['tableNumber'],
-                    'restaurantId' => $validated['restaurantId'],
-                    'user_id' => $customer->id,  // Link the order to the customer
-                    'orderDetails' => $validated['orderDetails'], // Correct key used
-                    'status' => 'processing', // Default status
-                ]);
+            // Create the order
+            $order = Order::create([
+                'tableNumber' => $validated['tableNumber'],
+                'restaurantId' => $validated['restaurantId'],
+                'user_id' => $customer->id,
+                'orderDetails' => $validated['orderDetails'],
+                'status' => 'processing',
+            ]);
 
-                $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
+            DB::commit();
 
-                if ($user && !empty($user->fcm)) {
-                    $web->sendNotification($user->fcm,'New Order Receive','New Order Receive',['id'=>$user->id]);
-                }
+            // Send Notification to restaurant admin
+            $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
+
+            if ($user && !empty($user->fcm)) {
+                $this->sendNotification(
+                    $user->fcm,
+                    'New Order Received',
+                    'Order #' . $order->id . ' has been placed.',
+                    ['order_id' => $order->id]
+                );
             }
 
             return response()->json([
@@ -252,17 +259,15 @@ class WebOrderController extends Controller
                 ],
             ], 201);
         } catch (ValidationException $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error.',
                 'errors' => $e,
             ], 400);
         } catch (Exception $e) {
-            // Rollback in case of error
             DB::rollBack();
-
             Log::error('Error creating transaction.', ['error' => $e->getMessage()]);
-
             return response()->json([
                 'success' => false,
                 'message' => 'Internal server error.',
@@ -272,15 +277,22 @@ class WebOrderController extends Controller
 
     public function sendNotification($deviceToken, $title, $body, $data = [])
     {
-        $factory = (new Factory)
-        ->withServiceAccount(storage_path(config('services.firebase.credentials')));
-        $messaging = $factory->createMessaging();
-        $message = CloudMessage::withTarget('token', $deviceToken)
-            ->withNotification(Notification::create($title, $body))
-            ->withData($data);
+        try {
+            $factory = (new Factory)
+                ->withServiceAccount(storage_path(config('services.firebase.credentials')));
 
-        $messaging->send($message);
+            $messaging = $factory->createMessaging();
+
+            $message = CloudMessage::withTarget('token', $deviceToken)
+                ->withNotification(Notification::create($title, $body))
+                ->withData($data);
+
+            $messaging->send($message);
+        } catch (Exception $e) {
+            Log::error('Firebase Notification Failed', ['error' => $e->getMessage()]);
+        }
     }
+
 
 
     /**
