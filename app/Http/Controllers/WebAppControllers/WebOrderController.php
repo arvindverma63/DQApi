@@ -280,7 +280,8 @@ class WebOrderController extends Controller
         try {
             $firebaseConfig = config('services.firebase.credentials_json');
 
-            $factory = (new Factory)->withServiceAccount($firebaseConfig);
+            $factory = (new Factory)->withServiceAccount(config('services.firebase.credentials_json'));
+
             $messaging = $factory->createMessaging();
 
             $message = CloudMessage::withTarget('token', $deviceToken)

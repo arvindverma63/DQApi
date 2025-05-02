@@ -11,8 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('mail', \Illuminate\Notifications\Channels\MailChannel::class);
-
+        //
     }
 
     /**
@@ -20,7 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->bind('mail', \Illuminate\Notifications\Channels\MailChannel::class);
-
+        //
     }
 }
