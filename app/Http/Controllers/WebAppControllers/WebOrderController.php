@@ -241,14 +241,14 @@ class WebOrderController extends Controller
             // Send Notification to restaurant admin
             $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
 
-            if ($user && !empty($user->fcm)) {
-                $this->sendNotification(
-                    $user->fcm,
-                    'New Order Received',
-                    'Order #' . $order->id . ' has been placed.',
-                    ['order_id' => $order->id]
-                );
-            }
+            // if ($user && !empty($user->fcm)) {
+            //     $this->sendNotification(
+            //         $user->fcm,
+            //         'New Order Received',
+            //         'Order #' . $order->id . ' has been placed.',
+            //         ['order_id' => $order->id]
+            //     );
+            // }
 
             return response()->json([
                 'success' => true,
