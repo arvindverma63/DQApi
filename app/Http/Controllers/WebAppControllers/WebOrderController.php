@@ -11,12 +11,15 @@ use App\Models\Menu;
 use App\Models\MenuInventory;
 use App\Models\Order;
 use App\Models\UserProfile;
+use Kreait\Firebase\Factory;
 use App\Services\FirebaseService;
 use DB;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Http\Request;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Log;
+use Notification;
 
 class WebOrderController extends Controller
 {
@@ -197,7 +200,7 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request, FirebaseNotificationController $firebaseNotification)
+    public function addTransaction(Request $request,WebOrderController $web)
     {
         try {
             // Validate the incoming request
@@ -236,9 +239,7 @@ class WebOrderController extends Controller
                 $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
 
                 if ($user && !empty($user->fcm)) {
-                    $firebaseNotification->sendNotification([
-                        'device_token'=>$user->fcm
-                    ]);
+                    $web->sendNotification($user->fcm,'New Order Receive','New Order Receive',['id'=>$user->id]);
                 }
             }
 
@@ -267,6 +268,18 @@ class WebOrderController extends Controller
                 'message' => 'Internal server error.',
             ], 500);
         }
+    }
+
+    public function sendNotification($deviceToken, $title, $body, $data = [])
+    {
+        $factory = (new Factory)
+        ->withServiceAccount(storage_path(config('services.firebase.credentials')));
+        $messaging = $factory->createMessaging();
+        $message = CloudMessage::withTarget('token', $deviceToken)
+            ->withNotification(Notification::create($title, $body))
+            ->withData($data);
+
+        $messaging->send($message);
     }
 
 

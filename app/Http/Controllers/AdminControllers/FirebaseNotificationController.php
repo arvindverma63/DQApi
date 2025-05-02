@@ -7,7 +7,7 @@ use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 
 
-class FirebaseNotificationController
+class FirebaseNotificationController extends Controller
 {
     protected $firebaseService;
 
