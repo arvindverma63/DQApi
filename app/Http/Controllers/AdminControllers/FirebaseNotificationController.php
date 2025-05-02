@@ -39,8 +39,8 @@ class FirebaseNotificationController extends Controller
     {
 
         $deviceToken = $request->device_token;
-        $title = $request->title;
-        $body = $request->body;
+        $title = $request->title ? $request->title : "";
+        $body = $request->body ? $request->body : "";
         $data = $request->get('data', []);
 
         $response = $this->firebaseService->sendNotification($deviceToken, $title, $body, $data);
