@@ -197,7 +197,7 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request, FirebaseNotificationController $firebaseService)
+    public function addTransaction(Request $request, FirebaseNotificationController $firebaseNotification)
     {
         try {
             // Validate the incoming request
@@ -236,17 +236,11 @@ class WebOrderController extends Controller
                 $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
 
                 if ($user && !empty($user->fcm)) {
-                    $firebaseService->sendNotification(
-                        $user->fcm,
-                        'New Order Received',
-                        'Order #' . $order->id . ' has been placed.',
-                        ['order_id' => $order->id]
-                    );
+                    $firebaseNotification->sendNotification([
+                        'device_token'=>$user->fcm
+                    ]);
                 }
             }
-
-
-
 
             return response()->json([
                 'success' => true,

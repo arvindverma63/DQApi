@@ -35,16 +35,14 @@ class FirebaseNotificationController extends Controller
      *     @OA\Response(response=400, description="Bad Request - Invalid input data"),
      * )
      */
-    public function sendNotification(Request $request)
+    public function sendNotification($deviceToken, $title = "", $body = "", $data = [])
     {
-
-        $deviceToken = $request->device_token;
-        $title = $request->title ? $request->title : "";
-        $body = $request->body ? $request->body : "";
-        $data = $request->get('data', []);
-
         $response = $this->firebaseService->sendNotification($deviceToken, $title, $body, $data);
 
-        return response()->json(['message' => 'Notification sent successfully', 'response' => $response]);
+        return response()->json([
+            'message' => 'Notification sent successfully',
+            'response' => $response,
+        ]);
     }
+
 }
