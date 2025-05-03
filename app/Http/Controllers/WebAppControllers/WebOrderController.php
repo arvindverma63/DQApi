@@ -10,16 +10,13 @@ use App\Models\Inventory;
 use App\Models\Menu;
 use App\Models\MenuInventory;
 use App\Models\Order;
+use App\Models\Transaction;
 use App\Models\UserProfile;
-use Kreait\Firebase\Factory;
-use App\Services\FirebaseService;
 use DB;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Http\Request;
-use Kreait\Firebase\Messaging\CloudMessage;
 use Log;
-use Notification;
 
 class WebOrderController extends Controller
 {
@@ -81,7 +78,7 @@ class WebOrderController extends Controller
 
         // Fetch all menu items for the given restaurant
         $menuItems = Menu::where('restaurantId', $request['restaurantId'])
-            ->where('status', 0)->get();
+                                    ->where('status',0)->get();
 
         if ($menuItems->isEmpty()) {
             return response()->json(['message' => 'No menu found for the given restaurant ID'], 404);
@@ -145,24 +142,24 @@ class WebOrderController extends Controller
      *             @OA\Property(property="tableNumber", type="string", description="Table number", example="12"),
      *             @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298"),
      *            @OA\Property(
-     *                 property="orderDetails",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
-     *                     @OA\Property(property="id", type="string", example="204"),
-     *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
-     *                     @OA\Property(property="category", type="string", example="MOMOS"),
-     *                     @OA\Property(property="price", type="number", format="float", example=120.0),
-     *                     @OA\Property(
-     *                         property="ingredients",
-     *                         type="array",
-     *                         @OA\Items(type="string", example="MAIDA")
-     *                     ),
-     *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
-     *                     @OA\Property(property="quantity", type="integer", example=1)
-     *                 )
-     *             ),
+    *                 property="orderDetails",
+    *                 type="array",
+    *                 @OA\Items(
+    *                     type="object",
+    *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
+    *                     @OA\Property(property="id", type="string", example="204"),
+    *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
+    *                     @OA\Property(property="category", type="string", example="MOMOS"),
+    *                     @OA\Property(property="price", type="number", format="float", example=120.0),
+    *                     @OA\Property(
+    *                         property="ingredients",
+    *                         type="array",
+    *                         @OA\Items(type="string", example="MAIDA")
+    *                     ),
+    *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
+    *                     @OA\Property(property="quantity", type="integer", example=1)
+    *                 )
+    *             ),
      *             @OA\Property(property="phoneNumber", type="string", description="Customer phone number", example="9876543210"),
      *             @OA\Property(property="userName", type="string", description="Customer name", example="John Doe"),
      *             @OA\Property(property="email", type="string", description="Customer email", example="john.doe@example.com"),
@@ -200,16 +197,14 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request)
+    public function addTransaction(Request $request,FirebaseNotificationController $firebase)
     {
-        DB::beginTransaction();
-
         try {
             // Validate the incoming request
             $validated = $request->validate([
                 'tableNumber' => 'nullable|string',
                 'restaurantId' => 'required|string',
-                'orderDetails' => 'required',
+                'orderDetails' => 'required', // Order details must be a JSON object (array)
                 'phoneNumber' => 'nullable|string',
                 'userName' => 'required|string',
                 'email' => 'nullable|string',
@@ -217,6 +212,7 @@ class WebOrderController extends Controller
             ]);
 
             Log::info('Transaction validation passed.', ['validated_data' => $validated]);
+
 
             // Create a customer
             $customer = Customer::create([
@@ -227,28 +223,21 @@ class WebOrderController extends Controller
                 'restaurantId' => $validated['restaurantId'],
             ]);
 
-            // Create the order
-            $order = Order::create([
-                'tableNumber' => $validated['tableNumber'],
-                'restaurantId' => $validated['restaurantId'],
-                'user_id' => $customer->id,
-                'orderDetails' => $validated['orderDetails'],
-                'status' => 'processing',
-            ]);
+            if ($customer) {
+                // Create the order
+                $order = Order::create([
+                    'tableNumber' => $validated['tableNumber'],
+                    'restaurantId' => $validated['restaurantId'],
+                    'user_id' => $customer->id,  // Link the order to the customer
+                    'orderDetails' => $validated['orderDetails'], // Correct key used
+                    'status' => 'processing', // Default status
+                ]);
+                $user = UserProfile::where('restaurantId',$validated['restaurantId'])->first();
+                $firebase->sendNotification($user->fcm);
+            }
 
-            DB::commit();
 
-            // Send Notification to restaurant admin
-            $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
 
-            // if ($user && !empty($user->fcm)) {
-            //     $this->sendNotification(
-            //         $user->fcm,
-            //         'New Order Received',
-            //         'Order #' . $order->id . ' has been placed.',
-            //         ['order_id' => $order->id]
-            //     );
-            // }
 
             return response()->json([
                 'success' => true,
@@ -259,56 +248,23 @@ class WebOrderController extends Controller
                 ],
             ], 201);
         } catch (ValidationException $e) {
-            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error.',
                 'errors' => $e,
             ], 400);
         } catch (Exception $e) {
+            // Rollback in case of error
             DB::rollBack();
+
             Log::error('Error creating transaction.', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Internal server error.',
             ], 500);
         }
     }
-
-    public function sendNotification($deviceToken, $title, $body, $data = [])
-    {
-        try {
-            // Retrieve the Firebase credentials JSON path from the config file
-            $firebaseConfig = config('services.firebase.credentials_json');
-
-            // Ensure that the credentials path is set
-            if (!$firebaseConfig || !file_exists($firebaseConfig)) {
-                throw new \Exception("Firebase credentials file not found.");
-            }
-
-            // Initialize the Firebase Factory with the correct credentials
-            $factory = (new Factory)->withServiceAccount($firebaseConfig);
-
-            // Create the messaging service
-            $messaging = $factory->createMessaging();
-
-            // Create the Firebase message with the given target, notification, and data
-            $message = CloudMessage::withTarget('token', $deviceToken)
-                ->withNotification(Notification::create($title, $body))
-                ->withData($data);
-
-            // Send the message to the Firebase Cloud Messaging service
-            $response = $messaging->send($message);
-
-            // Log the successful message sending (optional)
-            Log::info('Firebase Notification Sent Successfully', ['response' => $response]);
-        } catch (\Exception $e) {
-            // Log the error if the notification fails
-            Log::error('Firebase Notification Failed', ['error' => $e->getMessage()]);
-        }
-    }
-
-
 
 
     /**
