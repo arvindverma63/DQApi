@@ -245,8 +245,6 @@ class WebOrderController extends Controller
             }
 
 
-
-
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction created successfully.',
