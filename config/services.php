@@ -31,6 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     'firebase' => [
-        'credentials' => '../public/firebase_credentials.json', // or just 'firebase_credentials.json'
+        'credentials' => base_path(env('FIREBASE_CREDENTIALS', 'firebase/firebase_credentials.json')),
     ],
+
 ];
