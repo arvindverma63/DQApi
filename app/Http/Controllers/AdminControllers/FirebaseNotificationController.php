@@ -5,16 +5,13 @@ namespace App\Http\Controllers\AdminControllers;
 use App\Http\Controllers\Controller;
 use App\Services\FirebaseService;
 use Illuminate\Http\Request;
-
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class FirebaseNotificationController extends Controller
 {
-    protected $firebaseService;
 
-    public function __construct(FirebaseService $firebaseService)
-    {
-        $this->firebaseService = $firebaseService;
-    }
 
     /**
      * @OA\Post(
@@ -35,25 +32,22 @@ class FirebaseNotificationController extends Controller
      *     @OA\Response(response=400, description="Bad Request - Invalid input data"),
      * )
      */
-    public function sendNotification(Request $request)
+    protected $messaging;
+
+    public function __construct()
     {
-        $request->validate([
-            'device_token' => 'required|string',
-            'title' => 'required|string',
-            'body' => 'required|string',
-            'data' => 'nullable|array',
-        ]);
+        $factory = (new Factory)
+            ->withServiceAccount(storage_path(config('services.firebase.credentials')));
 
-        $deviceToken = $request->input('device_token');
-        $title = $request->input('title');
-        $body = $request->input('body');
-        $data = $request->input('data', []);
+        $this->messaging = $factory->createMessaging();
+    }
 
-        $response = $this->firebaseService->sendNotification($deviceToken, $title, $body, $data);
+    public function sendNotification($deviceToken, $title, $body, $data = [])
+    {
+        $message = CloudMessage::withTarget('token', $deviceToken)
+            ->withNotification(Notification::create($title, $body))
+            ->withData($data);
 
-        return response()->json([
-            'message' => 'Notification sent successfully',
-            'response' => $response,
-        ]);
+        return $this->messaging->send($message);
     }
 }
