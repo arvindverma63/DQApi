@@ -78,7 +78,7 @@ class WebOrderController extends Controller
 
         // Fetch all menu items for the given restaurant
         $menuItems = Menu::where('restaurantId', $request['restaurantId'])
-                                    ->where('status',0)->get();
+            ->where('status', 0)->get();
 
         if ($menuItems->isEmpty()) {
             return response()->json(['message' => 'No menu found for the given restaurant ID'], 404);
@@ -142,24 +142,24 @@ class WebOrderController extends Controller
      *             @OA\Property(property="tableNumber", type="string", description="Table number", example="12"),
      *             @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298"),
      *            @OA\Property(
-    *                 property="orderDetails",
-    *                 type="array",
-    *                 @OA\Items(
-    *                     type="object",
-    *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
-    *                     @OA\Property(property="id", type="string", example="204"),
-    *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
-    *                     @OA\Property(property="category", type="string", example="MOMOS"),
-    *                     @OA\Property(property="price", type="number", format="float", example=120.0),
-    *                     @OA\Property(
-    *                         property="ingredients",
-    *                         type="array",
-    *                         @OA\Items(type="string", example="MAIDA")
-    *                     ),
-    *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
-    *                     @OA\Property(property="quantity", type="integer", example=1)
-    *                 )
-    *             ),
+     *                 property="orderDetails",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     required={"id", "itemName", "category", "price", "ingredients", "imageUrl", "quantity"},
+     *                     @OA\Property(property="id", type="string", example="204"),
+     *                     @OA\Property(property="itemName", type="string", example="Tanddori Momos"),
+     *                     @OA\Property(property="category", type="string", example="MOMOS"),
+     *                     @OA\Property(property="price", type="number", format="float", example=120.0),
+     *                     @OA\Property(
+     *                         property="ingredients",
+     *                         type="array",
+     *                         @OA\Items(type="string", example="MAIDA")
+     *                     ),
+     *                     @OA\Property(property="imageUrl", type="string", example="https://rest.dicui.org/menus/1733563865_download%20(56).jpeg"),
+     *                     @OA\Property(property="quantity", type="integer", example=1)
+     *                 )
+     *             ),
      *             @OA\Property(property="phoneNumber", type="string", description="Customer phone number", example="9876543210"),
      *             @OA\Property(property="userName", type="string", description="Customer name", example="John Doe"),
      *             @OA\Property(property="email", type="string", description="Customer email", example="john.doe@example.com"),
@@ -197,7 +197,7 @@ class WebOrderController extends Controller
      * )
      */
 
-    public function addTransaction(Request $request,FirebaseNotificationController $firebase)
+    public function addTransaction(Request $request, FirebaseNotificationController $firebase)
     {
         try {
             // Validate the incoming request
@@ -232,8 +232,16 @@ class WebOrderController extends Controller
                     'orderDetails' => $validated['orderDetails'], // Correct key used
                     'status' => 'processing', // Default status
                 ]);
-                $user = UserProfile::where('restaurantId',$validated['restaurantId'])->first();
-                $firebase->sendNotification($user->fcm);
+                $user = UserProfile::where('restaurantId', $validated['restaurantId'])->first();
+
+                if ($user && $user->fcm) {
+                    $firebase->sendNotification(
+                        $user->fcm,
+                        'Notification Title',
+                        'Notification Body',
+                        ['custom_key' => 'custom_value'] // Optional data payload
+                    );
+                }
             }
 
 
