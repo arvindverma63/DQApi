@@ -2071,7 +2071,7 @@
                     "Firebase Notifications"
                 ],
                 "summary": "Send a push notification",
-                "operationId": "a9abbcb7bb41e0ebe44568e98932646a",
+                "operationId": "f6ebf2149281379e583256ad0c4d1e6b",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -6869,6 +6869,71 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/add-social-media": {
+            "post": {
+                "tags": [
+                    "Restaurant Profile"
+                ],
+                "summary": "Add or update social media links for a restaurant",
+                "description": "Updates the Facebook, Instagram, and WhatsApp fields for the restaurant's user profile.",
+                "operationId": "addSocialMedia",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "restaurantId"
+                                ],
+                                "properties": {
+                                    "restaurantId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "facebook": {
+                                        "type": "string",
+                                        "example": "https://facebook.com/restaurantpage"
+                                    },
+                                    "instagram": {
+                                        "type": "string",
+                                        "example": "https://instagram.com/restaurantpage"
+                                    },
+                                    "whatsapp": {
+                                        "type": "string",
+                                        "example": "https://wa.me/1234567890"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Social media links updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Social media updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User profile not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }

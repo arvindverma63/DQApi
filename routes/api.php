@@ -96,6 +96,7 @@ Route::middleware(['auth:api'])->group(function () {
         });
 
 
+        Route::post('/add-social-media',[UserProfileController::class,'addSocialMedia']);
         Route::get('/deliveries', [DeliveryManagementController::class, 'index'])->name('deliveries.index');
         Route::post('/deliveries', [DeliveryManagementController::class, 'store'])->name('deliveries.store');
         Route::get('/deliveries/{id}', [DeliveryManagementController::class, 'show'])->name('deliveries.show');

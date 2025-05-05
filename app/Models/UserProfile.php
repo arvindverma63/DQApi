@@ -21,6 +21,9 @@ class UserProfile extends Model
     'identity',
     'fcm',
     'permission',
-    'identityNumber'];
+    'identityNumber',
+    'facebook',
+    'instagram',
+    'whatsapp'];
     use HasFactory;
 }

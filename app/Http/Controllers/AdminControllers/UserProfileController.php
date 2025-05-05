@@ -499,4 +499,55 @@ class UserProfileController extends Controller
             ], 500);
         }
     }
+
+
+    /**
+     * @OA\Post(
+     *     path="/add-social-media",
+     *     operationId="addSocialMedia",
+     *     tags={"Restaurant Profile"},
+     *     summary="Add or update social media links for a restaurant",
+     *     description="Updates the Facebook, Instagram, and WhatsApp fields for the restaurant's user profile.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"restaurantId"},
+     *             @OA\Property(property="restaurantId", type="integer", example=1),
+     *             @OA\Property(property="facebook", type="string", example="https://facebook.com/restaurantpage"),
+     *             @OA\Property(property="instagram", type="string", example="https://instagram.com/restaurantpage"),
+     *             @OA\Property(property="whatsapp", type="string", example="https://wa.me/1234567890")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Social media links updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Social media updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User profile not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function addSocialMedia(Request $request)
+    {
+        $userProfile = UserProfile::where('restaurantId', $request->restaurantId)->first();
+
+        if (!$userProfile) {
+            return response()->json(['message' => 'User profile not found'], 404);
+        }
+
+        $userProfile->facebook = $request->facebook ?? $userProfile->facebook;
+        $userProfile->instagram = $request->instagram ?? $userProfile->instagram;
+        $userProfile->whatsapp = $request->whatsapp ?? $userProfile->whatsapp;
+        $userProfile->save();
+
+        return response()->json(['message' => 'Social media updated successfully'], 200);
+    }
 }
