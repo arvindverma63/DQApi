@@ -96,10 +96,9 @@ Route::middleware(['auth:api'])->group(function () {
         });
 
 
-        Route::post('/add-social-media',[UserProfileController::class,'addSocialMedia']);
-        Route::get('/deliveries', [DeliveryManagementController::class, 'index'])->name('deliveries.index');
+        Route::post('/add-social-media', [UserProfileController::class, 'addSocialMedia']);
+
         Route::post('/deliveries', [DeliveryManagementController::class, 'store'])->name('deliveries.store');
-        Route::get('/deliveries/{id}', [DeliveryManagementController::class, 'show'])->name('deliveries.show');
         Route::put('/deliveries/{id}', [DeliveryManagementController::class, 'update'])->name('deliveries.update');
         Route::patch('/deliveries/{id}/status', [DeliveryManagementController::class, 'updateStatus'])->name('deliveries.updateStatus');
         Route::delete('/deliveries/{id}', [DeliveryManagementController::class, 'destroy'])->name('deliveries.destroy');
@@ -273,7 +272,6 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 
-    Route::apiResource('restaurant/deliveries', DeliveryController::class);
     // Regular user routes (requires 'user' role)
     Route::middleware(['role:user'])->group(function () {
         Route::get('user/profile', [UserController::class, 'profile']);
@@ -300,3 +298,9 @@ Route::get('/getOrderByDelivery', [OrderController::class, 'getOrderByDelivery']
 
 Route::get('/admin/banners/{id}', [RestaurantBannerController::class, 'show']);
 Route::get('/admin/banners/restaurant/{restaurantId}', [RestaurantBannerController::class, 'findByRestaurantId']);
+
+
+Route::get('/deliveries', [DeliveryManagementController::class, 'index'])->name('deliveries.index');
+Route::get('/deliveries/{id}', [DeliveryManagementController::class, 'show'])->name('deliveries.show');
+
+Route::apiResource('restaurant/deliveries', DeliveryController::class);
