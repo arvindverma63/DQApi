@@ -6353,6 +6353,85 @@
                 }
             }
         },
+        "/deleteTransaction/{id}": {
+            "delete": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Delete transaction details by ID",
+                "description": "Delete transaction details for the specified transaction ID.",
+                "operationId": "86ed57787273a85153b5247d232b837d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the transaction to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Transaction]."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to delete transaction."
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error message details"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/rest-profile/{id}": {
             "get": {
                 "tags": [

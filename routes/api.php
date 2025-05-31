@@ -269,6 +269,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/transactionById/{id}', [TransactionController::class, 'getTransactionById']);
 
     Route::get('/reports', [ReportController::class, 'getDashboardStats']);
+    Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'destroy']);
 
 
 

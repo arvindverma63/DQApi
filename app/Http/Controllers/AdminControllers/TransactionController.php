@@ -113,7 +113,7 @@ class TransactionController extends Controller
                 'total' => 'required|numeric|min:0',
                 'type' => 'required|string',
                 'restaurantId' => 'required|string',
-                'tableNumber'=>'nullable|string',
+                'tableNumber' => 'nullable|string',
             ]);
 
             Log::info('Transaction validation passed.', ['validated_data' => $validated]);
@@ -128,7 +128,7 @@ class TransactionController extends Controller
                 'total' => $validated['total'],
                 'payment_type' => $validated['type'],
                 'restaurantId' => $validated['restaurantId'],
-                'tableNumber'=>$validated['tableNumber'],
+                'tableNumber' => $validated['tableNumber'],
             ]);
 
             Log::info('Transaction created successfully.', ['transaction_id' => $transaction->id]);
@@ -272,7 +272,7 @@ class TransactionController extends Controller
 
                 return [
                     'id' => $transaction->id,
-                    'user_id'=>$transaction->user_id,
+                    'user_id' => $transaction->user_id,
                     'userName' => $userName->name,
                     'items' => $transaction->items, // Decode JSON to array
                     'tax' => $transaction->tax,
@@ -283,7 +283,7 @@ class TransactionController extends Controller
                     'restaurantId' => $transaction->restaurantId,
                     'created_at' => $transaction->created_at,
                     'updated_at' => $transaction->updated_at,
-                    'tableNumber'=>$transaction->tableNumber,
+                    'tableNumber' => $transaction->tableNumber,
                 ];
             });
 
@@ -298,111 +298,170 @@ class TransactionController extends Controller
     }
 
     /**
- * @OA\Get(
- *     path="/transactionById/{id}",
- *     summary="Get transaction details by ID",
- *     description="Fetches transaction details for the specified transaction ID.",
- *     operationId="getTransactionById",
- *     tags={"Transaction"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID of the transaction to fetch",
- *         @OA\Schema(
- *             type="integer",
- *             format="int64"
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Transaction details retrieved successfully",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(
- *                 type="object",
- *                 @OA\Property(property="id", type="integer", description="Transaction ID"),
- *                 @OA\Property(property="userName", type="string", description="Customer's name"),
- *                 @OA\Property(property="userEmail", type="string", description="Customer's email"),
- *                 @OA\Property(property="items", type="array", @OA\Items(type="string"), description="List of items in the transaction"),
- *                 @OA\Property(property="tax", type="number", format="float", description="Tax applied to the transaction"),
- *                 @OA\Property(property="discount", type="number", format="float", description="Discount applied to the transaction"),
- *                 @OA\Property(property="sub_total", type="number", format="float", description="Subtotal before tax and discount"),
- *                 @OA\Property(property="total", type="number", format="float", description="Total after tax and discount"),
- *                 @OA\Property(property="payment_type", type="string", description="Payment method used (e.g., credit card, cash)"),
- *                 @OA\Property(property="restaurantId", type="integer", description="Restaurant ID associated with the transaction"),
- *                 @OA\Property(property="created_at", type="string", format="date-time", description="Transaction creation date and time"),
- *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Transaction last update date and time")
- *             )
- *         )
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="No transactions found for the given ID",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example="false"),
- *             @OA\Property(property="message", type="string", example="No transactions found.")
- *         )
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Internal server error",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example="false"),
- *             @OA\Property(property="message", type="string", example="An error occurred while retrieving transactions.")
- *         )
- *     )
- * )
- */
-public function getTransactionById($id)
-{
-    try {
-        // Fetch transactions for the specified restaurant ID
-        $transactions = Transaction::where('id', $id)->get();
+     * @OA\Get(
+     *     path="/transactionById/{id}",
+     *     summary="Get transaction details by ID",
+     *     description="Fetches transaction details for the specified transaction ID.",
+     *     operationId="getTransactionById",
+     *     tags={"Transaction"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the transaction to fetch",
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Transaction details retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", description="Transaction ID"),
+     *                 @OA\Property(property="userName", type="string", description="Customer's name"),
+     *                 @OA\Property(property="userEmail", type="string", description="Customer's email"),
+     *                 @OA\Property(property="items", type="array", @OA\Items(type="string"), description="List of items in the transaction"),
+     *                 @OA\Property(property="tax", type="number", format="float", description="Tax applied to the transaction"),
+     *                 @OA\Property(property="discount", type="number", format="float", description="Discount applied to the transaction"),
+     *                 @OA\Property(property="sub_total", type="number", format="float", description="Subtotal before tax and discount"),
+     *                 @OA\Property(property="total", type="number", format="float", description="Total after tax and discount"),
+     *                 @OA\Property(property="payment_type", type="string", description="Payment method used (e.g., credit card, cash)"),
+     *                 @OA\Property(property="restaurantId", type="integer", description="Restaurant ID associated with the transaction"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Transaction creation date and time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Transaction last update date and time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No transactions found for the given ID",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example="false"),
+     *             @OA\Property(property="message", type="string", example="No transactions found.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example="false"),
+     *             @OA\Property(property="message", type="string", example="An error occurred while retrieving transactions.")
+     *         )
+     *     )
+     * )
+     */
+    public function getTransactionById($id)
+    {
+        try {
+            // Fetch transactions for the specified restaurant ID
+            $transactions = Transaction::where('id', $id)->get();
 
-        if ($transactions->isEmpty()) {
+            if ($transactions->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No transactions found.'
+                ], 404);
+            }
+
+            // Transform the data to match the desired structure
+            $responseData = $transactions->map(function ($transaction) {
+
+                $customer = Customer::find($transaction->user_id);
+                $restaurant = UserProfile::where('restaurantId', $transaction->restaurantId)->first();
+                $appUrl = env('APP_URL');
+                $avatar = $appUrl . '/' . $restaurant->image;
+                return [
+                    'id' => $transaction->id,
+                    'userName' => $customer->name,
+                    'userEmail' => $customer->email ?? null,
+                    'restaurantLogo' => $avatar ?? null,
+                    'items' => json_decode($transaction->items), // Decode JSON to array
+                    'tax' => floatval($transaction->tax),
+                    'discount' => floatval($transaction->discount),
+                    'sub_total' => floatval($transaction->sub_total),
+                    'total' => floatval($transaction->total),
+                    'restaurantAddress' => $restaurant->address,
+                    'phoneNumber' => $restaurant->phoneNumber,
+                    'restaurantEmail' => $restaurant->email,
+                    'payment_type' => $transaction->payment_type,
+                    'restaurantId' => $transaction->restaurantId,
+                    'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
+                    'updated_at' => $transaction->updated_at,
+                    'tableNumber' => $transaction->tableNumber,
+                ];
+            });
+
+            return response()->json($responseData, 200);
+        } catch (\Exception $e) {
+            // Handle any unexpected errors
             return response()->json([
                 'success' => false,
-                'message' => 'No transactions found.'
-            ], 404);
+                'message' => 'An error occurred while retrieving transactions.'
+            ], 500);
         }
-
-        // Transform the data to match the desired structure
-        $responseData = $transactions->map(function ($transaction) {
-
-            $customer = Customer::find($transaction->user_id);
-            $restaurant = UserProfile::where('restaurantId',$transaction->restaurantId)->first();
-            $appUrl = env('APP_URL');
-            $avatar = $appUrl.'/'.$restaurant->image;
-            return [
-                'id' => $transaction->id,
-                'userName' => $customer->name,
-                'userEmail' => $customer->email ?? null,
-                'restaurantLogo'=>$avatar ?? null,
-                'items' => json_decode($transaction->items), // Decode JSON to array
-                'tax' => floatval($transaction->tax),
-                'discount' => floatval($transaction->discount),
-                'sub_total' => floatval($transaction->sub_total),
-                'total' => floatval($transaction->total),
-                'restaurantAddress'=>$restaurant->address,
-                'phoneNumber' => $restaurant->phoneNumber,
-                'restaurantEmail'=>$restaurant->email,
-                'payment_type' => $transaction->payment_type,
-                'restaurantId' => $transaction->restaurantId,
-                'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
-                'updated_at' => $transaction->updated_at,
-                'tableNumber'=>$transaction->tableNumber,
-            ];
-        });
-
-        return response()->json($responseData, 200);
-    } catch (\Exception $e) {
-        // Handle any unexpected errors
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred while retrieving transactions.'
-        ], 500);
     }
-}
 
+    /**
+     *
+     * @OA\Delete(
+     *     path="/deleteTransaction/{id}",
+     *     summary="Delete transaction details by ID",
+     *     description="Delete transaction details for the specified transaction ID.",
+     *     tags={"Transaction"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the transaction to delete",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Transaction deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Transaction deleted successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Transaction not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Transaction not found"),
+     *             @OA\Property(property="error", type="string", example="No query results for model [App\\Models\\Transaction].")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to delete transaction."),
+     *             @OA\Property(property="error", type="string", example="Error message details")
+     *         )
+     *     )
+     * )
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        try {
+            $transaction = Transaction::findOrFail($id);
+            $transaction->delete();
+
+            return response()->json([
+                'message' => 'Transaction deleted successfully.'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error deleting transaction: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to delete transaction.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
