@@ -926,7 +926,7 @@ class ReportController extends Controller
 
             // Fetch transactions in date range and for restaurant
             $transactions = Transaction::whereBetween('created_at', [$startDate, $endDate])
-                ->where('restaurant_id', $restaurantId)
+                ->where('restaurantId', $restaurantId)
                 ->get();
 
             // Group by date
