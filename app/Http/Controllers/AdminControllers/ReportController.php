@@ -846,4 +846,139 @@ class ReportController extends Controller
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 400);
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/mostOrderDishes",
+     *     summary="Get most ordered dishes grouped by date",
+     *     description="Retrieve the most ordered dishes for a specific restaurant within a date range, grouped by each date.",
+     *     operationId="mostOrderDishes",
+     *     tags={"Transaction"},
+     *     @OA\Parameter(
+     *         name="startDate",
+     *         in="query",
+     *         required=true,
+     *         description="Start date of the range (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2025-06-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="endDate",
+     *         in="query",
+     *         required=true,
+     *         description="End date of the range (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2025-06-02")
+     *     ),
+     *     @OA\Parameter(
+     *         name="restaurantId",
+     *         in="query",
+     *         required=true,
+     *         description="ID of the restaurant",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of most ordered dishes grouped by date",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="date", type="string", example="2025-06-01"),
+     *                 @OA\Property(
+     *                     property="dishes",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="itemId", type="string", example="209"),
+     *                         @OA\Property(property="itemName", type="string", example="Shake"),
+     *                         @OA\Property(property="totalQuantity", type="integer", example=7)
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No transactions found for the given restaurant ID",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="No transactions found.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="An error occurred while retrieving transactions."),
+     *             @OA\Property(property="error", type="string", example="Exception message here")
+     *         )
+     *     )
+     * )
+     */
+
+    public function mostOrderDishes(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'startDate'     => 'string|required',
+                'endDate'       => 'string|required',
+                'restaurantId'  => 'required|integer'
+            ]);
+
+            $startDate = Carbon::parse($validated['startDate'])->startOfDay();
+            $endDate = Carbon::parse($validated['endDate'])->endOfDay();
+            $restaurantId = $validated['restaurantId'];
+
+            // Fetch transactions in date range and for restaurant
+            $transactions = Transaction::whereBetween('created_at', [$startDate, $endDate])
+                ->where('restaurant_id', $restaurantId)
+                ->get();
+
+            // Group by date
+            $groupedByDate = [];
+
+            foreach ($transactions as $transaction) {
+                $date = Carbon::parse($transaction->created_at)->toDateString(); // e.g., 2025-06-02
+                $items = json_decode($transaction->item, true); // Convert item JSON
+
+                foreach ($items as $item) {
+                    $itemId = $item['itemId'];
+                    $itemName = $item['itemName'];
+                    $quantity = $item['quantity'];
+
+                    if (!isset($groupedByDate[$date])) {
+                        $groupedByDate[$date] = [];
+                    }
+
+                    if (!isset($groupedByDate[$date][$itemId])) {
+                        $groupedByDate[$date][$itemId] = [
+                            'itemId' => $itemId,
+                            'itemName' => $itemName,
+                            'totalQuantity' => 0
+                        ];
+                    }
+
+                    $groupedByDate[$date][$itemId]['totalQuantity'] += $quantity;
+                }
+            }
+
+            // Format output: sort each date's dishes by quantity
+            $response = [];
+            foreach ($groupedByDate as $date => $dishes) {
+                $sortedDishes = collect($dishes)->sortByDesc('totalQuantity')->values();
+                $response[] = [
+                    'date' => $date,
+                    'dishes' => $sortedDishes
+                ];
+            }
+
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving transactions.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
