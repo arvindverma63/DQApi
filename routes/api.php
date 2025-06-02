@@ -270,8 +270,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/reports', [ReportController::class, 'getDashboardStats']);
     Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'destroy']);
-    Route::get('/POStransactions',[TransactionController::class,'getPOSTransactions']);
-    Route::get('/mostOrderDishes',[ReportController::class,'mostOrderDishes']);
+    Route::get('/POStransactions', [TransactionController::class, 'getPOSTransactions']);
 
 
 
@@ -286,6 +285,7 @@ Route::middleware(['auth:api'])->group(function () {
 
 //Web App Api's
 
+Route::get('/mostOrderDishes', [ReportController::class, 'mostOrderDishes']);
 Route::get('/webMenu', [WebOrderController::class, 'menu']);
 Route::post('/addOrder', [WebOrderController::class, 'addTransaction']);
 Route::get('/webMenu/categories', [WebOrderController::class, 'getAllCategories']);
