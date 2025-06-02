@@ -855,7 +855,7 @@ class ReportController extends Controller
      *     summary="Get most ordered dishes grouped by date",
      *     description="Retrieve the most ordered dishes for a specific restaurant within a date range, grouped by each date.",
      *     operationId="mostOrderDishes",
-     *     tags={"Transaction"},
+     *     tags={"Reports"},
      *     @OA\Parameter(
      *         name="startDate",
      *         in="query",

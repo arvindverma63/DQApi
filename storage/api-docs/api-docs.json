@@ -4577,7 +4577,7 @@
         "/mostOrderDishes": {
             "get": {
                 "tags": [
-                    "Transaction"
+                    "Reports"
                 ],
                 "summary": "Get most ordered dishes grouped by date",
                 "description": "Retrieve the most ordered dishes for a specific restaurant within a date range, grouped by each date.",
@@ -4603,16 +4603,6 @@
                             "type": "string",
                             "format": "date",
                             "example": "2025-06-02"
-                        }
-                    },
-                    {
-                        "name": "restaurantId",
-                        "in": "query",
-                        "description": "ID of the restaurant",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
                         }
                     }
                 ],
@@ -9107,10 +9097,6 @@
             "description": "Reports"
         },
         {
-            "name": "Transaction",
-            "description": "Transaction"
-        },
-        {
             "name": "Reservations",
             "description": "Reservations"
         },
@@ -9129,6 +9115,10 @@
         {
             "name": "Suppliers",
             "description": "Suppliers"
+        },
+        {
+            "name": "Transaction",
+            "description": "Transaction"
         },
         {
             "name": "Authentication",
