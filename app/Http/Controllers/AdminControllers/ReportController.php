@@ -921,7 +921,8 @@ class ReportController extends Controller
 
             $startDate = Carbon::parse($validated['startDate'])->startOfDay();
             $endDate = Carbon::parse($validated['endDate'])->endOfDay();
-            $restaurantId = FacadesAuth::user()->restaurantId;
+            $restaurantId = \Illuminate\Support\Facades\Auth::user()->restaurantId;
+
 
             // Fetch transactions in date range and for restaurant
             $transactions = Transaction::whereBetween('created_at', [$startDate, $endDate])
