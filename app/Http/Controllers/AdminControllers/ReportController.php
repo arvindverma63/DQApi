@@ -752,7 +752,7 @@ class ReportController extends Controller
         return response()->json($data);
     }
 
-/**
+    /**
      * @OA\Get(
      *     path="/report-by-table",
      *     summary="Get transaction report by table number",

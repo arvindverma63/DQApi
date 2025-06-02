@@ -6432,6 +6432,71 @@
                 }
             }
         },
+        "/POStransactions": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get transactions by restaurant ID",
+                "description": "Retrieve a list of transactions for a specific restaurant.",
+                "operationId": "POStransactions",
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Transaction"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No transactions found for the given restaurant ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No transactions found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred while retrieving transactions."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/rest-profile/{id}": {
             "get": {
                 "tags": [

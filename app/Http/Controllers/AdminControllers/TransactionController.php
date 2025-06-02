@@ -9,6 +9,7 @@ use App\Models\Menu;
 use App\Models\MenuInventory;
 use App\Models\Transaction;
 use App\Models\UserProfile;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -461,6 +462,80 @@ class TransactionController extends Controller
             return response()->json([
                 'message' => 'Failed to delete transaction.',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/POStransactions",
+     *     summary="Get transactions by restaurant ID",
+     *     description="Retrieve a list of transactions for a specific restaurant.",
+     *     operationId="POStransactions",
+     *     tags={"Transaction"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful retrieval of transactions",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Transaction")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No transactions found for the given restaurant ID",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="No transactions found.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="An error occurred while retrieving transactions.")
+     *         )
+     *     )
+     * )
+     */
+    public function getPOSTransactions()
+    {
+        try {
+            // Fetch transactions for the specified restaurant ID
+            $startOfDay = Carbon::today();
+            $endOfDay = Carbon::today()->endOfDay();
+
+            $transactions = Transaction::whereBetween('created_at', [$startOfDay, $endOfDay])->get();
+
+
+            // Transform the data to match the desired structure
+            $responseData = $transactions->map(function ($transaction) {
+                $userName = Customer::find($transaction->user_id);
+
+                return [
+                    'id' => $transaction->id,
+                    'user_id' => $transaction->user_id,
+                    'userName' => $userName->name,
+                    'items' => $transaction->items, // Decode JSON to array
+                    'tax' => $transaction->tax,
+                    'discount' => $transaction->discount,
+                    'sub_total' => $transaction->sub_total,
+                    'total' => $transaction->total,
+                    'payment_type' => $transaction->payment_type,
+                    'restaurantId' => $transaction->restaurantId,
+                    'created_at' => $transaction->created_at,
+                    'updated_at' => $transaction->updated_at,
+                    'tableNumber' => $transaction->tableNumber,
+                ];
+            });
+
+            return response()->json($responseData, 200);
+        } catch (\Exception $e) {
+            // Handle any unexpected errors
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving transactions.'
             ], 500);
         }
     }

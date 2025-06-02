@@ -270,6 +270,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/reports', [ReportController::class, 'getDashboardStats']);
     Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'destroy']);
+    Route::get('/POStransactions',[ReportController::class,'getPOSTransactions']);
 
 
 
