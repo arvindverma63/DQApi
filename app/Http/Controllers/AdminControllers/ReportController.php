@@ -934,7 +934,7 @@ class ReportController extends Controller
 
             foreach ($transactions as $transaction) {
                 $date = Carbon::parse($transaction->created_at)->toDateString(); // e.g., 2025-06-02
-                $items = json_decode($transaction->item, true); // Convert item JSON
+                $items = json_decode($transaction->items, true); // Convert item JSON
 
                 foreach ($items as $item) {
                     $itemId = $item['itemId'];
