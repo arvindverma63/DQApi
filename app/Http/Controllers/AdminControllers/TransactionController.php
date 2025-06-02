@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\UserProfile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -506,7 +507,8 @@ class TransactionController extends Controller
             $startOfDay = Carbon::today();
             $endOfDay = Carbon::today()->endOfDay();
 
-            $transactions = Transaction::whereBetween('created_at', [$startOfDay, $endOfDay])->get();
+            $transactions = Transaction::whereBetween('created_at', [$startOfDay, $endOfDay])
+                            ->where('restaurantId',Auth::user()->restaurantId)->get();
 
 
             // Transform the data to match the desired structure

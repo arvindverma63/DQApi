@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Transaction;
+use Auth;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Log;
 
 class ReportController extends Controller
@@ -868,13 +870,6 @@ class ReportController extends Controller
      *         description="End date of the range (YYYY-MM-DD)",
      *         @OA\Schema(type="string", format="date", example="2025-06-02")
      *     ),
-     *     @OA\Parameter(
-     *         name="restaurantId",
-     *         in="query",
-     *         required=true,
-     *         description="ID of the restaurant",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of most ordered dishes grouped by date",
@@ -922,12 +917,11 @@ class ReportController extends Controller
             $validated = $request->validate([
                 'startDate'     => 'string|required',
                 'endDate'       => 'string|required',
-                'restaurantId'  => 'required|integer'
             ]);
 
             $startDate = Carbon::parse($validated['startDate'])->startOfDay();
             $endDate = Carbon::parse($validated['endDate'])->endOfDay();
-            $restaurantId = $validated['restaurantId'];
+            $restaurantId = FacadesAuth::user()->restaurantId;
 
             // Fetch transactions in date range and for restaurant
             $transactions = Transaction::whereBetween('created_at', [$startDate, $endDate])
