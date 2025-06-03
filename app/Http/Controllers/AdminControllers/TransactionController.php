@@ -408,11 +408,9 @@ class TransactionController extends Controller
     }
 
     /**
-     *
      * @OA\Delete(
      *     path="/deleteTransaction/{id}",
-     *     summary="Delete transaction details by ID",
-     *     description="Delete transaction details for the specified transaction ID.",
+     *     summary="Soft delete a transaction and store note",
      *     tags={"Transaction"},
      *     @OA\Parameter(
      *         name="id",
@@ -420,6 +418,12 @@ class TransactionController extends Controller
      *         description="ID of the transaction to delete",
      *         required=true,
      *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="note", type="string", example="Incorrect amount recorded")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -432,8 +436,7 @@ class TransactionController extends Controller
      *         response=404,
      *         description="Transaction not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Transaction not found"),
-     *             @OA\Property(property="error", type="string", example="No query results for model [App\\Models\\Transaction].")
+     *             @OA\Property(property="message", type="string", example="Transaction not found")
      *         )
      *     ),
      *     @OA\Response(
@@ -445,14 +448,18 @@ class TransactionController extends Controller
      *         )
      *     )
      * )
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
         try {
             $transaction = Transaction::findOrFail($id);
+
+            // Save note if provided
+            if ($request->has('note')) {
+                $transaction->note = $request->input('note');
+            }
+
             $transaction->delete();
 
             return response()->json([
@@ -508,7 +515,7 @@ class TransactionController extends Controller
             $endOfDay = Carbon::today()->endOfDay();
 
             $transactions = Transaction::whereBetween('created_at', [$startOfDay, $endOfDay])
-                            ->where('restaurantId',Auth::user()->restaurantId)->get();
+                ->where('restaurantId', Auth::user()->restaurantId)->get();
 
 
             // Transform the data to match the desired structure
@@ -541,6 +548,4 @@ class TransactionController extends Controller
             ], 500);
         }
     }
-
-
 }

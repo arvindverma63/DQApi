@@ -6477,8 +6477,7 @@
                 "tags": [
                     "Transaction"
                 ],
-                "summary": "Delete transaction details by ID",
-                "description": "Delete transaction details for the specified transaction ID.",
+                "summary": "Soft delete a transaction and store note",
                 "operationId": "86ed57787273a85153b5247d232b837d",
                 "parameters": [
                     {
@@ -6491,6 +6490,22 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "note": {
+                                        "type": "string",
+                                        "example": "Incorrect amount recorded"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Transaction deleted successfully",
@@ -6517,10 +6532,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Transaction not found"
-                                        },
-                                        "error": {
-                                            "type": "string",
-                                            "example": "No query results for model [App\\\\Models\\\\Transaction]."
                                         }
                                     },
                                     "type": "object"
