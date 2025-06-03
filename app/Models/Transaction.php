@@ -33,6 +33,7 @@ class Transaction extends Model
         'restaurantId',
         'addedBy',
         'tableNumber',
+        'note'
     ];
 
     /**
