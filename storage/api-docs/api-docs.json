@@ -7480,8 +7480,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get total revenue grouped by date",
-                "description": "Retrieve the total revenue for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get total revenue with full transaction details grouped by date",
+                "description": "Retrieve the total revenue for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "totalRevenueByDate",
                 "parameters": [
                     {
@@ -7509,7 +7509,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Total revenue grouped by date",
+                        "description": "Total revenue with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7524,6 +7524,78 @@
                                                 "type": "number",
                                                 "format": "float",
                                                 "example": 150.75
+                                            },
+                                            "transactions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 101
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "tax": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5.5
+                                                        },
+                                                        "discount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2
+                                                        },
+                                                        "sub_total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        },
+                                                        "total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 53.5
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "Credit Card"
+                                                        },
+                                                        "restaurantId": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "addedBy": {
+                                                            "type": "integer",
+                                                            "example": 201
+                                                        },
+                                                        "tableNumber": {
+                                                            "type": "string",
+                                                            "example": "Table 1"
+                                                        },
+                                                        "note": {
+                                                            "type": "string",
+                                                            "example": "Special request"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-06-01T12:00:00Z"
+                                                        },
+                                                        "deleted_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
                                             }
                                         },
                                         "type": "object"
@@ -7584,8 +7656,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get transactions grouped by payment type and date",
-                "description": "Retrieve the number of transactions by payment type for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get transactions by payment type with full transaction details grouped by date",
+                "description": "Retrieve the number of transactions by payment type for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "transactionsByPaymentType",
                 "parameters": [
                     {
@@ -7613,7 +7685,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Transactions grouped by payment type and date",
+                        "description": "Transactions by payment type with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7635,6 +7707,78 @@
                                                         "transactionCount": {
                                                             "type": "integer",
                                                             "example": 10
+                                                        },
+                                                        "transactions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "user_id": {
+                                                                        "type": "integer",
+                                                                        "example": 101
+                                                                    },
+                                                                    "items": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "tax": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 5.5
+                                                                    },
+                                                                    "discount": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 2
+                                                                    },
+                                                                    "sub_total": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 50
+                                                                    },
+                                                                    "total": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 53.5
+                                                                    },
+                                                                    "payment_type": {
+                                                                        "type": "string",
+                                                                        "example": "Credit Card"
+                                                                    },
+                                                                    "restaurantId": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "addedBy": {
+                                                                        "type": "integer",
+                                                                        "example": 201
+                                                                    },
+                                                                    "tableNumber": {
+                                                                        "type": "string",
+                                                                        "example": "Table 1"
+                                                                    },
+                                                                    "note": {
+                                                                        "type": "string",
+                                                                        "example": "Special request"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2025-06-01T12:00:00Z"
+                                                                    },
+                                                                    "deleted_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
                                                         }
                                                     },
                                                     "type": "object"
@@ -7699,8 +7843,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get average order value grouped by date",
-                "description": "Retrieve the average order value for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get average order value with full transaction details grouped by date",
+                "description": "Retrieve the average order value for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "averageOrderValueByDate",
                 "parameters": [
                     {
@@ -7728,7 +7872,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Average order value grouped by date",
+                        "description": "Average order value with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7743,6 +7887,78 @@
                                                 "type": "number",
                                                 "format": "float",
                                                 "example": 25.5
+                                            },
+                                            "transactions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 101
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "tax": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5.5
+                                                        },
+                                                        "discount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2
+                                                        },
+                                                        "sub_total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        },
+                                                        "total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 53.5
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "Credit Card"
+                                                        },
+                                                        "restaurantId": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "addedBy": {
+                                                            "type": "integer",
+                                                            "example": 201
+                                                        },
+                                                        "tableNumber": {
+                                                            "type": "string",
+                                                            "example": "Table 1"
+                                                        },
+                                                        "note": {
+                                                            "type": "string",
+                                                            "example": "Special request"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-06-01T12:00:00Z"
+                                                        },
+                                                        "deleted_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
                                             }
                                         },
                                         "type": "object"
@@ -7803,8 +8019,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get discount usage grouped by date",
-                "description": "Retrieve the total discount applied for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get discount usage with full transaction details grouped by date",
+                "description": "Retrieve the total discount applied for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "discountUsageByDate",
                 "parameters": [
                     {
@@ -7832,7 +8048,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Total discount applied grouped by date",
+                        "description": "Total discount applied with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7847,6 +8063,78 @@
                                                 "type": "number",
                                                 "format": "float",
                                                 "example": 50.25
+                                            },
+                                            "transactions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 101
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "tax": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5.5
+                                                        },
+                                                        "discount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2
+                                                        },
+                                                        "sub_total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        },
+                                                        "total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 53.5
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "Credit Card"
+                                                        },
+                                                        "restaurantId": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "addedBy": {
+                                                            "type": "integer",
+                                                            "example": 201
+                                                        },
+                                                        "tableNumber": {
+                                                            "type": "string",
+                                                            "example": "Table 1"
+                                                        },
+                                                        "note": {
+                                                            "type": "string",
+                                                            "example": "Special request"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-06-01T12:00:00Z"
+                                                        },
+                                                        "deleted_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
                                             }
                                         },
                                         "type": "object"
@@ -7907,8 +8195,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get table usage grouped by date",
-                "description": "Retrieve the number of transactions per table for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get table usage with full transaction details grouped by date",
+                "description": "Retrieve the number of transactions per table for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "tableUsageByDate",
                 "parameters": [
                     {
@@ -7936,7 +8224,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Table usage grouped by date",
+                        "description": "Table usage with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7958,6 +8246,78 @@
                                                         "transactionCount": {
                                                             "type": "integer",
                                                             "example": 5
+                                                        },
+                                                        "transactions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "user_id": {
+                                                                        "type": "integer",
+                                                                        "example": 101
+                                                                    },
+                                                                    "items": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "tax": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 5.5
+                                                                    },
+                                                                    "discount": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 2
+                                                                    },
+                                                                    "sub_total": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 50
+                                                                    },
+                                                                    "total": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 53.5
+                                                                    },
+                                                                    "payment_type": {
+                                                                        "type": "string",
+                                                                        "example": "Credit Card"
+                                                                    },
+                                                                    "restaurantId": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "addedBy": {
+                                                                        "type": "integer",
+                                                                        "example": 201
+                                                                    },
+                                                                    "tableNumber": {
+                                                                        "type": "string",
+                                                                        "example": "Table 1"
+                                                                    },
+                                                                    "note": {
+                                                                        "type": "string",
+                                                                        "example": "Special request"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2025-06-01T12:00:00Z"
+                                                                    },
+                                                                    "deleted_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
                                                         }
                                                     },
                                                     "type": "object"
@@ -8022,8 +8382,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get tax collected grouped by date",
-                "description": "Retrieve the total tax collected for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get tax collected with full transaction details grouped by date",
+                "description": "Retrieve the total tax collected for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "taxCollectedByDate",
                 "parameters": [
                     {
@@ -8051,7 +8411,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Total tax collected grouped by date",
+                        "description": "Total tax collected with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -8066,6 +8426,78 @@
                                                 "type": "number",
                                                 "format": "float",
                                                 "example": 12.75
+                                            },
+                                            "transactions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 101
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "tax": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5.5
+                                                        },
+                                                        "discount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2
+                                                        },
+                                                        "sub_total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        },
+                                                        "total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 53.5
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "Credit Card"
+                                                        },
+                                                        "restaurantId": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "addedBy": {
+                                                            "type": "integer",
+                                                            "example": 201
+                                                        },
+                                                        "tableNumber": {
+                                                            "type": "string",
+                                                            "example": "Table 1"
+                                                        },
+                                                        "note": {
+                                                            "type": "string",
+                                                            "example": "Special request"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-06-01T12:00:00Z"
+                                                        },
+                                                        "deleted_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
                                             }
                                         },
                                         "type": "object"
@@ -8126,8 +8558,8 @@
                 "tags": [
                     "Reports"
                 ],
-                "summary": "Get transaction count grouped by date",
-                "description": "Retrieve the number of transactions for a specific restaurant within a date range, grouped by each date.",
+                "summary": "Get transaction count with full transaction details grouped by date",
+                "description": "Retrieve the number of transactions for a specific restaurant within a date range, grouped by each date, including all transaction columns.",
                 "operationId": "transactionCountByDate",
                 "parameters": [
                     {
@@ -8149,13 +8581,13 @@
                         "schema": {
                             "type": "string",
                             "format": "date",
-                            "example": "2025-06-02"
+                            "example": "2025-5-02"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Transaction count grouped by date",
+                        "description": "Transaction count with transaction details grouped by date",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -8169,6 +8601,78 @@
                                             "transactionCount": {
                                                 "type": "integer",
                                                 "example": 20
+                                            },
+                                            "transactions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 101
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "tax": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5.5
+                                                        },
+                                                        "discount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2
+                                                        },
+                                                        "sub_total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        },
+                                                        "total": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 53.5
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "Credit Card"
+                                                        },
+                                                        "restaurantId": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "addedBy": {
+                                                            "type": "integer",
+                                                            "example": 201
+                                                        },
+                                                        "tableNumber": {
+                                                            "type": "string",
+                                                            "example": "Table 1"
+                                                        },
+                                                        "note": {
+                                                            "type": "string",
+                                                            "example": "Special request"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-06-01T12:00:00Z"
+                                                        },
+                                                        "deleted_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
                                             }
                                         },
                                         "type": "object"
