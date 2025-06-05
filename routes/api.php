@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminControllers\SocialMediaController;
 use App\Http\Controllers\AdminControllers\SubCategoryController;
 use App\Http\Controllers\AdminControllers\TransactionController;
 use App\Http\Controllers\AdminControllers\UserProfileController;
+use App\Http\Controllers\OtherReportsController;
 use App\Http\Controllers\UserControllers\MobileMenuController;
 use App\Http\Controllers\UserControllers\UserMenuController;
 use App\Http\Controllers\WebAppControllers\WebOrderController;
@@ -270,10 +271,17 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/reports', [ReportController::class, 'getDashboardStats']);
     Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'destroy']);
-    Route::get('/POStransactions',[TransactionController::class,'getPOSTransactions']);
-    Route::get('/mostOrderDishes',[ReportController::class,'mostOrderDishes']);
+    Route::get('/POStransactions', [TransactionController::class, 'getPOSTransactions']);
+    Route::get('/mostOrderDishes', [ReportController::class, 'mostOrderDishes']);
 
-
+    Route::get('/mostOrderDishes', [OtherReportsController::class, 'mostOrderDishes'])->name('reports.mostOrderDishes');
+    Route::get('/totalRevenueByDate', [OtherReportsController::class, 'totalRevenueByDate'])->name('reports.totalRevenueByDate');
+    Route::get('/transactionsByPaymentType', [OtherReportsController::class, 'transactionsByPaymentType'])->name('reports.transactionsByPaymentType');
+    Route::get('/averageOrderValueByDate', [OtherReportsController::class, 'averageOrderValueByDate'])->name('reports.averageOrderValueByDate');
+    Route::get('/discountUsageByDate', [OtherReportsController::class, 'discountUsageByDate'])->name('reports.discountUsageByDate');
+    Route::get('/tableUsageByDate', [OtherReportsController::class, 'tableUsageByDate'])->name('reports.tableUsageByDate');
+    Route::get('/taxCollectedByDate', [OtherReportsController::class, 'taxCollectedByDate'])->name('reports.taxCollectedByDate');
+    Route::get('/transactionCountByDate', [OtherReportsController::class, 'transactionCountByDate'])->name('reports.transactionCountByDate');
 
     // Regular user routes (requires 'user' role)
     Route::middleware(['role:user'])->group(function () {
