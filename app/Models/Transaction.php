@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PHPUnit\Framework\Constraint\Operator;
 
 class Transaction extends Model
 {
@@ -33,6 +34,7 @@ class Transaction extends Model
         'restaurantId',
         'addedBy',
         'tableNumber',
+        'operator',
         'note'
     ];
 
@@ -64,5 +66,10 @@ class Transaction extends Model
     public function user()
     {
         return $this->belongsTo(Customer::class, 'user_id');
+    }
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class, 'operator');
     }
 }

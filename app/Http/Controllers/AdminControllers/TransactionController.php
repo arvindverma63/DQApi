@@ -77,7 +77,8 @@ class TransactionController extends Controller
      *             @OA\Property(property="sub_total", type="number", format="float", description="Subtotal amount", example=300.00),
      *             @OA\Property(property="total", type="number", format="float", description="Total amount", example=305.00),
      *             @OA\Property(property="type", type="string", description="Payment type", example="credit_card"),
-     *             @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298")
+     *             @OA\Property(property="restaurantId", type="string", description="Restaurant ID", example="R1728231298"),
+     *             @OA\Property(property="operator", type="number", description="Operator ID", example=1)
      *         )
      *     ),
      *     @OA\Response(
@@ -116,6 +117,7 @@ class TransactionController extends Controller
                 'type' => 'required|string',
                 'restaurantId' => 'required|string',
                 'tableNumber' => 'nullable|string',
+                'operator' => 'nullable|integer',
             ]);
 
             Log::info('Transaction validation passed.', ['validated_data' => $validated]);
@@ -131,6 +133,7 @@ class TransactionController extends Controller
                 'payment_type' => $validated['type'],
                 'restaurantId' => $validated['restaurantId'],
                 'tableNumber' => $validated['tableNumber'],
+                'operator' => $validated['operator'],
             ]);
 
             Log::info('Transaction created successfully.', ['transaction_id' => $transaction->id]);
@@ -394,6 +397,7 @@ class TransactionController extends Controller
                     'created_at' => $transaction->created_at->format('d:m:Y H:i:s'),
                     'updated_at' => $transaction->updated_at,
                     'tableNumber' => $transaction->tableNumber,
+                    'operator' => $transaction->operator ?? "Admin",
                 ];
             });
 

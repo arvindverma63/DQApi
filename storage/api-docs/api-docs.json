@@ -6384,6 +6384,11 @@
                                         "description": "Restaurant ID",
                                         "type": "string",
                                         "example": "R1728231298"
+                                    },
+                                    "operator": {
+                                        "description": "Operator ID",
+                                        "type": "number",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
