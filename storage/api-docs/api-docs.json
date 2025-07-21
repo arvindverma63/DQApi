@@ -198,6 +198,185 @@
                 }
             }
         },
+        "/bill-operators": {
+            "get": {
+                "tags": [
+                    "Bill Operators"
+                ],
+                "summary": "List all operators for the authenticated restaurant",
+                "operationId": "5a4eaba26ae01bfde009dc5e800bb69c",
+                "responses": {
+                    "200": {
+                        "description": "List of operators",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BillOperator"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Bill Operators"
+                ],
+                "summary": "Create a new operator",
+                "operationId": "3d34f7c8fb6b49b791b5b9d4576f8cf9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "operator"
+                                ],
+                                "properties": {
+                                    "operator": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operator created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillOperator"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/bill-operators/{id}": {
+            "get": {
+                "tags": [
+                    "Bill Operators"
+                ],
+                "summary": "Get a specific operator",
+                "operationId": "14f777c613c1a7f542867f63bdd96ab7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Operator ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operator details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillOperator"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Bill Operators"
+                ],
+                "summary": "Update an operator",
+                "operationId": "fcf6235df2da59fc2668ebbed661cd8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Operator ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "operator"
+                                ],
+                                "properties": {
+                                    "operator": {
+                                        "type": "string",
+                                        "example": "Updated Operator Name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operator updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillOperator"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Bill Operators"
+                ],
+                "summary": "Delete an operator",
+                "operationId": "1baed8741b9abb3385574dc16745db40",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Operator ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operator deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Operator deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/category": {
             "post": {
                 "tags": [
@@ -9810,6 +9989,36 @@
     },
     "components": {
         "schemas": {
+            "BillOperator": {
+                "title": "Bill Operator",
+                "required": [
+                    "restaurantId",
+                    "operator"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurantId": {
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "operator": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Customer": {
                 "properties": {
                     "id": {
@@ -10303,6 +10512,10 @@
         {
             "name": "Admin Email",
             "description": "Admin Email"
+        },
+        {
+            "name": "Bill Operators",
+            "description": "Bill Operators"
         },
         {
             "name": "Category",

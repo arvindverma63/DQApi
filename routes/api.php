@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminControllers\AdminController;
 use App\Http\Controllers\AdminControllers\AdminEmailController;
+use App\Http\Controllers\AdminControllers\BillOperatorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminControllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -159,6 +160,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/menus/status', [MenuController::class, 'updateStatus']);
 
         // Menu management
+
+        Route::get('/bill-operators', [BillOperatorController::class, 'index']);
+        Route::post('/bill-operators', [BillOperatorController::class, 'store']);
+        Route::get('/bill-operators/{id}', [BillOperatorController::class, 'show']);
+        Route::put('/bill-operators/{id}', [BillOperatorController::class, 'update']);
+        Route::delete('/bill-operators/{id}', [BillOperatorController::class, 'destroy']);
 
         // QR management
         Route::post('/qr/create', [QrController::class, 'createQr']);
