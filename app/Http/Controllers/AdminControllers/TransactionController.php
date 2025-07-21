@@ -133,7 +133,7 @@ class TransactionController extends Controller
                 'payment_type' => $validated['type'],
                 'restaurantId' => $validated['restaurantId'],
                 'tableNumber' => $validated['tableNumber'],
-                'operator' => $validated['operator'],
+                'operator' => $validated['operator'] ?? 0,
             ]);
 
             Log::info('Transaction created successfully.', ['transaction_id' => $transaction->id]);
