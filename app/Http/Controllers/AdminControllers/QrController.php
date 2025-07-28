@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class QrController extends Controller
 {
     /**
      * Create a new QR code.
      */
-     /**
+    /**
      * @OA\Post(
      *     path="/qr/create",
      *     summary="Create a new QR code",
@@ -23,7 +23,6 @@ class QrController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="restaurantId", type="string", example="12345"),
      *             @OA\Property(property="tableNo", type="string", example="12"),
-     *
      *         )
      *     ),
      *     @OA\Response(
@@ -37,49 +36,61 @@ class QrController extends Controller
      * )
      */
     public function createQr(Request $request)
-{
-    // Validate the input
-    $validated = $request->validate([
-        'tableNo' => 'string|required',
-        'restaurantId' => 'string|required'
-    ]);
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'tableNo' => 'string|required',
+            'restaurantId' => 'string|required'
+        ]);
 
-    // Generate the text for the QR code, including the full URL
-    $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
+        // Generate the text for the QR code, including the full URL
+        $text = env('MOBILE_URL') . "/menu/?restaurantId=" . $validated['restaurantId'] . "&tableNo=" . $validated['tableNo'];
 
-    // Generate the QR code
-    $qrCode = QrCode::format('png')
-                    ->size(300)
-                    ->encoding('GBK')
-                    ->generate($text);
+        // Generate the QR code
+        $qrCode = QrCode::format('png')
+                        ->size(300)
+                        ->encoding('GBK')
+                        ->generate($text);
 
-    // Save the QR code as an image file in the 'public' disk
-    $fileName = 'qrcodes/' . time() . '.png';
-    Storage::disk('public')->put($fileName, $qrCode);
+        // Prepare image for ImgBB upload
+        $fileName = 'qrcodes/' . time() . '.png';
 
-    // Get the public URL of the QR code
-    $qrCodeUrl = Storage::url($fileName);
-    $qrUrl = env('MOBILE_URL').'/storage/app/public/'.$fileName;
+        // Upload to ImgBB
+        $response = Http::attach(
+            'image',
+            $qrCode,
+            $fileName
+        )->post('https://api.imgbb.com/1/upload', [
+            'key' => 'eb1e667c36413784234cf2e9b5081159'
+        ]);
 
-    // Store the QR code data in the database
-    DB::table('qr')->insert([
-        'restaurantId' => $validated['restaurantId'],
-        'qrImage' => $fileName, // Save the file name, not full URL
-        'qrCodeUrl'=>$qrUrl,
-        'created_at' => now(),
-        'updated_at' => now(),
-        'tableNumber'=>$validated['tableNo'],
-    ]);
+        // Check if upload was successful
+        if ($response->failed() || !$response->json('data.url')) {
+            return response()->json(['message' => 'Failed to upload QR code to ImgBB'], 500);
+        }
 
-    // Return the QR code URL in the response
-    return response()->json([
-        'message' => 'QR code generated and stored successfully!',
-        'qrCodeUrl' => $qrUrl // Include the full URL to the QR code image
-    ], 200);
-}
+        $qrCodeUrl = $response->json('data.url');
+        $deleteHash = $response->json('data.deletehash'); // Store delete hash for later deletion
 
+        // Store the QR code data in the database
+        DB::table('qr')->insert([
+            'restaurantId' => $validated['restaurantId'],
+            'qrImage' => $fileName,
+            'qrCodeUrl' => $qrCodeUrl,
+            'deleteHash' => $deleteHash, // Store delete hash
+            'created_at' => now(),
+            'updated_at' => now(),
+            'tableNumber' => $validated['tableNo'],
+        ]);
 
-   /**
+        // Return the QR code URL in the response
+        return response()->json([
+            'message' => 'QR code generated and stored successfully!',
+            'qrCodeUrl' => $qrCodeUrl
+        ], 200);
+    }
+
+    /**
      * Retrieve a QR code by ID.
      */
     /**
@@ -105,9 +116,9 @@ class QrController extends Controller
      */
     public function getQr($id)
     {
-        $qr = DB::table('qr')->where('restaurantId',$id)->get();
+        $qr = DB::table('qr')->where('restaurantId', $id)->get();
 
-        if (!$qr) {
+        if ($qr->isEmpty()) {
             return response()->json(['message' => 'QR code not found'], 404);
         }
 
@@ -170,7 +181,6 @@ class QrController extends Controller
     /**
      * Delete a QR code by ID.
      */
-
     /**
      * @OA\Delete(
      *     path="/qr/delete/{id}",
@@ -194,14 +204,18 @@ class QrController extends Controller
      */
     public function deleteQr($id)
     {
-        // Find and delete the QR record
+        // Find the QR record
         $qr = DB::table('qr')->find($id);
         if (!$qr) {
             return response()->json(['message' => 'QR code not found'], 404);
         }
 
-        // Delete the QR code image from storage
-        Storage::disk('public')->delete($qr->qrImage);
+        // Delete the QR code image from ImgBB
+        if ($qr->deleteHash) {
+            Http::post('https://api.imgbb.com/1/delete/' . $qr->deleteHash, [
+                'key' => 'eb1e667c36413784234cf2e9b5081159'
+            ]);
+        }
 
         // Delete the QR code from the database
         DB::table('qr')->where('id', $id)->delete();
