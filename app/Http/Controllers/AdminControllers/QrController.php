@@ -59,7 +59,7 @@ class QrController extends Controller
 
     // Get the public URL of the QR code
     $qrCodeUrl = Storage::url($fileName);
-    $qrUrl = env('APP_URL').'/storage/app/public/'.$fileName;
+    $qrUrl = env('MOBILE_URL').'/storage/app/public/'.$fileName;
 
     // Store the QR code data in the database
     DB::table('qr')->insert([
