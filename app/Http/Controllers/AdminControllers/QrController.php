@@ -48,9 +48,9 @@ class QrController extends Controller
 
         // Generate the QR code
         $qrCode = QrCode::format('png')
-                        ->size(300)
-                        ->encoding('GBK')
-                        ->generate($text);
+            ->size(300)
+            ->encoding('GBK')
+            ->generate($text);
 
         // Prepare image for ImgBB upload
         $fileName = 'qrcodes/' . time() . '.png';
@@ -70,14 +70,12 @@ class QrController extends Controller
         }
 
         $qrCodeUrl = $response->json('data.url');
-        $deleteHash = $response->json('data.deletehash'); // Store delete hash for later deletion
 
         // Store the QR code data in the database
         DB::table('qr')->insert([
             'restaurantId' => $validated['restaurantId'],
             'qrImage' => $fileName,
             'qrCodeUrl' => $qrCodeUrl,
-            'deleteHash' => $deleteHash, // Store delete hash
             'created_at' => now(),
             'updated_at' => now(),
             'tableNumber' => $validated['tableNo'],
@@ -208,13 +206,6 @@ class QrController extends Controller
         $qr = DB::table('qr')->find($id);
         if (!$qr) {
             return response()->json(['message' => 'QR code not found'], 404);
-        }
-
-        // Delete the QR code image from ImgBB
-        if ($qr->deleteHash) {
-            Http::post('https://api.imgbb.com/1/delete/' . $qr->deleteHash, [
-                'key' => 'eb1e667c36413784234cf2e9b5081159'
-            ]);
         }
 
         // Delete the QR code from the database
