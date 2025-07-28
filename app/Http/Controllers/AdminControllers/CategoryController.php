@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Menu;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class CategoryController extends Controller
 {
@@ -38,7 +38,7 @@ class CategoryController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="categoryName", type="string", example="Beverages"),
-     *                 @OA\Property(property="categoryImage", type="string", example="/storage/categories/image.jpg", nullable=true),
+     *                 @OA\Property(property="categoryImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
      *                 @OA\Property(property="restaurantId", type="string", example="1"),
      *                 @OA\Property(property="sub_category_id", type="integer", example=1, nullable=true)
      *             ),
@@ -49,7 +49,8 @@ class CategoryController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=422, description="Validation error")
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=500, description="Server error")
      * )
      */
     public function addCategory(Request $request)
@@ -61,23 +62,34 @@ class CategoryController extends Controller
             'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
         ]);
 
-        if ($request->hasFile('categoryImage')) {
-            $imageName = time() . '_' . $request->categoryName . '.' . $request->categoryImage->extension();
-            // Store image in public folder
-            $request->categoryImage->move(public_path('images/categories'), $imageName);
-            $validatedData['categoryImage'] = 'images/categories/' . $imageName; // Store image path in database
+        if ($request->hasFile('categoryImage') && $request->file('categoryImage')->isValid()) {
+            // Prepare image for ImgBB upload
+            $imageName = time() . '_' . $request->categoryName . '.' . $request->file('categoryImage')->getClientOriginalExtension();
+
+            // Upload to ImgBB
+            $response = Http::attach(
+                'image',
+                file_get_contents($request->file('categoryImage')->getRealPath()),
+                $imageName
+            )->post('https://api.imgbb.com/1/upload', [
+                'key' => 'eb1e667c36413784234cf2e9b5081159'
+            ]);
+
+            // Check if upload was successful
+            if ($response->failed() || !$response->json('data.url')) {
+                return response()->json(['message' => 'Failed to upload image to ImgBB'], 500);
+            }
+
+            $validatedData['categoryImage'] = $response->json('data.url');
         }
 
         // Create the category in the database with the validated data
         $category = Category::create($validatedData);
 
-        // Get the full URL for the image
-        $imageUrl = env('APP_URL') . '/' . $category['categoryImage'];
-
         $response = [
             'id' => $category->id,
             'categoryName' => $category->categoryName,
-            'categoryImage' => $imageUrl,
+            'categoryImage' => $category->categoryImage ?? null,
             'restaurantId' => $category->restaurantId,
             'sub_category_id' => $category->sub_category_id,
         ];
@@ -106,7 +118,7 @@ class CategoryController extends Controller
      *                     type="object",
      *                     @OA\Property(property="id", type="integer", example=1),
      *                     @OA\Property(property="categoryName", type="string", example="Beverages"),
-     *                     @OA\Property(property="categoryImage", type="string", example="/storage/categories/image.jpg", nullable=true),
+     *                     @OA\Property(property="categoryImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
      *                     @OA\Property(property="restaurantId", type="string", example="1"),
      *                     @OA\Property(property="sub_category_id", type="integer", example=1, nullable=true),
      *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
@@ -136,14 +148,12 @@ class CategoryController extends Controller
         // Initialize an empty array for the response data
         $data = [];
 
-        // Construct image URL for each category and prepare the response
+        // Prepare the response
         foreach ($categories as $category) {
-            $imageUrl = env('APP_URL') . '/' . $category->categoryImage; // Construct image URL
-
             $data[] = [
                 'id' => $category->id,
                 'categoryName' => $category->categoryName,
-                'categoryImage' => $imageUrl, // Send full image URL
+                'categoryImage' => $category->categoryImage ?? null,
                 'created_at' => $category->created_at,
                 'updated_at' => $category->updated_at,
                 'restaurantId' => $category->restaurantId,
@@ -171,7 +181,7 @@ class CategoryController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="categoryName", type="string", example="Beverages"),
-     *                 @OA\Property(property="categoryImage", type="string", example="/storage/categories/image.jpg", nullable=true),
+     *                 @OA\Property(property="categoryImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
      *                 @OA\Property(property="restaurantId", type="string", example="1"),
      *                 @OA\Property(property="sub_category_id", type="integer", example=1, nullable=true),
      *                 @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
@@ -194,7 +204,7 @@ class CategoryController extends Controller
         $response = [
             'id' => $category->id,
             'categoryName' => $category->categoryName,
-            'categoryImage' => $category->categoryImage ? Storage::url($category->categoryImage) : null,
+            'categoryImage' => $category->categoryImage ?? null,
             'restaurantId' => $category->restaurantId,
             'sub_category_id' => $category->sub_category_id,
             'created_at' => $category->created_at,
@@ -234,7 +244,7 @@ class CategoryController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="categoryName", type="string", example="Updated Category"),
-     *                 @OA\Property(property="categoryImage", type="string", example="/storage/categories/image.jpg", nullable=true),
+     *                 @OA\Property(property="categoryImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
      *                 @OA\Property(property="restaurantId", type="string", example="2"),
      *                 @OA\Property(property="sub_category_id", type="integer", example=1, nullable=true)
      *             ),
@@ -246,7 +256,8 @@ class CategoryController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=404, description="Category not found"),
-     *     @OA\Response(response=422, description="Validation error")
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=500, description="Server error")
      * )
      */
     public function updateCategory(Request $request, $id)
@@ -254,9 +265,9 @@ class CategoryController extends Controller
         // Validate request
         $validatedData = $request->validate([
             'categoryName' => 'string|required',
-            'categoryImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image
-            'restaurantId'  => 'string|required',
-            'sub_category' => 'integer|nullable',
+            'categoryImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'restaurantId' => 'string|required',
+            'sub_category_id' => 'integer|nullable',
         ]);
 
         // Find the category
@@ -266,16 +277,23 @@ class CategoryController extends Controller
         }
 
         // Handle image upload
-        if ($request->hasFile('categoryImage')) {
-            // Delete old image if exists
-            if ($category->categoryImage && file_exists(public_path($category->categoryImage))) {
-                unlink(public_path($category->categoryImage));
+        if ($request->hasFile('categoryImage') && $request->file('categoryImage')->isValid()) {
+            // Upload to ImgBB
+            $imageName = time() . '_' . $request->categoryName . '.' . $request->file('categoryImage')->getClientOriginalExtension();
+            $response = Http::attach(
+                'image',
+                file_get_contents($request->file('categoryImage')->getRealPath()),
+                $imageName
+            )->post('https://api.imgbb.com/1/upload', [
+                'key' => 'eb1e667c36413784234cf2e9b5081159'
+            ]);
+
+            // Check if upload was successful
+            if ($response->failed() || !$response->json('data.url')) {
+                return response()->json(['message' => 'Failed to upload image to ImgBB'], 500);
             }
 
-            // Upload new image
-            $imageName = time() . '_' . $request->categoryName . '.' . $request->categoryImage->extension();
-            $request->categoryImage->move(public_path('images/categories'), $imageName);
-            $validatedData['categoryImage'] = 'images/categories/' . $imageName; // Store image path
+            $validatedData['categoryImage'] = $response->json('data.url');
         }
 
         // Update category
@@ -314,10 +332,6 @@ class CategoryController extends Controller
             return response()->json([
                 'message' => 'Cannot delete category with linked menu items'
             ], 400);
-        }
-
-        if ($category->categoryImage) {
-            Storage::disk('public')->delete($category->categoryImage);
         }
 
         $category->delete();
