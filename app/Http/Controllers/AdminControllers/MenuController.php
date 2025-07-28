@@ -7,7 +7,7 @@ use App\Models\Inventory;
 use App\Models\Menu;
 use App\Models\MenuInventory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
  *     description="Menu Model",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="itemName", type="string", example="Pizza"),
- *     @OA\Property(property="itemImage", type="string", example="/menus/pizza.jpg", nullable=true),
+ *     @OA\Property(property="itemImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
  *     @OA\Property(property="price", type="number", format="float", example=9.99),
  *     @OA\Property(property="categoryId", type="integer", example=1),
  *     @OA\Property(property="restaurantId", type="string", example="1"),
@@ -94,7 +94,7 @@ class MenuController extends Controller
         $inventoryItems = Inventory::whereIn('id', $stockItems->pluck('stockId'))->get()->keyBy('id');
 
         $menus->transform(function ($menu) use ($stockItems, $inventoryItems) {
-            $menu->itemImage = $menu->itemImage ? url($menu->itemImage) : null;
+            $menu->itemImage = $menu->itemImage ?? null;
             $menu->stockItems = $stockItems->where('menuId', $menu->id)->map(function ($stockItem) use ($inventoryItems) {
                 return [
                     'id' => $stockItem->id,
@@ -199,7 +199,7 @@ class MenuController extends Controller
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="menu", ref="#/components/schemas/Menu"),
-     *                 @OA\Property(property="itemImage", type="string", example="/menus/pizza.jpg", nullable=true),
+     *                 @OA\Property(property="itemImage", type="string", example="https://i.ibb.co/example.jpg", nullable=true),
      *                 @OA\Property(
      *                     property="stockItems",
      *                     type="array",
@@ -218,80 +218,82 @@ class MenuController extends Controller
      * )
      */
     public function store(Request $request)
-{
-    Log::info('Reached store method');
+    {
+        Log::info('Reached store method');
 
-    try {
-        $validatedData = $request->validate([
-            'itemName' => 'required|string|max:255',
-            'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'price' => 'required|numeric|min:0',
-            'categoryId' => 'required|integer',
-            'restaurantId' => 'required|string|max:255',
-            'sub_category' => 'nullable|integer',
-            'stockItems' => 'required|array|min:1',
-            'stockItems.*.stockId' => 'required|integer',
-            'stockItems.*.quantity' => 'required|numeric|min:0.001',
-        ]);
-
-        Log::info('Validated Data:', $validatedData);
-
-        return DB::transaction(function () use ($validatedData, $request) {
-            $menu = Menu::create([
-                'itemName' => $validatedData['itemName'],
-                'price' => $validatedData['price'],
-                'categoryId' => $validatedData['categoryId'],
-                'restaurantId' => $validatedData['restaurantId'],
-                'sub_category' => $validatedData['sub_category'] ?? null,
-                'status' => 1 // Default to active
+        try {
+            $validatedData = $request->validate([
+                'itemName' => 'required|string|max:255',
+                'itemImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'price' => 'required|numeric|min:0',
+                'categoryId' => 'required|integer',
+                'restaurantId' => 'required|string|max:255',
+                'sub_category' => 'nullable|integer',
+                'stockItems' => 'required|array|min:1',
+                'stockItems.*.stockId' => 'required|integer',
+                'stockItems.*.quantity' => 'required|numeric|min:0.001',
             ]);
 
-            if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
-                // Store the image directly in the public/menus folder
-                $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
-                $publicPath = public_path('menus');
+            Log::info('Validated Data:', $validatedData);
 
-                // Create the directory if it doesn't exist
-                if (!file_exists($publicPath)) {
-                    mkdir($publicPath, 0777, true);
+            return DB::transaction(function () use ($validatedData, $request) {
+                $menu = Menu::create([
+                    'itemName' => $validatedData['itemName'],
+                    'price' => $validatedData['price'],
+                    'categoryId' => $validatedData['categoryId'],
+                    'restaurantId' => $validatedData['restaurantId'],
+                    'sub_category' => $validatedData['sub_category'] ?? null,
+                    'status' => 1 // Default to active
+                ]);
+
+                $imageUrl = null;
+                if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                    // Prepare image for ImgBB upload
+                    $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+
+                    // Upload to ImgBB
+                    $response = Http::attach(
+                        'image',
+                        file_get_contents($request->file('itemImage')->getRealPath()),
+                        $imageName
+                    )->post('https://api.imgbb.com/1/upload', [
+                        'key' => 'eb1e667c36413784234cf2e9b5081159'
+                    ]);
+
+                    // Check if upload was successful
+                    if ($response->failed() || !$response->json('data.url')) {
+                        throw new \Exception('Failed to upload image to ImgBB');
+                    }
+
+                    $imageUrl = $response->json('data.url');
+                    $menu->update(['itemImage' => $imageUrl]);
+
+                    Log::info('Image uploaded to ImgBB:', ['url' => $imageUrl]);
                 }
 
-                // Move the file to the public/mens directory
-                $request->file('itemImage')->move($publicPath, $imageName);
+                foreach ($validatedData['stockItems'] as $stockItem) {
+                    MenuInventory::create([
+                        'menuId' => $menu->id,
+                        'restaurantId' => $validatedData['restaurantId'],
+                        'stockId' => $stockItem['stockId'],
+                        'quantity' => $stockItem['quantity'],
+                    ]);
+                }
 
-                // Generate the public URL manually
-                $imageUrl = url('menus/' . $imageName);
-                $menu->update(['itemImage' => $imageUrl]);
-
-                Log::info('Image uploaded and stored in public folder:', ['path' => $imageUrl]);
-            }
-
-            foreach ($validatedData['stockItems'] as $stockItem) {
-                MenuInventory::create([
-                    'menuId' => $menu->id,
-                    'restaurantId' => $validatedData['restaurantId'],
-                    'stockId' => $stockItem['stockId'],
-                    'quantity' => $stockItem['quantity'],
-                ]);
-            }
-
-            // Use the stored URL directly from the model or null if no image
-            $imageUrl = $menu->itemImage ?? null;
-
-            return response()->json([
-                'data' => [
-                    'menu' => $menu->fresh(),
-                    'itemImage' => $imageUrl,
-                    'stockItems' => $validatedData['stockItems'],
-                ],
-                'message' => 'Menu item created successfully'
-            ], 201);
-        });
-    } catch (\Exception $e) {
-        Log::error('Failed to create menu item:', ['error' => $e->getMessage()]);
-        return response()->json(['message' => 'Failed to create menu item: ' . $e->getMessage()], 500);
+                return response()->json([
+                    'data' => [
+                        'menu' => $menu->fresh(),
+                        'itemImage' => $imageUrl,
+                        'stockItems' => $validatedData['stockItems'],
+                    ],
+                    'message' => 'Menu item created successfully'
+                ], 201);
+            });
+        } catch (\Exception $e) {
+            Log::error('Failed to create menu item:', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Failed to create menu item: ' . $e->getMessage()], 500);
+        }
     }
-}
 
     /**
      * @OA\Put(
@@ -346,12 +348,26 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
 
         return DB::transaction(function () use ($request, $menu, $validatedData) {
-            if ($request->hasFile('itemImage')) {
-                if ($menu->itemImage) {
-                    Storage::disk('public')->delete($menu->itemImage);
+            if ($request->hasFile('itemImage') && $request->file('itemImage')->isValid()) {
+                // Prepare image for ImgBB upload
+                $imageName = time() . '_' . $request->file('itemImage')->getClientOriginalName();
+
+                // Upload to ImgBB
+                $response = Http::attach(
+                    'image',
+                    file_get_contents($request->file('itemImage')->getRealPath()),
+                    $imageName
+                )->post('https://api.imgbb.com/1/upload', [
+                    'key' => 'eb1e667c36413784234cf2e9b5081159'
+                ]);
+
+                // Check if upload was successful
+                if ($response->failed() || !$response->json('data.url')) {
+                    throw new \Exception('Failed to upload image to ImgBB');
                 }
-                $imagePath = $request->file('itemImage')->store('menus', 'public');
-                $validatedData['itemImage'] = $imagePath;
+
+                $validatedData['itemImage'] = $response->json('data.url');
+                Log::info('Image uploaded to ImgBB:', ['url' => $validatedData['itemImage']]);
             }
 
             $menu->update($validatedData);
@@ -391,10 +407,6 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
 
         return DB::transaction(function () use ($menu) {
-            if ($menu->itemImage) {
-                Storage::disk('public')->delete($menu->itemImage);
-            }
-
             MenuInventory::where('menuId', $menu->id)->delete();
             $menu->delete();
 
