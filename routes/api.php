@@ -23,6 +23,7 @@ use App\Http\Controllers\AdminControllers\MenuInventoryController;
 use App\Http\Controllers\AdminControllers\ReportController;
 use App\Http\Controllers\AdminControllers\ReservationController;
 use App\Http\Controllers\AdminControllers\RestaurantBannerController;
+use App\Http\Controllers\AdminControllers\RestaurantExpenseController;
 use App\Http\Controllers\AdminControllers\SocialMediaController;
 use App\Http\Controllers\AdminControllers\SubCategoryController;
 use App\Http\Controllers\AdminControllers\TransactionController;
@@ -184,6 +185,8 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/notification/{id}', [OrderController::class, 'getNotification']);
             Route::put('/status/notification/{id}', [OrderController::class, 'updateNotificationStatus']);
         });
+
+        Route::apiResource('restaurant-expenses', RestaurantExpenseController::class);
         Route::prefix('suppliers')->group(function () {
             // Get all suppliers
             Route::get('/', [SupplierController::class, 'getSuppliers']);
